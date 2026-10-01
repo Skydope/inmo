@@ -1,6 +1,7 @@
 import Link from "next/link"
-import { ArrowUpRight } from "@phosphor-icons/react/dist/ssr"
+import { ArrowUpRight, Compass } from "@phosphor-icons/react/dist/ssr"
 import { CoverImage } from "@/components/cover-image"
+import { HeroInteractive } from "@/components/hero-interactive"
 import { HeroSearch } from "@/components/hero-search"
 import { LandingNav } from "@/components/landing-nav"
 import { LandingPropertyCard } from "@/components/landing-property-card"
@@ -40,45 +41,38 @@ export default async function HomePage() {
   const agencies = new Set(properties.map((p) => p.agency.name)).size
 
   return (
-    <div className="pb-16">
-      <section className="px-2 pt-2 md:px-3 md:pt-3">
-        <div className="relative overflow-hidden rounded-[1.75rem] md:rounded-[2.25rem]">
-          <div className="absolute inset-0">
-            <CoverImage
-              src="/images/hero/hero.jpg"
-              alt=""
-              className="h-full w-full object-cover"
-            />
-            <div
-              aria-hidden
-              className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/45"
-            />
+    <div>
+      <section className="sticky top-0 z-0 px-2 pt-2 md:px-3 md:pt-3">
+        <HeroInteractive>
+          <LandingNav />
+
+          <div className="my-auto max-w-xl py-10 md:py-14">
+            <div className="animate-rise inline-flex items-center gap-2 rounded-full glass px-3.5 py-1.5 text-xs uppercase tracking-[0.2em] text-accent backdrop-blur">
+              <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
+              San Carlos de Bolívar
+            </div>
+            <p className="animate-rise-delay mt-4 max-w-sm text-sm leading-relaxed text-white/90 md:max-w-md md:text-base">
+              {brandName} conecta venta y alquiler en Bolívar con mapa interactivo,
+              filtros vivos y un catálogo con verdadero carácter de ciudad.
+            </p>
           </div>
 
-          <div className="relative flex min-h-[calc(100dvh-1rem)] flex-col px-4 pb-4 pt-0 md:min-h-[calc(100dvh-1.5rem)] md:px-7 md:pb-6">
-            <LandingNav />
-
-            <div className="my-auto max-w-xl py-10 md:py-14">
-              <h1 className="animate-rise text-5xl leading-[0.95] tracking-tight text-white md:text-7xl lg:text-[5.25rem]">
-                <span className="block font-display font-normal">Redefiniendo</span>
-                <span className="mt-1 block font-accent text-[2.75rem] font-normal md:text-6xl lg:text-[4.5rem]">
-                  el vivir moderno
-                </span>
-              </h1>
-              <p className="animate-rise-delay mt-6 max-w-sm text-sm leading-relaxed text-white/90 md:max-w-md md:text-[15px]">
-                {brandName} conecta venta y alquiler en Bolívar con mapa vivo,
-                filtros claros y un catálogo con carácter de ciudad.
-              </p>
-            </div>
-
-            <div className="mt-auto pt-4">
-              <HeroSearch />
-            </div>
+          <div className="mt-auto pt-4">
+            <Link
+              href="/propiedades"
+              className="animate-rise-delay mx-auto mb-3 flex w-fit items-center gap-2.5 rounded-full bg-[#c4a574] px-5 py-2 text-base font-medium text-[#1a1a1a] transition hover:bg-[#a8906a]"
+            >
+              <Compass weight="fill" className="h-5 w-5" aria-hidden />
+              Explorar
+            </Link>
+            <HeroSearch />
           </div>
-        </div>
+        </HeroInteractive>
       </section>
 
-      <section id="nosotros" className="mx-auto max-w-6xl px-4 pb-6 pt-16 md:pt-20">
+      <div className="relative z-10 -mt-8 px-2 md:-mt-12 md:px-3">
+        <div className="sheet-over rounded-t-[1.75rem] bg-bg pb-16 md:rounded-t-[2.25rem]">
+      <section id="nosotros" className="mx-auto max-w-6xl px-4 pb-6 pt-14 md:pt-16">
         <p className="max-w-4xl text-3xl leading-snug tracking-tight text-fg md:text-5xl md:leading-[1.15]">
           Nuestra red cubre{" "}
           <span className="font-accent">todos los tipos</span> de operación en
@@ -102,7 +96,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-10">
+      <section className="py-10">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {CATEGORIES.map((c) => (
             <Link
@@ -127,7 +121,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section id="agentes" className="mx-auto max-w-6xl px-4 py-6">
+      <section id="agentes" className="py-6">
         <div className="relative overflow-hidden rounded-[2rem]">
           <CoverImage
             src="/images/properties/house-3.jpg"
@@ -156,7 +150,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 pb-8 pt-14">
+      <section className="pb-8 pt-14">
         <h2 className="mb-8 text-4xl tracking-tight text-fg md:text-5xl">
           Mejores <span className="font-accent">propiedades</span>
         </h2>
@@ -177,6 +171,8 @@ export default async function HomePage() {
           </Link>
         </div>
       </section>
+        </div>
+      </div>
     </div>
   )
 }

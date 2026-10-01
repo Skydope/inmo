@@ -22,7 +22,7 @@
 .dark {
   --bg: #1a1a1a;
   --bg-elevated: #262626;
-  --chrome: var(--bg-elevated);
+  --chrome: var(--bg);
   --fg: #f3efe6;
   --fg-muted: #a8a297;
   --accent: #c4a574;
@@ -117,7 +117,7 @@ body {
 
 /* Ref-07: inverted tabs flush to hero top, concave scoops at TL/TR.
    Caller sets position (relative|absolute) so ::before/::after can scoop.
-   Fill + scoops = --chrome (theme-aware; tracks page/elevated surface). */
+   Fill + scoops = --chrome (same black as the page). */
 .nav-tab {
   background: var(--chrome);
   color: var(--fg);
@@ -139,13 +139,24 @@ body {
 .nav-tab::before {
   left: calc(var(--nav-scoop) * -1);
   border-top-right-radius: var(--nav-scoop);
-  box-shadow: var(--nav-scoop) 0 0 0 var(--chrome);
+  /* +1px overlap: the shadow otherwise leaves a hairline of the photo */
+  box-shadow: calc(var(--nav-scoop) + 1px) 0 0 0 var(--chrome);
 }
 
 .nav-tab::after {
   right: calc(var(--nav-scoop) * -1);
   border-top-left-radius: var(--nav-scoop);
-  box-shadow: calc(var(--nav-scoop) * -1) 0 0 0 var(--chrome);
+  box-shadow: calc((var(--nav-scoop) + 1px) * -1) 0 0 0 var(--chrome);
+}
+
+/* Sheet that scrolls over the sticky hero. Bottom of the hero is square
+   so this radius is the only curve at the join. */
+.sheet-over {
+  box-shadow: 0 -28px 70px rgba(26, 26, 26, 0.16);
+}
+
+.dark .sheet-over {
+  box-shadow: 0 -28px 70px rgba(0, 0, 0, 0.55);
 }
 
 /* Ref-05 hero search: same theme-aware --chrome as nav tabs. */
@@ -166,17 +177,7 @@ body {
 }
 
 .page-atmosphere {
-  background:
-    radial-gradient(1200px 600px at 10% -10%, color-mix(in oklab, var(--accent) 12%, transparent), transparent 55%),
-    radial-gradient(900px 500px at 90% 0%, rgba(255, 255, 255, 0.35), transparent 50%),
-    linear-gradient(180deg, color-mix(in oklab, var(--bg) 92%, white) 0%, var(--bg) 42%, color-mix(in oklab, var(--bg) 88%, black) 100%);
-}
-
-.dark .page-atmosphere {
-  background:
-    radial-gradient(1200px 600px at 10% -10%, rgba(196, 165, 116, 0.12), transparent 55%),
-    radial-gradient(900px 500px at 90% 0%, rgba(255, 255, 255, 0.04), transparent 50%),
-    linear-gradient(180deg, #1f1f1f 0%, var(--bg) 40%, #141414 100%);
+  background: var(--bg);
 }
 
 @keyframes rise-in {
@@ -222,7 +223,20 @@ body {
   color: var(--accent) !important;
 }
 
+.map-stage .maplibregl-map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.map-stage .maplibregl-ctrl-top-left {
+  top: 3.25rem;
+  left: 0.35rem;
+}
+
 .map-marker-pill {
+  width: max-content;
   font-family: var(--font-archivo), Impact, sans-serif;
   background: #1a1a1a;
   color: #f3efe6;
@@ -234,6 +248,16 @@ body {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
   cursor: pointer;
   transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.map-marker-pill::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 7px solid #1a1a1a;
 }
 .map-marker-pill.is-selected {
   border-color: #f3efe6;

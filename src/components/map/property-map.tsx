@@ -9,6 +9,17 @@ import type { PropertyWithDistance } from "@/lib/properties/types"
 
 const DARK_STYLE = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
 
+/** ponytail: bottom pad is a fraction of the map so the filmstrip doesn't cover the houses; if the strip grows past ~45% of the viewport, raise the cap. */
+function chromePadding(map: MapLibreMap) {
+  const h = map.getContainer().clientHeight || 640
+  return {
+    top: Math.min(88, Math.round(h * 0.14)),
+    bottom: Math.min(360, Math.round(h * 0.46)),
+    left: 40,
+    right: 40,
+  }
+}
+
 export function PropertyMap({
   properties,
   selectedId,
@@ -29,6 +40,7 @@ export function PropertyMap({
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const markersRef = useRef<Map<string, Marker>>(new Map())
+  const frameRef = useRef<() => void>(() => {})
   const handlersRef = useRef({ onExpand, onCollapse, onSelect })
   handlersRef.current = { onExpand, onCollapse, onSelect }
 
@@ -40,17 +52,28 @@ export function PropertyMap({
       style: DARK_STYLE,
       center: [BOLIVAR_CENTER.lng, BOLIVAR_CENTER.lat],
       zoom: 13.2,
-      attributionControl: {
-        compact: true,
-        customAttribution: "© OpenStreetMap",
-      },
+      attributionControl: false,
     })
 
-    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right")
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-left")
+    map.addControl(
+      new maplibregl.AttributionControl({
+        compact: true,
+        customAttribution: "© OpenStreetMap",
+      }),
+      "top-left",
+    )
     map.on("click", () => handlersRef.current.onCollapse())
     mapRef.current = map
 
+    const ro = new ResizeObserver(() => {
+      map.resize()
+      frameRef.current()
+    })
+    ro.observe(map.getContainer())
+
     return () => {
+      ro.disconnect()
       markersRef.current.forEach((m) => m.remove())
       markersRef.current.clear()
       map.remove()
@@ -60,9 +83,37 @@ export function PropertyMap({
 
   useEffect(() => {
     const map = mapRef.current
-    if (!map || !center) return
-    map.easeTo({ center: [center.lng, center.lat], zoom: Math.max(map.getZoom(), 13.5) })
-  }, [center])
+    if (!map) return
+
+    const frame = () => {
+      const h = map.getContainer().clientHeight
+      if (h < 200) return
+      const pad = chromePadding(map)
+      if (center) {
+        map.easeTo({
+          center: [center.lng, center.lat],
+          zoom: Math.max(map.getZoom(), 14),
+          padding: pad,
+        })
+        return
+      }
+      if (properties.length === 0) {
+        map.easeTo({
+          center: [BOLIVAR_CENTER.lng, BOLIVAR_CENTER.lat],
+          zoom: 13.2,
+          padding: pad,
+        })
+        return
+      }
+      const bounds = new maplibregl.LngLatBounds()
+      for (const property of properties) bounds.extend([property.lng, property.lat])
+      map.fitBounds(bounds, { padding: pad, maxZoom: 15, duration: 600 })
+    }
+
+    frameRef.current = frame
+    if (map.loaded()) frame()
+    else map.once("load", () => frameRef.current())
+  }, [properties, center])
 
   useEffect(() => {
     const map = mapRef.current
@@ -110,11 +161,13 @@ export function PropertyMap({
         })
       }
 
+      el.style.zIndex = isExpanded ? "3" : isSelected ? "2" : "1"
+
       const prev = existing.get(property.id)
       if (prev) {
         prev.remove()
       }
-      const marker = new maplibregl.Marker({ element: el, anchor: isExpanded ? "bottom" : "center" })
+      const marker = new maplibregl.Marker({ element: el, anchor: "bottom" })
         .setLngLat([property.lng, property.lat])
         .addTo(map)
       existing.set(property.id, marker)
@@ -122,7 +175,7 @@ export function PropertyMap({
   }, [properties, selectedId, expandedId])
 
   return (
-    <div className="relative h-full min-h-[420px] w-full overflow-hidden rounded-[1.5rem] border border-glass-border bg-bg-elevated">
+    <div className="map-stage relative h-full min-h-0 w-full bg-[#1a1a1a]">
       <div ref={containerRef} className="absolute inset-0" />
     </div>
   )

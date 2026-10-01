@@ -15,38 +15,34 @@ type ThemeContextValue = {
   theme: Theme
   setTheme: (t: Theme) => void
   toggle: () => void
-  forceDark: () => void
-  releaseDark: () => void
 }
 
 const ThemeContext = createContext<ThemeContextValue | null>(null)
 
 const STORAGE_KEY = "inmo-theme"
 
-function applyDomTheme(theme: Theme, forced: boolean) {
+function applyDomTheme(theme: Theme) {
   const root = document.documentElement
-  const effective: Theme = forced ? "dark" : theme
-  root.classList.toggle("dark", effective === "dark")
-  root.style.colorScheme = effective
+  root.classList.toggle("dark", theme === "dark")
+  root.style.colorScheme = theme
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("light")
-  const [forcedCount, setForcedCount] = useState(0)
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
     const stored = window.localStorage.getItem(STORAGE_KEY)
     const initial: Theme = stored === "dark" || stored === "light" ? stored : "light"
     setThemeState(initial)
-    applyDomTheme(initial, false)
+    applyDomTheme(initial)
     setReady(true)
   }, [])
 
   useEffect(() => {
     if (!ready) return
-    applyDomTheme(theme, forcedCount > 0)
-  }, [theme, forcedCount, ready])
+    applyDomTheme(theme)
+  }, [theme, ready])
 
   const setTheme = useCallback((t: Theme) => {
     setThemeState(t)
@@ -61,18 +57,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
-  const forceDark = useCallback(() => {
-    setForcedCount((n) => n + 1)
-  }, [])
-
-  const releaseDark = useCallback(() => {
-    setForcedCount((n) => Math.max(0, n - 1))
-  }, [])
-
   return (
-    <ThemeContext.Provider
-      value={{ theme, setTheme, toggle, forceDark, releaseDark }}
-    >
+    <ThemeContext.Provider value={{ theme, setTheme, toggle }}>
       {children}
     </ThemeContext.Provider>
   )

@@ -3,11 +3,11 @@
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useEffect, useMemo, useReducer, useState, useTransition } from "react"
-import { LayoutGrid, Map as MapIcon, Navigation } from "lucide-react"
+import { NavigationArrow } from "@phosphor-icons/react"
+import { LandingNav } from "@/components/landing-nav"
 import { PropertyMapDynamic } from "@/components/map/property-map-dynamic"
 import { PropertyCard } from "@/components/property-card"
 import { Button } from "@/components/ui/button"
-import { BOLIVAR_CENTER } from "@/lib/brand"
 import {
   applyFilters,
   filtersToSearchParams,
@@ -37,15 +37,16 @@ export function ExploreClient({ properties }: { properties: Property[] }) {
   const [gps, setGps] = useState<GpsStatus>({ kind: "idle" })
   const [markerState, dispatchMarker] = useReducer(markerReducer, initialMarkerState)
 
-  const userPos =
-    gps.kind === "success" ? { lat: gps.lat, lng: gps.lng } : null
+  const userPos = useMemo(
+    () => (gps.kind === "success" ? { lat: gps.lat, lng: gps.lng } : null),
+    [gps],
+  )
 
   const list = useMemo(
     () => applyFilters(properties, filters, userPos),
     [properties, filters, userPos],
   )
 
-  const mapCenter = userPos ?? BOLIVAR_CENTER
   const banner = gpsBannerMessage(gps)
 
   function pushFilters(next: PropertyFilters) {
@@ -90,119 +91,111 @@ export function ExploreClient({ properties }: { properties: Property[] }) {
   useEffect(() => {
     if (!markerState.selectedId) return
     const el = document.getElementById(`card-${markerState.selectedId}`)
-    el?.scrollIntoView({ behavior: "smooth", block: "nearest" })
+    el?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" })
   }, [markerState.selectedId])
 
-  const showMap = filters.view === "map"
-
   return (
-    <div className="mx-auto flex max-w-[1400px] flex-col gap-4 px-4 pb-10 pt-6">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="font-display text-3xl text-fg md:text-4xl">Propiedades</h1>
-          <p className="mt-1 text-sm text-fg-muted">
-            {list.length} resultado{list.length === 1 ? "" : "s"} en Bolívar
-          </p>
+    <div className="px-2 pb-2 pt-2 md:px-3 md:pb-3 md:pt-3">
+      <div className="relative h-[calc(100dvh-1rem)] md:h-[calc(100dvh-1.5rem)]">
+        <div className="absolute inset-0 overflow-hidden rounded-[1.75rem] md:rounded-[2.25rem]">
+          <PropertyMapDynamic
+            properties={list}
+            selectedId={markerState.selectedId}
+            expandedId={markerState.expandedId}
+            center={userPos}
+            onExpand={(id) => dispatchMarker({ type: "expand", id })}
+            onCollapse={() => dispatchMarker({ type: "collapse" })}
+            onSelect={(id) => dispatchMarker({ type: "select", id })}
+          />
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <Button
-            variant="secondary"
-            onClick={locateMe}
-            disabled={gps.kind === "pending"}
-            aria-busy={gps.kind === "pending"}
-          >
-            <Navigation className="h-4 w-4" aria-hidden />
-            {gps.kind === "pending" ? "Buscando…" : "Cerca mío"}
-          </Button>
+        <div className="pointer-events-none relative flex h-full flex-col">
+          <div className="pointer-events-auto">
+            <LandingNav />
+          </div>
 
-          <div className="glass flex rounded-full p-1 md:hidden">
-            <button
-              type="button"
-              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs ${showMap ? "bg-accent text-bg" : "text-fg-muted"}`}
-              onClick={() => patch({ view: "map" })}
-            >
-              <MapIcon className="h-3.5 w-3.5" /> Mapa
-            </button>
-            <button
-              type="button"
-              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs ${!showMap ? "bg-accent text-bg" : "text-fg-muted"}`}
-              onClick={() => patch({ view: "grid" })}
-            >
-              <LayoutGrid className="h-3.5 w-3.5" /> Lista
-            </button>
+          <div className="pointer-events-auto mt-auto flex flex-col gap-2.5 px-3 pb-3 md:px-5 md:pb-5">
+            {banner ? (
+              <div
+                role="status"
+                className="w-fit max-w-md rounded-full bg-chrome px-4 py-2 text-sm text-fg shadow-[0_8px_30px_rgba(0,0,0,0.18)]"
+              >
+                {banner}
+              </div>
+            ) : null}
+
+            <FilterBar
+              filters={filters}
+              count={list.length}
+              onChange={patch}
+              gpsActive={Boolean(userPos)}
+              gpsPending={gps.kind === "pending"}
+              onLocate={locateMe}
+            />
+
+            {list.length === 0 ? (
+              <div className="flex w-fit max-w-md flex-col items-start gap-3 rounded-[1.5rem] bg-chrome p-5 shadow-[0_12px_40px_rgba(0,0,0,0.18)]">
+                <p className="font-display text-2xl">Sin resultados</p>
+                <p className="text-sm text-fg-muted">
+                  Probá limpiar los filtros o ampliar el rango de precio.
+                </p>
+                <Link href="/propiedades">
+                  <Button>Limpiar filtros</Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-1">
+                {list.map((p) => (
+                  <PropertyCard
+                    key={p.id}
+                    id={`card-${p.id}`}
+                    property={p}
+                    selected={markerState.selectedId === p.id}
+                    onHover={(id) => dispatchMarker({ type: "hover-card", id })}
+                    onSelect={(id) => dispatchMarker({ type: "select", id })}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      <FilterBar filters={filters} onChange={patch} gpsActive={Boolean(userPos)} />
-
-      {banner ? (
-        <div
-          role="status"
-          className="rounded-2xl border border-accent/30 bg-accent/10 px-4 py-3 text-sm text-fg"
-        >
-          {banner}
-        </div>
-      ) : null}
-
-      {list.length === 0 ? (
-        <div className="glass flex flex-col items-start gap-4 rounded-[1.5rem] p-8">
-          <p className="font-display text-2xl">Sin resultados</p>
-          <p className="text-fg-muted">Probá limpiar los filtros o ampliar el rango de precio.</p>
-          <Link href="/propiedades">
-            <Button>Limpiar filtros</Button>
-          </Link>
-        </div>
-      ) : (
-        <div className="grid gap-4 lg:grid-cols-[minmax(320px,420px)_1fr] lg:items-start">
-          <div
-            className={`max-h-[calc(100dvh-11rem)] space-y-4 overflow-y-auto pr-1 ${showMap ? "hidden lg:block" : "block"}`}
-          >
-            {list.map((p) => (
-              <PropertyCard
-                key={p.id}
-                id={`card-${p.id}`}
-                property={p}
-                selected={markerState.selectedId === p.id}
-                onHover={(id) => dispatchMarker({ type: "hover-card", id })}
-                onSelect={(id) => dispatchMarker({ type: "select", id })}
-              />
-            ))}
-          </div>
-
-          <div
-            className={`sticky top-24 h-[calc(100dvh-8rem)] min-h-[420px] ${showMap ? "block" : "hidden lg:block"}`}
-          >
-            <PropertyMapDynamic
-              properties={list}
-              selectedId={markerState.selectedId}
-              expandedId={markerState.expandedId}
-              center={mapCenter}
-              onExpand={(id) => dispatchMarker({ type: "expand", id })}
-              onCollapse={() => dispatchMarker({ type: "collapse" })}
-              onSelect={(id) => dispatchMarker({ type: "select", id })}
-            />
-          </div>
-        </div>
-      )}
     </div>
   )
 }
 
 function FilterBar({
   filters,
+  count,
   onChange,
   gpsActive,
+  gpsPending,
+  onLocate,
 }: {
   filters: PropertyFilters
+  count: number
   onChange: (partial: Partial<PropertyFilters>) => void
   gpsActive: boolean
+  gpsPending: boolean
+  onLocate: () => void
 }) {
   const priceOk = priceControlsEnabled(filters)
 
   return (
-    <div className="glass flex flex-wrap items-center gap-2 rounded-[1.25rem] p-3">
+    <div className="flex items-center gap-2 overflow-x-auto rounded-full bg-chrome px-2 py-1.5 text-fg shadow-[0_12px_40px_rgba(0,0,0,0.18)]">
+      <p className="shrink-0 px-2 text-xs text-fg-muted">
+        {count} en Bolívar
+      </p>
+      <button
+        type="button"
+        onClick={onLocate}
+        disabled={gpsPending}
+        aria-busy={gpsPending}
+        className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-fg px-3 py-1.5 text-xs font-medium text-bg hover:opacity-90 disabled:opacity-60"
+      >
+        <NavigationArrow weight="fill" className="h-3.5 w-3.5" aria-hidden />
+        {gpsPending ? "Buscando…" : "Cerca mío"}
+      </button>
       <Segment
         label="Operación"
         value={filters.op ?? ""}
@@ -235,7 +228,7 @@ function FilterBar({
         onChange={(v) => onChange({ cur: (v || undefined) as PropertyFilters["cur"] })}
       />
 
-      <label className="flex items-center gap-2 text-xs text-fg-muted">
+      <label className="flex shrink-0 items-center gap-2 text-xs text-fg-muted">
         Dorm.
         <select
           className="rounded-full border border-glass-border bg-bg px-2 py-1.5 text-sm text-fg"
@@ -252,7 +245,7 @@ function FilterBar({
         </select>
       </label>
 
-      <label className={`flex items-center gap-2 text-xs ${priceOk ? "text-fg-muted" : "text-fg-muted/40"}`}>
+      <label className={`flex shrink-0 items-center gap-2 text-xs ${priceOk ? "text-fg-muted" : "text-fg-muted/40"}`}>
         Min
         <input
           type="number"
@@ -265,7 +258,7 @@ function FilterBar({
           placeholder="—"
         />
       </label>
-      <label className={`flex items-center gap-2 text-xs ${priceOk ? "text-fg-muted" : "text-fg-muted/40"}`}>
+      <label className={`flex shrink-0 items-center gap-2 text-xs ${priceOk ? "text-fg-muted" : "text-fg-muted/40"}`}>
         Max
         <input
           type="number"
@@ -279,7 +272,7 @@ function FilterBar({
         />
       </label>
 
-      <label className="ml-auto flex items-center gap-2 text-xs text-fg-muted">
+      <label className="ml-auto flex shrink-0 items-center gap-2 text-xs text-fg-muted">
         Orden
         <select
           className="rounded-full border border-glass-border bg-bg px-2 py-1.5 text-sm text-fg"
@@ -314,16 +307,16 @@ function Segment({
   onChange: (v: string) => void
 }) {
   return (
-    <div className="flex items-center gap-1" role="group" aria-label={label}>
+    <div className="flex shrink-0 items-center gap-1" role="group" aria-label={label}>
       {options.map((o) => (
         <button
           key={o.value || "all"}
           type="button"
           onClick={() => onChange(o.value)}
-          className={`rounded-full px-3 py-1.5 text-xs transition ${
+          className={`shrink-0 rounded-full px-3 py-1.5 text-xs transition ${
             value === o.value
-              ? "bg-accent text-bg"
-              : "text-fg-muted hover:bg-white/5 hover:text-fg"
+              ? "bg-fg text-bg"
+              : "text-fg-muted hover:bg-black/5 hover:text-fg dark:hover:bg-white/10"
           }`}
         >
           {o.label}

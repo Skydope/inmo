@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { brandName } from "@/lib/brand"
 import { cn } from "@/lib/utils"
 
@@ -12,7 +13,7 @@ const links = [
 export function SiteNav({ className }: { className?: string }) {
   return (
     <header className={cn("sticky top-0 z-40 px-4 pt-4", className)}>
-      <div className="glass-strong mx-auto flex max-w-6xl items-center justify-between gap-4 rounded-full px-4 py-2.5">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 rounded-full bg-chrome px-3 py-2 shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
         <Link href="/" className="flex items-center gap-2.5">
           <span
             aria-hidden
@@ -49,12 +50,15 @@ export function SiteNav({ className }: { className?: string }) {
           ))}
         </nav>
 
-        <Link
-          href="/propiedades"
-          className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-bg transition hover:bg-accent-muted"
-        >
-          Explorar
-        </Link>
+        <div className="flex items-center gap-1">
+          <Link
+            href="/propiedades"
+            className="rounded-full bg-fg px-4 py-2 text-sm font-medium text-bg transition hover:opacity-90"
+          >
+            Explorar
+          </Link>
+          <ThemeToggle className="h-9 w-9 bg-transparent shadow-none hover:bg-black/5 dark:bg-transparent dark:hover:bg-white/10" />
+        </div>
       </div>
     </header>
   )

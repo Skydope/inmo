@@ -8,7 +8,7 @@ export const PropertyMapDynamic = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="grid h-full min-h-[420px] place-items-center rounded-[1.5rem] border border-glass-border glass animate-pulse-soft">
+      <div className="grid h-full min-h-0 w-full place-items-center bg-[#1a1a1a] animate-pulse-soft">
         <p className="text-sm text-fg-muted">Cargando mapa…</p>
       </div>
     ),

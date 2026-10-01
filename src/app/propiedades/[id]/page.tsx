@@ -2,6 +2,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { Bath, BedDouble, Expand, MessageCircle, Phone, Mail, ArrowLeft } from "lucide-react"
 import { CoverImage } from "@/components/cover-image"
+import { SiteNav } from "@/components/site-nav"
 import { Button } from "@/components/ui/button"
 import { contactLinkFor } from "@/lib/contact"
 import { formatPrice, operationLabel, typeLabel } from "@/lib/format"
@@ -26,7 +27,9 @@ export default async function PropertyDetailPage({
     contact.kind === "whatsapp" ? MessageCircle : contact.kind === "tel" ? Phone : Mail
 
   return (
-    <div className="mx-auto max-w-5xl px-4 pb-20 pt-8">
+    <div className="pb-20">
+      <SiteNav />
+      <div className="mx-auto max-w-5xl px-4 pt-8">
       <Link
         href="/propiedades"
         className="mb-6 inline-flex items-center gap-2 text-sm text-fg-muted hover:text-fg"
@@ -150,6 +153,7 @@ export default async function PropertyDetailPage({
             </div>
           ) : null}
         </div>
+      </div>
       </div>
     </div>
   )
