@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Inmo — portal inmobiliario Bolívar (front v1)
 
-## Getting Started
+Front-only mock del portal local para **Bolívar, Buenos Aires**.  
+Stack: Next.js (App Router) + TypeScript + Tailwind + MapLibre. Sin backend.
 
-First, run the development server:
+Marca TBD → wordmark placeholder vía constante `brandName` en `src/lib/brand.ts`.
+
+## Correr en local
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abrí [http://127.0.0.1:43123](http://127.0.0.1:43123).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Comando | Qué hace |
+| --- | --- |
+| `npm run dev` | Dev server en `127.0.0.1:43123` |
+| `npm test` | Unit tests (filtros, GPS, markers, haversine, contacto) |
+| `npm run typecheck` | TypeScript |
+| `npm run build` | Build de producción |
 
-## Learn More
+## Superficies
 
-To learn more about Next.js, take a look at the following resources:
+- `/` — landing + search segmentada
+- `/propiedades` — listado + mapa (URL-state de filtros; mobile `view=map|grid`)
+- `/propiedades/[id]` — detalle + CTA contacto (`wa.me` / `tel` / `mailto`)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Datos
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Mock seed en `src/lib/properties/seed.ts`, acceso vía `getProperties()` (`src/lib/properties/adapter.ts`).  
+Swap al backend de socios = cambiar el adapter.
 
-## Deploy on Vercel
+## Spec / refs
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Ver `docs/spec-alcance-v1.md` y `docs/references/`.
