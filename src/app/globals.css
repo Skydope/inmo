@@ -4,6 +4,7 @@
 :root {
   --bg: #efe8dc;
   --bg-elevated: #f7f2ea;
+  --chrome: #fff;
   --fg: #1a1a1a;
   --fg-muted: #6e675e;
   --accent: #1a1a1a;
@@ -18,6 +19,7 @@
 .dark {
   --bg: #1a1a1a;
   --bg-elevated: #262626;
+  --chrome: #fff;
   --fg: #f3efe6;
   --fg-muted: #a8a297;
   --accent: #c4a574;
@@ -110,15 +112,12 @@ body {
 }
 
 /* Ref-07: inverted tabs flush to hero top, concave scoops at TL/TR.
-   Caller sets position (relative|absolute) so ::before/::after can scoop. */
+   Caller sets position (relative|absolute) so ::before/::after can scoop.
+   Fill = --chrome (same opaque white as hero-search). */
 .nav-tab {
-  background: #fff;
+  background: var(--chrome);
   border-radius: 0 0 1.35rem 1.35rem;
   --nav-scoop: 0.875rem;
-}
-
-.dark .nav-tab {
-  background: rgba(255, 255, 255, 0.94);
 }
 
 .nav-tab::before,
@@ -135,40 +134,28 @@ body {
 .nav-tab::before {
   left: calc(var(--nav-scoop) * -1);
   border-top-right-radius: var(--nav-scoop);
-  box-shadow: var(--nav-scoop) 0 0 0 #fff;
+  box-shadow: var(--nav-scoop) 0 0 0 var(--chrome);
 }
 
 .nav-tab::after {
   right: calc(var(--nav-scoop) * -1);
   border-top-left-radius: var(--nav-scoop);
-  box-shadow: calc(var(--nav-scoop) * -1) 0 0 0 #fff;
+  box-shadow: calc(var(--nav-scoop) * -1) 0 0 0 var(--chrome);
 }
 
-.dark .nav-tab::before {
-  box-shadow: var(--nav-scoop) 0 0 0 rgba(255, 255, 255, 0.94);
-}
-
-.dark .nav-tab::after {
-  box-shadow: calc(var(--nav-scoop) * -1) 0 0 0 rgba(255, 255, 255, 0.94);
-}
-
-/* Ref-05 hero search: large white pill; soft tint in dark mode. */
+/* Ref-05 hero search: same solid --chrome as nav tabs. */
 .hero-search {
-  background: rgba(255, 255, 255, 0.96);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: var(--chrome);
+  border: 1px solid var(--chrome);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
-  backdrop-filter: blur(18px) saturate(1.2);
-  -webkit-backdrop-filter: blur(18px) saturate(1.2);
 }
 
 .dark .hero-search {
-  background: rgba(255, 255, 255, 0.88);
-  border-color: rgba(255, 255, 255, 0.55);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
 }
 
 .hero-search select option {
-  background: #fff;
+  background: var(--chrome);
   color: #171717;
 }
 
