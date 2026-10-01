@@ -8,7 +8,6 @@ export type MarkerAction =
   | { type: "expand"; id: string }
   | { type: "collapse" }
   | { type: "hover-card"; id: string | null }
-  | { type: "clear" }
 
 /** Single expanded marker; selection shared with list highlight. */
 export function markerReducer(
@@ -30,8 +29,6 @@ export function markerReducer(
       }
     case "collapse":
       return { ...state, expandedId: null }
-    case "clear":
-      return { expandedId: null, selectedId: null }
     default:
       return state
   }

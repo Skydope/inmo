@@ -13,7 +13,6 @@ export type Theme = "light" | "dark"
 
 type ThemeContextValue = {
   theme: Theme
-  setTheme: (t: Theme) => void
   toggle: () => void
 }
 
@@ -33,7 +32,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const stored = window.localStorage.getItem(STORAGE_KEY)
-    const initial: Theme = stored === "dark" || stored === "light" ? stored : "light"
+    const initial: Theme =
+      stored === "dark" || stored === "light"
+        ? stored
+        : window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light"
     setThemeState(initial)
     applyDomTheme(initial)
     setReady(true)
@@ -44,11 +48,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     applyDomTheme(theme)
   }, [theme, ready])
 
-  const setTheme = useCallback((t: Theme) => {
-    setThemeState(t)
-    window.localStorage.setItem(STORAGE_KEY, t)
-  }, [])
-
   const toggle = useCallback(() => {
     setThemeState((prev) => {
       const next: Theme = prev === "light" ? "dark" : "light"
@@ -58,7 +57,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [])
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, toggle }}>
+    <ThemeContext.Provider value={{ theme, toggle }}>
       {children}
     </ThemeContext.Provider>
   )

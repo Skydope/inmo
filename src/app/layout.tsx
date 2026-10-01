@@ -1,7 +1,8 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Archivo_Black, Instrument_Serif, Manrope } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import { brandName } from "@/lib/brand"
+import { siteUrl } from "@/lib/site"
 import "./globals.css"
 
 const manrope = Manrope({
@@ -23,8 +24,39 @@ const instrument = Instrument_Serif({
 })
 
 export const metadata: Metadata = {
-  title: `${brandName} · Bolívar`,
-  description: "Portal inmobiliario local de Bolívar, Buenos Aires.",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: `${brandName} · Propiedades en Bolívar`,
+    template: `%s · ${brandName}`,
+  },
+  description:
+    "Portal inmobiliario local de San Carlos de Bolívar, Buenos Aires. Venta y alquiler con mapa interactivo y filtros vivos.",
+  openGraph: {
+    type: "website",
+    locale: "es_AR",
+    siteName: brandName,
+    title: `${brandName} · Propiedades en Bolívar`,
+    description:
+      "Venta y alquiler en San Carlos de Bolívar con mapa interactivo y filtros vivos.",
+    images: [
+      {
+        url: "/images/hero/hero-day.jpg",
+        width: 1672,
+        height: 941,
+        alt: "San Carlos de Bolívar",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
+}
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#efe8dc" },
+    { media: "(prefers-color-scheme: dark)", color: "#1a1a1a" },
+  ],
 }
 
 export default function RootLayout({

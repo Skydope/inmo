@@ -5,7 +5,6 @@ import { useState } from "react"
 import {
   Buildings,
   CurrencyDollar,
-  MapPin,
   MagnifyingGlass,
   SquaresFour,
 } from "@phosphor-icons/react"
@@ -15,7 +14,6 @@ type PriceBand = "" | "usd-80" | "usd-80-150" | "usd-150"
 
 export function HeroSearch() {
   const router = useRouter()
-  const [ubicacion, setUbicacion] = useState("bolivar")
   const [price, setPrice] = useState<PriceBand>("usd-80-150")
   const [beds, setBeds] = useState("3")
   const [type, setType] = useState<PropertyType | "">("house")
@@ -36,8 +34,6 @@ export function HeroSearch() {
       p.set("cur", "USD")
       p.set("min", "150000")
     }
-    // ubicacion is Bolívar-only for v1; kept for UX parity with ref
-    void ubicacion
     const qs = p.toString()
     router.push(qs ? `/propiedades?${qs}` : "/propiedades")
   }
@@ -45,28 +41,12 @@ export function HeroSearch() {
   return (
     <form
       onSubmit={submit}
-      className="hero-search animate-rise-delay grid grid-cols-2 gap-1 rounded-[1.75rem] p-1.5 md:grid-cols-[1.1fr_1fr_1fr_1fr_auto] md:items-stretch md:gap-0 md:divide-x md:divide-black/8 md:rounded-full dark:md:divide-white/10"
+      className="hero-search animate-rise-delay grid grid-cols-2 gap-1 rounded-panel p-1.5 md:grid-cols-[1fr_1fr_1fr_auto] md:items-stretch md:gap-0 md:divide-x md:divide-black/8 md:rounded-full dark:md:divide-white/10"
     >
-      <label className="flex items-center gap-2 rounded-full px-2 py-3 md:gap-3 md:px-4 md:rounded-none">
-        <MapPin weight="fill" className="h-5 w-5 shrink-0 text-fg" aria-hidden />
-        <span className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-[11px] text-fg-muted">Ubicación</span>
-          <select
-            value={ubicacion}
-            onChange={(e) => setUbicacion(e.target.value)}
-            className="w-full appearance-none bg-transparent text-sm font-medium text-fg outline-none"
-          >
-            <option value="bolivar">Bolívar, BA</option>
-            <option value="centro">Centro</option>
-            <option value="norte">Zona Norte</option>
-          </select>
-        </span>
-      </label>
-
       <label className="flex items-center gap-2 rounded-full px-2 py-3 md:gap-3 md:px-4 md:rounded-none">
         <CurrencyDollar weight="fill" className="h-5 w-5 shrink-0 text-fg" aria-hidden />
         <span className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-[11px] text-fg-muted">Precio</span>
+          <span className="text-xs text-fg-muted">Precio</span>
           <select
             value={price}
             onChange={(e) => setPrice(e.target.value as PriceBand)}
@@ -83,7 +63,7 @@ export function HeroSearch() {
       <label className="flex items-center gap-2 rounded-full px-2 py-3 md:gap-3 md:px-4 md:rounded-none">
         <SquaresFour weight="fill" className="h-5 w-5 shrink-0 text-fg" aria-hidden />
         <span className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-[11px] text-fg-muted">Ambientes</span>
+          <span className="text-xs text-fg-muted">Ambientes</span>
           <select
             value={beds}
             onChange={(e) => setBeds(e.target.value)}
@@ -92,7 +72,7 @@ export function HeroSearch() {
             <option value="">Cualquiera</option>
             <option value="1">1+</option>
             <option value="2">2+</option>
-            <option value="3">3–5</option>
+            <option value="3">3+</option>
             <option value="4">4+</option>
           </select>
         </span>
@@ -101,7 +81,7 @@ export function HeroSearch() {
       <label className="flex items-center gap-2 rounded-full px-2 py-3 md:gap-3 md:px-4 md:rounded-none">
         <Buildings weight="fill" className="h-5 w-5 shrink-0 text-fg" aria-hidden />
         <span className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-[11px] text-fg-muted">Tipo</span>
+          <span className="text-xs text-fg-muted">Tipo</span>
           <select
             value={type}
             onChange={(e) => setType(e.target.value as PropertyType | "")}
@@ -118,7 +98,7 @@ export function HeroSearch() {
       <div className="col-span-2 flex items-center p-1 md:col-span-1 md:pl-2">
         <button
           type="submit"
-          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-neutral-950 px-7 py-3.5 text-sm font-medium text-white transition hover:bg-neutral-800 md:w-auto dark:bg-neutral-900 dark:hover:bg-neutral-800"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-medium text-bg transition hover:bg-accent-muted md:w-auto"
         >
           <MagnifyingGlass weight="fill" className="h-4 w-4" aria-hidden />
           Buscar

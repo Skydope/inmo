@@ -8,8 +8,6 @@ export type GpsStatus =
 
 export const GPS_TIMEOUT_MS = 8000
 
-export type GeoPosition = { lat: number; lng: number }
-
 type GeoLike = {
   getCurrentPosition: (
     success: (pos: { coords: { latitude: number; longitude: number } }) => void,

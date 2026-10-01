@@ -17,10 +17,8 @@ export type Property = {
   lng: number
   photoCount: number
   coverUrl: string
-  photos?: string[]
   description?: string
   features?: string[]
-  neighborhood?: string
   featured?: boolean
   agency: {
     name: string

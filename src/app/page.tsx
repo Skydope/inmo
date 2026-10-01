@@ -8,7 +8,9 @@ import { LandingNav } from "@/components/landing-nav"
 import { LandingPropertyCard } from "@/components/landing-property-card"
 import { Reveal } from "@/components/reveal"
 import { ScrollRevealLine } from "@/components/scroll-reveal-line"
-import { Button } from "@/components/ui/button"
+import { SiteFooter } from "@/components/site-footer"
+import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import { brandName } from "@/lib/brand"
 import { getProperties } from "@/lib/properties/adapter"
 
@@ -49,7 +51,7 @@ export default async function HomePage() {
         <HeroInteractive>
           <LandingNav />
 
-          <div className="mt-auto max-w-xl pb-5 pt-[28rem] md:pt-[28rem]">
+          <div className="mt-auto max-w-xl pb-5 pt-[28rem]">
             <div className="animate-rise inline-flex items-center gap-2 rounded-full glass px-3.5 py-1.5 text-xs uppercase tracking-[0.2em] text-accent backdrop-blur">
               <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
               San Carlos de Bolívar
@@ -63,7 +65,7 @@ export default async function HomePage() {
           <div className="pt-4">
             <Link
               href="/propiedades"
-              className="animate-rise-delay mx-auto mb-3 flex w-fit items-center gap-2.5 rounded-full bg-[#c4a574] px-5 py-2 text-base font-medium text-[#1a1a1a] transition hover:bg-[#a8906a]"
+              className="animate-rise-delay mx-auto mb-3 flex w-fit items-center gap-2.5 rounded-full bg-gold px-5 py-2 text-base font-medium text-gold-fg transition hover:bg-gold-muted"
             >
               <Compass weight="fill" className="h-5 w-5" aria-hidden />
               Explorar
@@ -74,7 +76,7 @@ export default async function HomePage() {
       </section>
 
       <div className="relative z-10 -mt-8 px-2 md:-mt-12 md:px-3">
-        <div className="sheet-over rounded-t-[1.75rem] bg-bg pb-16 md:rounded-t-[2.25rem]">
+        <div className="sheet-over rounded-t-panel bg-bg pb-16 md:rounded-t-sheet">
       <section id="nosotros" className="mx-auto max-w-6xl px-4 pb-6 pt-14 md:pt-16">
         <ScrollRevealLine
           className="max-w-4xl text-3xl leading-snug tracking-tight text-fg md:text-5xl md:leading-[1.15]"
@@ -91,14 +93,14 @@ export default async function HomePage() {
 
         <div className="mt-12 grid gap-8 border-y border-glass-border py-10 sm:grid-cols-2 md:grid-cols-4">
           {[
-            { n: 2012, l: "Año de arranque local" },
+            { n: 2012, l: "Año de arranque local", plain: true },
             { n: properties.length, l: "Avisos activos" },
             { n: saleCount + rentCount, l: "Venta y alquiler" },
             { n: agencies, l: "Inmobiliarias" },
           ].map((s) => (
             <div key={s.l}>
               <p className="font-display text-4xl text-fg md:text-5xl">
-                <CountUp value={s.n} />
+                {"plain" in s ? s.n : <CountUp value={s.n} />}
               </p>
               <p className="mt-2 text-sm text-fg-muted">{s.l}</p>
             </div>
@@ -112,7 +114,7 @@ export default async function HomePage() {
             <Reveal key={c.label} delay={i * 140}>
             <Link
               href={c.href}
-              className="group relative block aspect-[3/4] overflow-hidden rounded-[1.75rem]"
+              className="group relative block aspect-[3/4] overflow-hidden rounded-panel"
             >
               <CoverImage
                 src={c.image}
@@ -132,8 +134,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section id="agentes" className="py-6">
-        <div className="relative overflow-hidden rounded-[2rem]">
+      <section id="servicios" className="py-6">
+        <div className="relative overflow-hidden rounded-panel">
           <CoverImage
             src="/images/properties/house-3.jpg"
             alt=""
@@ -154,7 +156,7 @@ export default async function HomePage() {
                 href="/propiedades"
                 className="inline-flex rounded-full border border-white/50 px-5 py-2.5 text-sm text-white transition hover:bg-white/10"
               >
-                Conocer más
+                Ver catálogo
               </Link>
             </div>
           </div>
@@ -171,17 +173,18 @@ export default async function HomePage() {
           ))}
         </div>
         <div className="mt-10 flex justify-center">
-          <Link href="/propiedades" className="w-full max-w-md">
-            <Button
-              variant="secondary"
-              size="lg"
-              className="w-full border-0 bg-black/8 text-fg hover:bg-black/12 dark:bg-white/10 dark:hover:bg-white/15"
-            >
-              Cargar más
-            </Button>
+          <Link
+            href="/propiedades"
+            className={cn(
+              buttonVariants({ variant: "secondary", size: "lg" }),
+              "w-full max-w-md border-0 bg-black/8 hover:bg-black/12 dark:bg-white/10 dark:hover:bg-white/15",
+            )}
+          >
+            Ver todas las propiedades
           </Link>
         </div>
       </section>
+      <SiteFooter />
         </div>
       </div>
     </div>

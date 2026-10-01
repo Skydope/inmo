@@ -14,15 +14,10 @@ export const SEED_PROPERTIES: Property[] = [
     baths: 2,
     areaM2: 210,
     address: "Av. San Martín 845, Bolívar",
-    neighborhood: "Centro Residencial",
     lat: -36.2295,
     lng: -61.1138,
     photoCount: 12,
     coverUrl: "/images/properties/house-1.jpg",
-    photos: [
-      "/images/properties/house-1.jpg",
-      "/images/hero/hero.jpg",
-    ],
     featured: true,
     description:
       "Imponente residencia contemporánea desarrollada en dos plantas en la arteria principal de Bolívar. Cuenta con amplio living en doble altura con hogar a leña, cocina integrada con isla de mármol y ventanales panorámicos al jardín parquizado. En planta alta, máster suite con vestidor y dos dormitorios adicionales con placard completo. Fondo con quincho cubierto, parrilla de acero y piscina climatizada.",
@@ -53,14 +48,10 @@ export const SEED_PROPERTIES: Property[] = [
     baths: 1,
     areaM2: 68,
     address: "Belgrano 320, Bolívar",
-    neighborhood: "Plaza 1810 / Centro",
     lat: -36.2312,
     lng: -61.1151,
     photoCount: 8,
     coverUrl: "/images/properties/apt-1.jpg",
-    photos: [
-      "/images/properties/apt-1.jpg",
-    ],
     featured: true,
     description:
       "Semipiso de categoría a metros de la Plaza 1810 y el centro comercial. Living comedor con salida a balcón terraza aterrazado con vista abierta a la copa de los árboles. Cocina independiente con muebles bajo mesada y alacenas a medida. Dos dormitorios con pisos de madera flotante y placard embutido. Baño completo con bañera y ventilación natural. Bajas expensas.",
@@ -91,14 +82,10 @@ export const SEED_PROPERTIES: Property[] = [
     baths: 0,
     areaM2: 600,
     address: "Calle 14 entre 9 y 11, Bolívar",
-    neighborhood: "Barrio Las Acacias",
     lat: -36.2268,
     lng: -61.1089,
     photoCount: 4,
     coverUrl: "/images/properties/lot-1.jpg",
-    photos: [
-      "/images/properties/lot-1.jpg",
-    ],
     description:
       "Excelente lote residencial de 20 metros de frente por 30 metros de fondo en el consolidado barrio Las Acacias. Entorno sereno con construcciones modernas, arboleda añosa y calle consolidada con cordón cuneta. Escrituración inmediata, amojonado y con servicios en puerta: tendido eléctrico, agua corriente y gas en la vereda.",
     features: [
@@ -127,14 +114,10 @@ export const SEED_PROPERTIES: Property[] = [
     baths: 1,
     areaM2: 95,
     address: "Rivadavia 1120, Bolívar",
-    neighborhood: "Barrio Pompeya",
     lat: -36.2331,
     lng: -61.1172,
     photoCount: 15,
     coverUrl: "/images/properties/house-2.jpg",
-    photos: [
-      "/images/properties/house-2.jpg",
-    ],
     description:
       "Propiedad de autor totalmente restaurada conservando su esencia original con toques de diseño industrial. Fachada de ladrillo a la vista restaurado, aberturas de hierro negro con vidrio repartido y techos altos. Cómodo patio privado interno con pisos damero, pérgola con guirnaldas de luces y canteros con vegetación autóctona. Sin expensas.",
     features: [
@@ -163,14 +146,10 @@ export const SEED_PROPERTIES: Property[] = [
     baths: 1,
     areaM2: 38,
     address: "Pinto 512, Bolívar",
-    neighborhood: "Centro",
     lat: -36.2301,
     lng: -61.1148,
     photoCount: 6,
     coverUrl: "/images/properties/apt-2.jpg",
-    photos: [
-      "/images/properties/apt-2.jpg",
-    ],
     description:
       "Departamento monoambiente de concepto abierto con mobiliario integral a medida en pleno centro de Bolívar. Cuenta con barra desayunadora de mármol, anafe vitrocerámico, sommier de 2 plazas, amplio ventanal con vista panorámica a la ciudad y luminarias colgantes de diseño. Ideal profesionales, estudiantes o estadías corporativas.",
     features: [
@@ -199,14 +178,10 @@ export const SEED_PROPERTIES: Property[] = [
     baths: 2,
     areaM2: 280,
     address: "Ruta 226 Km 312, Bolívar",
-    neighborhood: "Suburbano Ruta 226",
     lat: -36.2385,
     lng: -61.102,
     photoCount: 18,
     coverUrl: "/images/properties/house-3.jpg",
-    photos: [
-      "/images/properties/house-3.jpg",
-    ],
     featured: true,
     description:
       "Excepcional quinta de descanso ubicada sobre el acceso por Ruta 226, a solo 5 minutos del centro de Bolívar. Sobre un parque arbolado de 2.500 m² con añosa plantación de eucaliptos y sauces. Casa principal con gran galería cubierta, 4 amplios dormitorios, salón con hogar a leña y cocina de campo. Piscina con solárium atérmico y quincho con horno a leña.",
@@ -237,14 +212,10 @@ export const SEED_PROPERTIES: Property[] = [
     baths: 2,
     areaM2: 92,
     address: "Alsina 780, Bolívar",
-    neighborhood: "Barrio Parque",
     lat: -36.2284,
     lng: -61.1165,
     photoCount: 10,
     coverUrl: "/images/properties/apt-3.jpg",
-    photos: [
-      "/images/properties/apt-3.jpg",
-    ],
     description:
       "Departamento de 3 ambientes a estrenar en moderno edificio boutique sobre calle Alsina. Orientación este con sol de mañana en todos los ambientes. Amplio estar comedor con balcón aterrazado vidriado, cocina semiseparada con mesadas de silestone, suite principal con antebaño y dos dormitorios secundarios. Incluye cochera cubierta con portón automatizado.",
     features: [
@@ -273,14 +244,10 @@ export const SEED_PROPERTIES: Property[] = [
     baths: 1,
     areaM2: 140,
     address: "Av. Bolívar y Sarmiento",
-    neighborhood: "Esquina Comercial",
     lat: -36.2318,
     lng: -61.1122,
     photoCount: 9,
     coverUrl: "/images/properties/house-4.jpg",
-    photos: [
-      "/images/properties/house-4.jpg",
-    ],
     description:
       "Punto neurálgico inmejorable en la intersección de Av. Bolívar y Sarmiento. En planta baja, local comercial con amplia ochava y vidrieras blindex de doble altura con máxima visibilidad peatonal y vehicular. En planta alta, vivienda independiente o sector de oficinas privadas con dos dormitorios, estar y cocina completa. Ideal para showroom o empresa.",
     features: [
@@ -309,14 +276,10 @@ export const SEED_PROPERTIES: Property[] = [
     baths: 0,
     areaM2: 450,
     address: "Av. San Martín 1500, Bolívar",
-    neighborhood: "Avenida Comercial",
     lat: -36.2249,
     lng: -61.111,
     photoCount: 3,
     coverUrl: "/images/properties/lot-2.jpg",
-    photos: [
-      "/images/properties/lot-2.jpg",
-    ],
     description:
       "Fracción comercial de 450 m² (15 m de frente por 30 m de fondo) con ubicación estratégica sobre la traza ensanchada de Av. San Martín. Zonificación habilitada para depósito, concesionaria, supermercado o desarrollo de locales y departamentos en altura. Nivelado, cercado y con servicios disponibles.",
     features: [
@@ -344,14 +307,10 @@ export const SEED_PROPERTIES: Property[] = [
     baths: 2,
     areaM2: 185,
     address: "Los Álamos 45, Bolívar",
-    neighborhood: "Barrio El Mirador",
     lat: -36.2356,
     lng: -61.1208,
     photoCount: 14,
     coverUrl: "/images/properties/house-5.jpg",
-    photos: [
-      "/images/properties/house-5.jpg",
-    ],
     description:
       "Cálida casa de estilo rústico contemporáneo en el exclusivo barrio residencial El Mirador. Construcción de primera calidad con muros dobles, revestimiento en piedra natural y carpintería de madera maciza. Amplio living comedor con techos de madera a la vista, cocina comedor diario, 3 dormitorios (principal en suite) y parque trasero con césped bermuda y galería.",
     features: [

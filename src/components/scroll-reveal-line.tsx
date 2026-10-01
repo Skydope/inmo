@@ -66,7 +66,7 @@ export function ScrollRevealLine({
         return (
           <span
             key={i}
-            className={word.accent ? "font-accent text-[#c4a574]" : undefined}
+            className={word.accent ? "font-accent text-accent" : undefined}
             style={{ opacity: lit ? 1 : DIM, transition: "opacity 160ms linear" }}
           >
             {word.token}

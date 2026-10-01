@@ -24,7 +24,10 @@ type PhotonFeature = {
 
 type NominatimHit = {
   category?: string
-  geojson?: { type?: string; coordinates?: [number, number][] }
+  geojson?: {
+    type?: string
+    coordinates?: [number, number][] | [number, number]
+  }
 }
 
 export function streetNamesFromPhoton(features: PhotonFeature[]): string[] {
@@ -54,7 +57,8 @@ export function linesFromNominatim(hits: NominatimHit[]): StreetLines {
         hit.category !== "highway" ||
         geo?.type !== "LineString" ||
         !geo.coordinates ||
-        geo.coordinates.length < 2
+        geo.coordinates.length < 2 ||
+        !Array.isArray(geo.coordinates[0])
       ) {
         return []
       }
@@ -62,7 +66,10 @@ export function linesFromNominatim(hits: NominatimHit[]): StreetLines {
         {
           type: "Feature" as const,
           properties: {},
-          geometry: { type: "LineString" as const, coordinates: geo.coordinates },
+          geometry: {
+            type: "LineString" as const,
+            coordinates: geo.coordinates as [number, number][],
+          },
         },
       ]
     }),

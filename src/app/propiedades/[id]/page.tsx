@@ -1,9 +1,19 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { Bath, BedDouble, Expand, MessageCircle, Phone, Mail, ArrowLeft } from "lucide-react"
+import type { Metadata } from "next"
+import {
+  ArrowLeft,
+  ArrowsOutSimple,
+  Bathtub,
+  Bed,
+  Envelope,
+  Phone,
+  WhatsappLogo,
+} from "@phosphor-icons/react/dist/ssr"
 import { CoverImage } from "@/components/cover-image"
 import { SiteNav } from "@/components/site-nav"
-import { Button } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import { contactLinkFor } from "@/lib/contact"
 import { formatPrice, operationLabel, typeLabel } from "@/lib/format"
 import { getProperties, getPropertyById } from "@/lib/properties/adapter"
@@ -11,6 +21,21 @@ import { getProperties, getPropertyById } from "@/lib/properties/adapter"
 export async function generateStaticParams() {
   const all = await getProperties()
   return all.map((p) => ({ id: p.id }))
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const { id } = await params
+  const property = await getPropertyById(id)
+  if (!property) return {}
+  return {
+    title: property.title,
+    description: `${operationLabel(property.operation)} · ${typeLabel(property.type)} en ${property.address} — ${formatPrice(property.price, property.currency)}.`,
+    openGraph: { images: [{ url: property.coverUrl }] },
+  }
 }
 
 export default async function PropertyDetailPage({
@@ -24,7 +49,11 @@ export default async function PropertyDetailPage({
 
   const contact = contactLinkFor(property.agency)
   const ContactIcon =
-    contact.kind === "whatsapp" ? MessageCircle : contact.kind === "tel" ? Phone : Mail
+    contact.kind === "whatsapp"
+      ? WhatsappLogo
+      : contact.kind === "tel"
+        ? Phone
+        : Envelope
 
   return (
     <div className="pb-20">
@@ -34,10 +63,10 @@ export default async function PropertyDetailPage({
         href="/propiedades"
         className="mb-6 inline-flex items-center gap-2 text-sm text-fg-muted hover:text-fg"
       >
-        <ArrowLeft className="h-4 w-4" /> Volver al catálogo
+        <ArrowLeft className="h-4 w-4" aria-hidden /> Volver al catálogo
       </Link>
 
-      <div className="overflow-hidden rounded-[1.75rem] border border-glass-border">
+      <div className="overflow-hidden rounded-panel border border-glass-border">
         <div className="relative aspect-[16/9] bg-bg-elevated">
           <CoverImage
             src={property.coverUrl}
@@ -68,16 +97,16 @@ export default async function PropertyDetailPage({
           <div className="flex flex-wrap gap-4 text-fg-muted">
             {property.beds > 0 ? (
               <span className="inline-flex items-center gap-2 rounded-full border border-glass-border px-3 py-1.5">
-                <BedDouble className="h-4 w-4" /> {property.beds} dorm.
+                <Bed className="h-4 w-4" aria-hidden /> {property.beds} dorm.
               </span>
             ) : null}
             {property.baths > 0 ? (
               <span className="inline-flex items-center gap-2 rounded-full border border-glass-border px-3 py-1.5">
-                <Bath className="h-4 w-4" /> {property.baths} baños
+                <Bathtub className="h-4 w-4" aria-hidden /> {property.baths} baños
               </span>
             ) : null}
             <span className="inline-flex items-center gap-2 rounded-full border border-glass-border px-3 py-1.5">
-              <Expand className="h-4 w-4" /> {property.areaM2} m²
+              <ArrowsOutSimple className="h-4 w-4" aria-hidden /> {property.areaM2} m²
             </span>
           </div>
 
@@ -99,11 +128,10 @@ export default async function PropertyDetailPage({
               href={contact.href}
               target={contact.kind === "whatsapp" ? "_blank" : undefined}
               rel={contact.kind === "whatsapp" ? "noreferrer" : undefined}
+              className={cn(buttonVariants({ size: "lg" }))}
             >
-              <Button size="lg">
-                <ContactIcon className="h-4 w-4" />
-                Contactar · {contact.label}
-              </Button>
+              <ContactIcon className="h-4 w-4" aria-hidden />
+              Contactar · {contact.label}
             </a>
           </div>
 
@@ -127,26 +155,6 @@ export default async function PropertyDetailPage({
                   >
                     <span className="h-1.5 w-1.5 rounded-full bg-accent" />
                     {feat}
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : null}
-
-          {property.photos && property.photos.length > 1 ? (
-            <div className="space-y-3 border-t border-glass-border pt-6">
-              <h2 className="font-display text-xl text-fg">Galería de fotos</h2>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {property.photos.map((photo, idx) => (
-                  <div
-                    key={idx}
-                    className="relative aspect-[16/10] overflow-hidden rounded-2xl border border-glass-border bg-bg-elevated"
-                  >
-                    <CoverImage
-                      src={photo}
-                      alt={`${property.title} - Foto ${idx + 1}`}
-                      className="h-full w-full object-cover transition duration-300 hover:scale-[1.02]"
-                    />
                   </div>
                 ))}
               </div>

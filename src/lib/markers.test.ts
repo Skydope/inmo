@@ -24,12 +24,6 @@ describe("markerReducer", () => {
     expect(s.selectedId).toBe("bol-01")
   })
 
-  it("clear resets both", () => {
-    let s = markerReducer(initialMarkerState, { type: "expand", id: "bol-01" })
-    s = markerReducer(s, { type: "clear" })
-    expect(s).toEqual(initialMarkerState)
-  })
-
   it("hover-card highlights without forcing expand", () => {
     const s = markerReducer(initialMarkerState, { type: "hover-card", id: "bol-03" })
     expect(s.selectedId).toBe("bol-03")

@@ -30,7 +30,7 @@ export function PropertyCard({
     <article
       id={id}
       className={cn(
-        "w-[17.5rem] shrink-0 snap-start overflow-hidden rounded-[1.5rem] bg-bg-elevated shadow-[0_12px_40px_rgba(0,0,0,0.28)] transition",
+        "w-[17.5rem] shrink-0 snap-start overflow-hidden rounded-card bg-bg-elevated shadow-[0_12px_40px_rgba(0,0,0,0.28)] transition",
         selected && "ring-2 ring-fg",
       )}
       onMouseEnter={() => onHover?.(property.id)}

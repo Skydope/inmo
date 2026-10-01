@@ -7,7 +7,7 @@ import { NavigationArrow } from "@phosphor-icons/react"
 import { LandingNav } from "@/components/landing-nav"
 import { PropertyMapDynamic } from "@/components/map/property-map-dynamic"
 import { PropertyCard } from "@/components/property-card"
-import { Button } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import {
   applyFilters,
   filtersToSearchParams,
@@ -99,7 +99,7 @@ export function ExploreClient({ properties }: { properties: Property[] }) {
   return (
     <div className="px-2 pb-2 pt-2 md:px-3 md:pb-3 md:pt-3">
       <div className="relative h-[calc(100dvh-1rem)] md:h-[calc(100dvh-1.5rem)]">
-        <div className="absolute inset-0 overflow-hidden rounded-[1.75rem] md:rounded-[2.25rem]">
+        <div className="absolute inset-0 overflow-hidden rounded-panel md:rounded-sheet">
           <PropertyMapDynamic
             properties={list}
             selectedId={markerState.selectedId}
@@ -138,13 +138,13 @@ export function ExploreClient({ properties }: { properties: Property[] }) {
             />
 
             {list.length === 0 ? (
-              <div className="flex w-fit max-w-md flex-col items-start gap-3 rounded-[1.5rem] bg-chrome p-5 shadow-[0_12px_40px_rgba(0,0,0,0.18)]">
+              <div className="flex w-fit max-w-md flex-col items-start gap-3 rounded-card bg-chrome p-5 shadow-[0_12px_40px_rgba(0,0,0,0.18)]">
                 <p className="font-display text-2xl">Sin resultados</p>
                 <p className="text-sm text-fg-muted">
                   Probá limpiar los filtros o ampliar el rango de precio.
                 </p>
-                <Link href="/propiedades">
-                  <Button>Limpiar filtros</Button>
+                <Link href="/propiedades" className={buttonVariants()}>
+                  Limpiar filtros
                 </Link>
               </div>
             ) : (

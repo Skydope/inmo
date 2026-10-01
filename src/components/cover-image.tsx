@@ -18,7 +18,7 @@ export function CoverImage({
     return (
       <div
         className={cn(
-          "grid place-items-center bg-gradient-to-br from-bg-elevated via-[#2a2620] to-bg text-accent",
+          "grid place-items-center bg-bg-elevated text-fg-muted",
           className,
         )}
         role="img"
@@ -38,6 +38,8 @@ export function CoverImage({
     <img
       src={src}
       alt={alt}
+      loading="lazy"
+      decoding="async"
       className={className}
       onError={() => setFailed(true)}
     />

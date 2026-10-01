@@ -7,7 +7,7 @@ export function LandingPropertyCard({ property }: { property: Property }) {
   return (
     <Link
       href={`/propiedades/${property.id}`}
-      className="group block overflow-hidden rounded-[1.5rem] bg-bg-elevated transition hover:-translate-y-0.5"
+      className="group block overflow-hidden rounded-card bg-bg-elevated transition hover:-translate-y-0.5"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
         <CoverImage

@@ -17,7 +17,7 @@ export function HeroInteractive({ children }: { children: React.ReactNode }) {
   const clipId = useId().replace(/:/g, "")
 
   return (
-    <div className="relative isolate rounded-t-[1.75rem] md:rounded-t-[2.25rem]">
+    <div className="relative isolate rounded-t-panel md:rounded-t-sheet">
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
         {/* The day layer stays opaque so the crossfade never exposes the page. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -27,7 +27,7 @@ export function HeroInteractive({ children }: { children: React.ReactNode }) {
       </div>
 
       <div className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-[inherit]">
-        <h1 className={cn("hero-depth-title font-display text-center uppercase transition-colors duration-[1200ms]", isNight ? "text-[#f3efe6]" : "text-[#272b29]")}>
+        <h1 className="hero-depth-title font-display text-center uppercase text-fg transition-colors duration-[1200ms]">
           <span className="relative -top-4 block text-[0.34em] leading-none tracking-[0.16em] md:-top-6">Viví</span>
           <span className="mt-[calc(0.04em+1rem)] block leading-[0.86] tracking-[-0.055em] md:mt-[calc(0.04em+1.25rem)]">Bolívar</span>
         </h1>
@@ -37,7 +37,7 @@ export function HeroInteractive({ children }: { children: React.ReactNode }) {
         <defs><clipPath id={clipId}><polygon points={FOREGROUND} /></clipPath></defs>
         <g clipPath={`url(#${clipId})`}>
           <image href={DAY} width="1672" height="941" />
-          <image href={NIGHT} width="1672" height="941" className={cn("transition-opacity duration-1000 ease-in-out", isNight ? "opacity-100 delay-200" : "opacity-0 delay-0")} />
+          <image href={NIGHT} width="1672" height="941" className={cn("transition-opacity duration-[1200ms] ease-in-out", isNight ? "opacity-100" : "opacity-0")} />
         </g>
       </svg>
 
