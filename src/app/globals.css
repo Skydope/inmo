@@ -1,10 +1,13 @@
 @import "tailwindcss";
 @import "maplibre-gl/dist/maplibre-gl.css";
 
+/* Class-based dark mode (ThemeProvider toggles html.dark). */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --bg: #efe8dc;
   --bg-elevated: #f7f2ea;
-  --chrome: #fff;
+  --chrome: var(--bg);
   --fg: #1a1a1a;
   --fg-muted: #6e675e;
   --accent: #1a1a1a;
@@ -19,7 +22,7 @@
 .dark {
   --bg: #1a1a1a;
   --bg-elevated: #262626;
-  --chrome: #fff;
+  --chrome: var(--bg-elevated);
   --fg: #f3efe6;
   --fg-muted: #a8a297;
   --accent: #c4a574;
@@ -113,9 +116,10 @@ body {
 
 /* Ref-07: inverted tabs flush to hero top, concave scoops at TL/TR.
    Caller sets position (relative|absolute) so ::before/::after can scoop.
-   Fill = --chrome (same opaque white as hero-search). */
+   Fill + scoops = --chrome (theme-aware; tracks page/elevated surface). */
 .nav-tab {
   background: var(--chrome);
+  color: var(--fg);
   border-radius: 0 0 1.35rem 1.35rem;
   --nav-scoop: 0.875rem;
 }
@@ -143,9 +147,10 @@ body {
   box-shadow: calc(var(--nav-scoop) * -1) 0 0 0 var(--chrome);
 }
 
-/* Ref-05 hero search: same solid --chrome as nav tabs. */
+/* Ref-05 hero search: same theme-aware --chrome as nav tabs. */
 .hero-search {
   background: var(--chrome);
+  color: var(--fg);
   border: 1px solid var(--chrome);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
 }
@@ -156,7 +161,7 @@ body {
 
 .hero-search select option {
   background: var(--chrome);
-  color: #171717;
+  color: var(--fg);
 }
 
 .page-atmosphere {

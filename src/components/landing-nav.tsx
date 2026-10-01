@@ -13,13 +13,13 @@ export function LandingNav() {
     <div className="relative flex items-start justify-end">
       <nav
         aria-label="Principal"
-        className="nav-tab absolute left-1/2 top-0 z-10 hidden -translate-x-1/2 items-center gap-1 px-2 py-2.5 text-sm text-neutral-900 md:flex"
+        className="nav-tab absolute left-1/2 top-0 z-10 hidden -translate-x-1/2 items-center gap-1 px-2 py-2.5 text-sm md:flex"
       >
         {links.map((l) => (
           <Link
             key={l.href + l.label}
             href={l.href}
-            className="rounded-full px-4 py-1.5 transition hover:bg-black/5"
+            className="rounded-full px-4 py-1.5 transition hover:bg-black/5 dark:hover:bg-white/10"
           >
             {l.label}
           </Link>
@@ -28,7 +28,7 @@ export function LandingNav() {
 
       <nav
         aria-label="Móvil"
-        className="nav-tab relative mr-2 flex items-center gap-1 px-2 py-2 text-sm text-neutral-900 md:hidden"
+        className="nav-tab relative mr-2 flex items-center gap-1 px-2 py-2 text-sm md:hidden"
       >
         {links.slice(0, 2).map((l) => (
           <Link
@@ -41,14 +41,14 @@ export function LandingNav() {
         ))}
       </nav>
 
-      <div className="nav-tab relative z-10 flex items-center gap-1 px-2 py-1.5 text-sm text-neutral-900 md:px-2.5 md:py-2">
+      <div className="nav-tab relative z-10 flex items-center gap-1 px-2 py-1.5 text-sm md:px-2.5 md:py-2">
         <Link
           href="/propiedades"
-          className="rounded-full px-4 py-1.5 font-medium transition hover:bg-black/5 md:px-5"
+          className="rounded-full px-4 py-1.5 font-medium transition hover:bg-black/5 md:px-5 dark:hover:bg-white/10"
         >
           Ingresar
         </Link>
-        <ThemeToggle className="h-9 w-9 bg-transparent shadow-none hover:bg-black/5 dark:bg-transparent dark:hover:bg-black/5" />
+        <ThemeToggle className="h-9 w-9 bg-transparent shadow-none hover:bg-black/5 dark:bg-transparent dark:hover:bg-white/10" />
       </div>
     </div>
   )

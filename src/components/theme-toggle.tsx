@@ -14,7 +14,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       onClick={toggle}
       aria-label={isDark ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
       className={cn(
-        "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-neutral-900 shadow-sm transition hover:bg-white/90 dark:bg-white/90 dark:hover:bg-white",
+        "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-chrome text-fg shadow-sm transition hover:opacity-90",
         className,
       )}
     >

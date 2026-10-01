@@ -45,16 +45,16 @@ export function HeroSearch() {
   return (
     <form
       onSubmit={submit}
-      className="hero-search animate-rise-delay grid gap-1 rounded-[1.75rem] p-1.5 md:grid-cols-[1.1fr_1fr_1fr_1fr_auto] md:items-stretch md:gap-0 md:divide-x md:divide-black/8 md:rounded-full"
+      className="hero-search animate-rise-delay grid gap-1 rounded-[1.75rem] p-1.5 md:grid-cols-[1.1fr_1fr_1fr_1fr_auto] md:items-stretch md:gap-0 md:divide-x md:divide-black/8 md:rounded-full dark:md:divide-white/10"
     >
       <label className="flex items-center gap-3 rounded-full px-4 py-3 md:rounded-none">
-        <MapPin weight="fill" className="h-5 w-5 shrink-0 text-neutral-800" aria-hidden />
+        <MapPin weight="fill" className="h-5 w-5 shrink-0 text-fg" aria-hidden />
         <span className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-[11px] text-neutral-500">Ubicación</span>
+          <span className="text-[11px] text-fg-muted">Ubicación</span>
           <select
             value={ubicacion}
             onChange={(e) => setUbicacion(e.target.value)}
-            className="w-full appearance-none bg-transparent text-sm font-medium text-neutral-900 outline-none"
+            className="w-full appearance-none bg-transparent text-sm font-medium text-fg outline-none"
           >
             <option value="bolivar">Bolívar, BA</option>
             <option value="centro">Centro</option>
@@ -64,13 +64,13 @@ export function HeroSearch() {
       </label>
 
       <label className="flex items-center gap-3 rounded-full px-4 py-3 md:rounded-none">
-        <CurrencyDollar weight="fill" className="h-5 w-5 shrink-0 text-neutral-800" aria-hidden />
+        <CurrencyDollar weight="fill" className="h-5 w-5 shrink-0 text-fg" aria-hidden />
         <span className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-[11px] text-neutral-500">Precio</span>
+          <span className="text-[11px] text-fg-muted">Precio</span>
           <select
             value={price}
             onChange={(e) => setPrice(e.target.value as PriceBand)}
-            className="w-full appearance-none bg-transparent text-sm font-medium text-neutral-900 outline-none"
+            className="w-full appearance-none bg-transparent text-sm font-medium text-fg outline-none"
           >
             <option value="">Cualquiera</option>
             <option value="usd-80">Hasta US$ 80k</option>
@@ -81,13 +81,13 @@ export function HeroSearch() {
       </label>
 
       <label className="flex items-center gap-3 rounded-full px-4 py-3 md:rounded-none">
-        <SquaresFour weight="fill" className="h-5 w-5 shrink-0 text-neutral-800" aria-hidden />
+        <SquaresFour weight="fill" className="h-5 w-5 shrink-0 text-fg" aria-hidden />
         <span className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-[11px] text-neutral-500">Ambientes</span>
+          <span className="text-[11px] text-fg-muted">Ambientes</span>
           <select
             value={beds}
             onChange={(e) => setBeds(e.target.value)}
-            className="w-full appearance-none bg-transparent text-sm font-medium text-neutral-900 outline-none"
+            className="w-full appearance-none bg-transparent text-sm font-medium text-fg outline-none"
           >
             <option value="">Cualquiera</option>
             <option value="1">1+</option>
@@ -99,13 +99,13 @@ export function HeroSearch() {
       </label>
 
       <label className="flex items-center gap-3 rounded-full px-4 py-3 md:rounded-none">
-        <Buildings weight="fill" className="h-5 w-5 shrink-0 text-neutral-800" aria-hidden />
+        <Buildings weight="fill" className="h-5 w-5 shrink-0 text-fg" aria-hidden />
         <span className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-[11px] text-neutral-500">Tipo</span>
+          <span className="text-[11px] text-fg-muted">Tipo</span>
           <select
             value={type}
             onChange={(e) => setType(e.target.value as PropertyType | "")}
-            className="w-full appearance-none bg-transparent text-sm font-medium text-neutral-900 outline-none"
+            className="w-full appearance-none bg-transparent text-sm font-medium text-fg outline-none"
           >
             <option value="">Todos</option>
             <option value="house">Casas</option>
