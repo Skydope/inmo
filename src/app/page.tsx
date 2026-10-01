@@ -1,10 +1,13 @@
 import Link from "next/link"
 import { ArrowUpRight, Compass } from "@phosphor-icons/react/dist/ssr"
+import { CountUp } from "@/components/count-up"
 import { CoverImage } from "@/components/cover-image"
 import { HeroInteractive } from "@/components/hero-interactive"
 import { HeroSearch } from "@/components/hero-search"
 import { LandingNav } from "@/components/landing-nav"
 import { LandingPropertyCard } from "@/components/landing-property-card"
+import { Reveal } from "@/components/reveal"
+import { ScrollRevealLine } from "@/components/scroll-reveal-line"
 import { Button } from "@/components/ui/button"
 import { brandName } from "@/lib/brand"
 import { getProperties } from "@/lib/properties/adapter"
@@ -46,7 +49,7 @@ export default async function HomePage() {
         <HeroInteractive>
           <LandingNav />
 
-          <div className="my-auto max-w-xl py-10 md:py-14">
+          <div className="mt-auto max-w-xl pb-5 pt-[28rem] md:pt-[28rem]">
             <div className="animate-rise inline-flex items-center gap-2 rounded-full glass px-3.5 py-1.5 text-xs uppercase tracking-[0.2em] text-accent backdrop-blur">
               <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
               San Carlos de Bolívar
@@ -57,7 +60,7 @@ export default async function HomePage() {
             </p>
           </div>
 
-          <div className="mt-auto pt-4">
+          <div className="pt-4">
             <Link
               href="/propiedades"
               className="animate-rise-delay mx-auto mb-3 flex w-fit items-center gap-2.5 rounded-full bg-[#c4a574] px-5 py-2 text-base font-medium text-[#1a1a1a] transition hover:bg-[#a8906a]"
@@ -73,23 +76,30 @@ export default async function HomePage() {
       <div className="relative z-10 -mt-8 px-2 md:-mt-12 md:px-3">
         <div className="sheet-over rounded-t-[1.75rem] bg-bg pb-16 md:rounded-t-[2.25rem]">
       <section id="nosotros" className="mx-auto max-w-6xl px-4 pb-6 pt-14 md:pt-16">
-        <p className="max-w-4xl text-3xl leading-snug tracking-tight text-fg md:text-5xl md:leading-[1.15]">
-          Nuestra red cubre{" "}
-          <span className="font-accent">todos los tipos</span> de operación en
-          Bolívar: una experiencia{" "}
-          <span className="font-accent">ágil</span> y{" "}
-          <span className="font-accent">personal</span> para cada búsqueda.
-        </p>
+        <ScrollRevealLine
+          className="max-w-4xl text-3xl leading-snug tracking-tight text-fg md:text-5xl md:leading-[1.15]"
+          parts={[
+            { text: "Nuestra red cubre " },
+            { text: "todos los tipos", accent: true },
+            { text: " de operación en Bolívar: una experiencia " },
+            { text: "ágil", accent: true },
+            { text: " y " },
+            { text: "personal", accent: true },
+            { text: " para cada búsqueda." },
+          ]}
+        />
 
         <div className="mt-12 grid gap-8 border-y border-glass-border py-10 sm:grid-cols-2 md:grid-cols-4">
           {[
-            { n: "2012", l: "Año de arranque local" },
-            { n: String(properties.length), l: "Avisos activos" },
-            { n: String(saleCount + rentCount), l: "Venta y alquiler" },
-            { n: String(agencies), l: "Inmobiliarias" },
+            { n: 2012, l: "Año de arranque local" },
+            { n: properties.length, l: "Avisos activos" },
+            { n: saleCount + rentCount, l: "Venta y alquiler" },
+            { n: agencies, l: "Inmobiliarias" },
           ].map((s) => (
             <div key={s.l}>
-              <p className="font-display text-4xl text-fg md:text-5xl">{s.n}</p>
+              <p className="font-display text-4xl text-fg md:text-5xl">
+                <CountUp value={s.n} />
+              </p>
               <p className="mt-2 text-sm text-fg-muted">{s.l}</p>
             </div>
           ))}
@@ -98,11 +108,11 @@ export default async function HomePage() {
 
       <section className="py-10">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {CATEGORIES.map((c) => (
+          {CATEGORIES.map((c, i) => (
+            <Reveal key={c.label} delay={i * 140}>
             <Link
-              key={c.label}
               href={c.href}
-              className="group relative aspect-[3/4] overflow-hidden rounded-[1.75rem]"
+              className="group relative block aspect-[3/4] overflow-hidden rounded-[1.75rem]"
             >
               <CoverImage
                 src={c.image}
@@ -117,6 +127,7 @@ export default async function HomePage() {
                 {c.label}
               </p>
             </Link>
+            </Reveal>
           ))}
         </div>
       </section>
