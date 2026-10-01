@@ -25,9 +25,11 @@ Abrí [http://127.0.0.1:43123](http://127.0.0.1:43123).
 
 ## Superficies
 
-- `/` — landing + search segmentada
-- `/propiedades` — listado + mapa (URL-state de filtros; mobile `view=map|grid`)
+- `/` — landing ref-03 (hero glass, light/dark toggle, categorías, grid)
+- `/propiedades` — Explorar: listado + mapa (force dark; URL-state de filtros)
 - `/propiedades/[id]` — detalle + CTA contacto (`wa.me` / `tel` / `mailto`)
+
+Tema: `ThemeProvider` + toggle luna/sol en el hero. Preferencia en `localStorage` (`inmo-theme`).
 
 ## Datos
 

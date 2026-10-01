@@ -87,7 +87,9 @@ export default async function PropertyDetailPage({
               />
               <div>
                 <p className="font-medium text-fg">{property.agency.name}</p>
-                <p className="text-sm text-fg-muted">Inmobiliaria en Bolívar</p>
+                <p className="text-sm text-fg-muted">
+                  Inmobiliaria en Bolívar{property.agency.address ? ` · ${property.agency.address}` : ""}
+                </p>
               </div>
             </div>
             <a
@@ -102,10 +104,51 @@ export default async function PropertyDetailPage({
             </a>
           </div>
 
-          <p className="max-w-2xl text-fg-muted">
-            Aviso mock para el portal local. Las fotos e iconografía definitivas llegan con el seed
-            de marca; por ahora usamos placeholders tipográficos y gradientes.
-          </p>
+          {property.description ? (
+            <div className="space-y-2 border-t border-glass-border pt-6">
+              <h2 className="font-display text-xl text-fg">Descripción</h2>
+              <p className="text-base leading-relaxed text-fg-muted whitespace-pre-line">
+                {property.description}
+              </p>
+            </div>
+          ) : null}
+
+          {property.features && property.features.length > 0 ? (
+            <div className="space-y-3 border-t border-glass-border pt-6">
+              <h2 className="font-display text-xl text-fg">Características y comodidades</h2>
+              <div className="grid gap-2.5 sm:grid-cols-2 md:grid-cols-3">
+                {property.features.map((feat) => (
+                  <div
+                    key={feat}
+                    className="flex items-center gap-2 rounded-xl bg-bg/50 px-3.5 py-2 text-sm text-fg"
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                    {feat}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {property.photos && property.photos.length > 1 ? (
+            <div className="space-y-3 border-t border-glass-border pt-6">
+              <h2 className="font-display text-xl text-fg">Galería de fotos</h2>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {property.photos.map((photo, idx) => (
+                  <div
+                    key={idx}
+                    className="relative aspect-[16/10] overflow-hidden rounded-2xl border border-glass-border bg-bg-elevated"
+                  >
+                    <CoverImage
+                      src={photo}
+                      alt={`${property.title} - Foto ${idx + 1}`}
+                      className="h-full w-full object-cover transition duration-300 hover:scale-[1.02]"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

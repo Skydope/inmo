@@ -36,13 +36,13 @@ export function SiteNav({ className }: { className?: string }) {
 
         <nav
           aria-label="Principal"
-          className="hidden items-center gap-1 rounded-full bg-white/5 p-1 md:flex"
+          className="hidden items-center gap-1 rounded-full bg-black/5 p-1 dark:bg-white/5 md:flex"
         >
           {links.map((l) => (
             <Link
               key={l.href + l.label}
               href={l.href}
-              className="rounded-full px-3.5 py-1.5 text-sm text-fg-muted transition hover:bg-white/10 hover:text-fg"
+              className="rounded-full px-3.5 py-1.5 text-sm text-fg-muted transition hover:bg-black/5 hover:text-fg dark:hover:bg-white/10"
             >
               {l.label}
             </Link>

@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" fill="none">
+  <defs>
+    <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f1116"/>
+      <stop offset="60%" stop-color="#1b1c24"/>
+      <stop offset="100%" stop-color="#32281e"/>
+    </linearGradient>
+    <linearGradient id="gPool" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#18363b"/>
+      <stop offset="60%" stop-color="#112224"/>
+      <stop offset="100%" stop-color="#0b1517"/>
+    </linearGradient>
+    <linearGradient id="gGlow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff5db"/>
+      <stop offset="100%" stop-color="#cca05d"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="800" fill="url(#gSky)"/>
+
+  <!-- Covered Quincho & Argentine Asador (Right side) -->
+  <rect x="650" y="240" width="500" height="380" rx="3" fill="#1b1b20" stroke="#32333d" stroke-width="2"/>
+  <!-- Quincho timber pergola ceiling -->
+  <line x1="650" y1="280" x2="1150" y2="280" stroke="#c4a574" stroke-width="2"/>
+  
+  <!-- Built-in Parrilla with iron grill and warm ember glow -->
+  <rect x="940" y="340" width="180" height="240" fill="#131316" stroke="#443224" stroke-width="2"/>
+  <rect x="960" y="440" width="140" height="70" rx="2" fill="#2d170c"/>
+  <ellipse cx="1030" cy="480" rx="55" ry="12" fill="#ff7733" opacity="0.8"/>
+  <ellipse cx="1030" cy="480" rx="30" ry="7" fill="#ffe399"/>
+  <!-- Parrilla stainless hood -->
+  <polygon points="950,440 1030,360 1110,440" fill="#222329" stroke="#383942" stroke-width="1.5"/>
+
+  <!-- Dining table in quincho -->
+  <rect x="690" y="480" width="220" height="90" rx="4" fill="#3d2a1b" stroke="#543b27" stroke-width="2"/>
+  <rect x="710" y="550" width="180" height="20" fill="#22170f"/>
+
+  <!-- Illuminated Swimming Pool (Foreground left) -->
+  <polygon points="120,540 600,540 680,750 40,750" fill="url(#gPool)" stroke="#c4a574" stroke-width="1.5" stroke-opacity="0.6"/>
+  <ellipse cx="360" cy="650" rx="160" ry="25" fill="#3ca6ad" fill-opacity="0.3"/>
+  <ellipse cx="360" cy="650" rx="70" ry="10" fill="#8cedf5" fill-opacity="0.4"/>
+
+  <!-- Landscaped perimeter fence & bamboo -->
+  <path d="M0 520 Q300 500 650 510 V700 H0 Z" fill="#141c13"/>
+  <circle cx="100" cy="460" r="50" fill="#1b291a"/>
+  <circle cx="240" cy="450" r="60" fill="#1f301e"/>
+  <circle cx="400" cy="470" r="55" fill="#1b291a"/>
+
+  <!-- Property Tag Badge -->
+  <rect x="40" y="40" width="240" height="34" rx="17" fill="#1a1a1a" fill-opacity="0.85" stroke="#c4a574" stroke-width="1" stroke-opacity="0.4"/>
+  <circle cx="58" cy="57" r="4.5" fill="#c4a574"/>
+  <text x="74" y="62" fill="#f3efe6" font-family="system-ui, sans-serif" font-weight="600" font-size="12" letter-spacing="1">QUINCHO · PARRILLA · PILETA</text>
+</svg>

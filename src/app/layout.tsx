@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { Archivo_Black, Instrument_Serif, Manrope } from "next/font/google"
-import { SiteNav } from "@/components/site-nav"
+import { ThemeProvider } from "@/components/theme-provider"
 import { brandName } from "@/lib/brand"
 import "./globals.css"
 
@@ -35,11 +35,11 @@ export default function RootLayout({
   return (
     <html
       lang="es-AR"
+      suppressHydrationWarning
       className={`${manrope.variable} ${archivo.variable} ${instrument.variable} h-full antialiased`}
     >
       <body className="page-atmosphere min-h-full flex flex-col text-fg">
-        <SiteNav />
-        <main className="flex-1">{children}</main>
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   )

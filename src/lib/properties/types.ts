@@ -17,7 +17,18 @@ export type Property = {
   lng: number
   photoCount: number
   coverUrl: string
-  agency: { name: string; logoUrl: string; phone?: string; email?: string }
+  photos?: string[]
+  description?: string
+  features?: string[]
+  neighborhood?: string
+  featured?: boolean
+  agency: {
+    name: string
+    logoUrl: string
+    phone?: string
+    email?: string
+    address?: string
+  }
 }
 
 export type PropertyWithDistance = Property & { distanceKm?: number }
