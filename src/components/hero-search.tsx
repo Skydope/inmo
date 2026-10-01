@@ -2,8 +2,13 @@
 
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { BedDouble, DollarSign, Home, MapPin, Search } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import {
+  Buildings,
+  CurrencyDollar,
+  MapPin,
+  MagnifyingGlass,
+  SquaresFour,
+} from "@phosphor-icons/react"
 import type { PropertyType } from "@/lib/properties/types"
 
 type PriceBand = "" | "usd-80" | "usd-80-150" | "usd-150"
@@ -11,9 +16,9 @@ type PriceBand = "" | "usd-80" | "usd-80-150" | "usd-150"
 export function HeroSearch() {
   const router = useRouter()
   const [ubicacion, setUbicacion] = useState("bolivar")
-  const [price, setPrice] = useState<PriceBand>("")
-  const [beds, setBeds] = useState("")
-  const [type, setType] = useState<PropertyType | "">("")
+  const [price, setPrice] = useState<PriceBand>("usd-80-150")
+  const [beds, setBeds] = useState("3")
+  const [type, setType] = useState<PropertyType | "">("house")
 
   function submit(e: React.FormEvent) {
     e.preventDefault()
@@ -31,7 +36,7 @@ export function HeroSearch() {
       p.set("cur", "USD")
       p.set("min", "150000")
     }
-    // ubicacion is Bolívar-only for v1; kept for UX parity with ref-03
+    // ubicacion is Bolívar-only for v1; kept for UX parity with ref
     void ubicacion
     const qs = p.toString()
     router.push(qs ? `/propiedades?${qs}` : "/propiedades")
@@ -40,93 +45,84 @@ export function HeroSearch() {
   return (
     <form
       onSubmit={submit}
-      className="glass-strong animate-rise-delay grid gap-2 rounded-[1.75rem] p-2 md:grid-cols-[1.1fr_1fr_1fr_1fr_auto] md:items-stretch md:gap-0 md:divide-x md:divide-white/15"
+      className="hero-search animate-rise-delay grid gap-1 rounded-[1.75rem] p-1.5 md:grid-cols-[1.1fr_1fr_1fr_1fr_auto] md:items-stretch md:gap-0 md:divide-x md:divide-black/8 md:rounded-full"
     >
-      <label className="flex items-center gap-3 rounded-2xl px-3 py-2.5 md:rounded-none">
-        <MapPin className="h-4 w-4 shrink-0 text-white/70" aria-hidden />
+      <label className="flex items-center gap-3 rounded-full px-4 py-3 md:rounded-none">
+        <MapPin weight="fill" className="h-5 w-5 shrink-0 text-neutral-800" aria-hidden />
         <span className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-[10px] uppercase tracking-[0.16em] text-white/55">
-            Ubicación
-          </span>
+          <span className="text-[11px] text-neutral-500">Ubicación</span>
           <select
             value={ubicacion}
             onChange={(e) => setUbicacion(e.target.value)}
-            className="w-full appearance-none bg-transparent text-sm text-white outline-none"
+            className="w-full appearance-none bg-transparent text-sm font-medium text-neutral-900 outline-none"
           >
-            <option value="bolivar">Bolívar</option>
+            <option value="bolivar">Bolívar, BA</option>
             <option value="centro">Centro</option>
             <option value="norte">Zona Norte</option>
           </select>
         </span>
       </label>
 
-      <label className="flex items-center gap-3 rounded-2xl px-3 py-2.5 md:rounded-none">
-        <DollarSign className="h-4 w-4 shrink-0 text-white/70" aria-hidden />
+      <label className="flex items-center gap-3 rounded-full px-4 py-3 md:rounded-none">
+        <CurrencyDollar weight="fill" className="h-5 w-5 shrink-0 text-neutral-800" aria-hidden />
         <span className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-[10px] uppercase tracking-[0.16em] text-white/55">
-            Precio
-          </span>
+          <span className="text-[11px] text-neutral-500">Precio</span>
           <select
             value={price}
             onChange={(e) => setPrice(e.target.value as PriceBand)}
-            className="w-full appearance-none bg-transparent text-sm text-white outline-none"
+            className="w-full appearance-none bg-transparent text-sm font-medium text-neutral-900 outline-none"
           >
             <option value="">Cualquiera</option>
             <option value="usd-80">Hasta US$ 80k</option>
-            <option value="usd-80-150">US$ 80k – 150k</option>
+            <option value="usd-80-150">US$ 80k–150k</option>
             <option value="usd-150">US$ 150k+</option>
           </select>
         </span>
       </label>
 
-      <label className="flex items-center gap-3 rounded-2xl px-3 py-2.5 md:rounded-none">
-        <BedDouble className="h-4 w-4 shrink-0 text-white/70" aria-hidden />
+      <label className="flex items-center gap-3 rounded-full px-4 py-3 md:rounded-none">
+        <SquaresFour weight="fill" className="h-5 w-5 shrink-0 text-neutral-800" aria-hidden />
         <span className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-[10px] uppercase tracking-[0.16em] text-white/55">
-            Ambientes
-          </span>
+          <span className="text-[11px] text-neutral-500">Ambientes</span>
           <select
             value={beds}
             onChange={(e) => setBeds(e.target.value)}
-            className="w-full appearance-none bg-transparent text-sm text-white outline-none"
+            className="w-full appearance-none bg-transparent text-sm font-medium text-neutral-900 outline-none"
           >
             <option value="">Cualquiera</option>
             <option value="1">1+</option>
             <option value="2">2+</option>
-            <option value="3">3+</option>
+            <option value="3">3–5</option>
             <option value="4">4+</option>
           </select>
         </span>
       </label>
 
-      <label className="flex items-center gap-3 rounded-2xl px-3 py-2.5 md:rounded-none">
-        <Home className="h-4 w-4 shrink-0 text-white/70" aria-hidden />
+      <label className="flex items-center gap-3 rounded-full px-4 py-3 md:rounded-none">
+        <Buildings weight="fill" className="h-5 w-5 shrink-0 text-neutral-800" aria-hidden />
         <span className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-[10px] uppercase tracking-[0.16em] text-white/55">
-            Tipo
-          </span>
+          <span className="text-[11px] text-neutral-500">Tipo</span>
           <select
             value={type}
             onChange={(e) => setType(e.target.value as PropertyType | "")}
-            className="w-full appearance-none bg-transparent text-sm text-white outline-none"
+            className="w-full appearance-none bg-transparent text-sm font-medium text-neutral-900 outline-none"
           >
             <option value="">Todos</option>
-            <option value="house">Casa</option>
-            <option value="apartment">Depto</option>
-            <option value="lot">Lote</option>
+            <option value="house">Casas</option>
+            <option value="apartment">Departamentos</option>
+            <option value="lot">Lotes</option>
           </select>
         </span>
       </label>
 
       <div className="flex items-center p-1 md:pl-2">
-        <Button
+        <button
           type="submit"
-          size="lg"
-          className="w-full bg-fg text-bg hover:bg-fg/90 md:w-auto"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-neutral-950 px-7 py-3.5 text-sm font-medium text-white transition hover:bg-neutral-800 md:w-auto dark:bg-neutral-900 dark:hover:bg-neutral-800"
         >
-          <Search className="h-4 w-4" aria-hidden />
+          <MagnifyingGlass weight="fill" className="h-4 w-4" aria-hidden />
           Buscar
-        </Button>
+        </button>
       </div>
     </form>
   )

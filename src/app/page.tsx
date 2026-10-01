@@ -1,10 +1,9 @@
 import Link from "next/link"
-import { ArrowUpRight } from "lucide-react"
+import { ArrowUpRight } from "@phosphor-icons/react/dist/ssr"
 import { CoverImage } from "@/components/cover-image"
 import { HeroSearch } from "@/components/hero-search"
 import { LandingNav } from "@/components/landing-nav"
 import { LandingPropertyCard } from "@/components/landing-property-card"
-import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button"
 import { brandName } from "@/lib/brand"
 import { getProperties } from "@/lib/properties/adapter"
@@ -42,8 +41,8 @@ export default async function HomePage() {
 
   return (
     <div className="pb-16">
-      <section className="px-3 pt-3 md:px-5 md:pt-5">
-        <div className="relative overflow-hidden rounded-[2rem] md:rounded-[2.5rem]">
+      <section className="px-2 pt-2 md:px-3 md:pt-3">
+        <div className="relative overflow-hidden rounded-[1.75rem] md:rounded-[2.25rem]">
           <div className="absolute inset-0">
             <CoverImage
               src="/images/hero/hero.jpg"
@@ -52,30 +51,27 @@ export default async function HomePage() {
             />
             <div
               aria-hidden
-              className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/55"
+              className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/45"
             />
           </div>
 
-          <div className="relative flex min-h-[78vh] flex-col px-5 pb-5 pt-5 md:min-h-[86vh] md:px-8 md:pb-6 md:pt-6">
+          <div className="relative flex min-h-[calc(100dvh-1rem)] flex-col px-4 pb-4 pt-4 md:min-h-[calc(100dvh-1.5rem)] md:px-7 md:pb-6 md:pt-5">
             <LandingNav />
 
-            <div className="mt-14 max-w-xl md:mt-20">
-              <h1 className="animate-rise text-5xl leading-[0.95] tracking-tight text-white md:text-7xl">
-                <span className="font-display">Redefiniendo</span>
-                <span className="mt-2 block font-accent text-4xl font-normal md:text-6xl">
-                  vivir en Bolívar
+            <div className="my-auto max-w-xl py-10 md:py-14">
+              <h1 className="animate-rise text-5xl leading-[0.95] tracking-tight text-white md:text-7xl lg:text-[5.25rem]">
+                <span className="block font-display font-normal">Redefiniendo</span>
+                <span className="mt-1 block font-accent text-[2.75rem] font-normal md:text-6xl lg:text-[4.5rem]">
+                  el vivir moderno
                 </span>
               </h1>
-              <p className="animate-rise-delay mt-5 max-w-md text-sm leading-relaxed text-white/80 md:text-base">
-                {brandName} conecta venta y alquiler local con mapa vivo, filtros
-                claros y un catálogo con carácter de ciudad.
+              <p className="animate-rise-delay mt-6 max-w-sm text-sm leading-relaxed text-white/90 md:max-w-md md:text-[15px]">
+                {brandName} conecta venta y alquiler en Bolívar con mapa vivo,
+                filtros claros y un catálogo con carácter de ciudad.
               </p>
             </div>
 
-            <div className="mt-auto flex flex-col gap-3 pt-16">
-              <div className="flex justify-end">
-                <ThemeToggle />
-              </div>
+            <div className="mt-auto pt-4">
               <HeroSearch />
             </div>
           </div>
@@ -121,7 +117,7 @@ export default async function HomePage() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent" />
               <span className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white/90 text-neutral-900 transition group-hover:bg-white">
-                <ArrowUpRight className="h-4 w-4" aria-hidden />
+                <ArrowUpRight weight="fill" className="h-4 w-4" aria-hidden />
               </span>
               <p className="absolute bottom-4 left-4 text-lg font-medium text-white">
                 {c.label}
