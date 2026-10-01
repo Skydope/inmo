@@ -22,6 +22,7 @@ import {
   markerReducer,
 } from "@/lib/markers"
 import type { Property } from "@/lib/properties/types"
+import { STREET_QUERY_MIN, type StreetLines } from "@/lib/streets"
 
 export function ExploreClient({ properties }: { properties: Property[] }) {
   const router = useRouter()
@@ -35,6 +36,7 @@ export function ExploreClient({ properties }: { properties: Property[] }) {
   )
 
   const [gps, setGps] = useState<GpsStatus>({ kind: "idle" })
+  const [street, setStreet] = useState<StreetLines | null>(null)
   const [markerState, dispatchMarker] = useReducer(markerReducer, initialMarkerState)
 
   const userPos = useMemo(
@@ -103,6 +105,7 @@ export function ExploreClient({ properties }: { properties: Property[] }) {
             selectedId={markerState.selectedId}
             expandedId={markerState.expandedId}
             center={userPos}
+            street={street}
             onExpand={(id) => dispatchMarker({ type: "expand", id })}
             onCollapse={() => dispatchMarker({ type: "collapse" })}
             onSelect={(id) => dispatchMarker({ type: "select", id })}
@@ -131,6 +134,7 @@ export function ExploreClient({ properties }: { properties: Property[] }) {
               gpsActive={Boolean(userPos)}
               gpsPending={gps.kind === "pending"}
               onLocate={locateMe}
+              onStreet={setStreet}
             />
 
             {list.length === 0 ? (
@@ -171,6 +175,7 @@ function FilterBar({
   gpsActive,
   gpsPending,
   onLocate,
+  onStreet,
 }: {
   filters: PropertyFilters
   count: number
@@ -178,11 +183,14 @@ function FilterBar({
   gpsActive: boolean
   gpsPending: boolean
   onLocate: () => void
+  onStreet: (lines: StreetLines | null) => void
 }) {
   const priceOk = priceControlsEnabled(filters)
 
   return (
-    <div className="flex items-center gap-2 overflow-x-auto rounded-full bg-chrome px-2 py-1.5 text-fg shadow-[0_12px_40px_rgba(0,0,0,0.18)]">
+    <div className="flex items-center gap-2 rounded-full bg-chrome px-2 py-1.5 text-fg shadow-[0_12px_40px_rgba(0,0,0,0.18)]">
+      <StreetSearch onStreet={onStreet} />
+      <div className="flex min-w-0 flex-1 items-center gap-2 overflow-x-auto">
       <p className="shrink-0 px-2 text-xs text-fg-muted">
         {count} en Bolívar
       </p>
@@ -291,6 +299,79 @@ function FilterBar({
           </option>
         </select>
       </label>
+      </div>
+    </div>
+  )
+}
+
+function StreetSearch({ onStreet }: { onStreet: (lines: StreetLines | null) => void }) {
+  const [q, setQ] = useState("")
+  const [names, setNames] = useState<string[]>([])
+  const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    const query = q.trim()
+    if (query.length < STREET_QUERY_MIN) {
+      setNames([])
+      setOpen(false)
+      return
+    }
+    const ac = new AbortController()
+    const t = setTimeout(() => {
+      fetch(`/api/streets?q=${encodeURIComponent(query)}`, { signal: ac.signal })
+        .then((r) => r.json())
+        .then((data: { names?: string[] }) => {
+          setNames(data.names ?? [])
+          setOpen(true)
+        })
+        .catch(() => {})
+    }, 280)
+    return () => {
+      clearTimeout(t)
+      ac.abort()
+    }
+  }, [q])
+
+  async function pick(name: string) {
+    setQ(name)
+    setOpen(false)
+    const res = await fetch(`/api/streets?name=${encodeURIComponent(name)}`)
+    const data = (await res.json()) as StreetLines
+    onStreet(data.features?.length ? data : null)
+  }
+
+  return (
+    <div className="relative shrink-0">
+      <input
+        value={q}
+        placeholder="Calle"
+        aria-label="Buscar calle"
+        autoComplete="off"
+        onChange={(e) => {
+          const value = e.target.value
+          setQ(value)
+          if (!value.trim()) onStreet(null)
+        }}
+        onFocus={() => {
+          if (names.length) setOpen(true)
+        }}
+        className="w-36 rounded-full border border-glass-border bg-bg px-3 py-1.5 text-sm text-fg placeholder:text-fg-muted md:w-44"
+      />
+      {open && names.length > 0 ? (
+        <ul className="absolute bottom-full left-0 z-30 mb-2 max-h-48 w-56 overflow-auto rounded-2xl bg-chrome py-1 text-sm text-fg shadow-[0_12px_40px_rgba(0,0,0,0.22)]">
+          {names.map((name) => (
+            <li key={name}>
+              <button
+                type="button"
+                className="block w-full px-3 py-1.5 text-left hover:bg-black/5 dark:hover:bg-white/10"
+                onClick={() => pick(name)}
+              >
+                {name}
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </div>
   )
 }
