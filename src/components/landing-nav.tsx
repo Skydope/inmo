@@ -10,10 +10,10 @@ const links = [
 
 export function LandingNav() {
   return (
-    <div className="relative flex items-center justify-end gap-2 md:gap-3">
+    <div className="relative flex items-start justify-end">
       <nav
         aria-label="Principal"
-        className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-full bg-white px-2 py-1.5 text-sm text-neutral-900 shadow-sm dark:bg-white/92 md:flex"
+        className="nav-tab absolute left-1/2 top-0 z-10 hidden -translate-x-1/2 items-center gap-1 px-2 py-2.5 text-sm text-neutral-900 md:flex"
       >
         {links.map((l) => (
           <Link
@@ -26,29 +26,29 @@ export function LandingNav() {
         ))}
       </nav>
 
-      <div className="flex items-center gap-2 md:gap-3">
-        <nav
-          aria-label="Móvil"
-          className="flex items-center gap-1 rounded-full bg-white px-2 py-1.5 text-sm text-neutral-900 shadow-sm dark:bg-white/92 md:hidden"
-        >
-          {links.slice(0, 2).map((l) => (
-            <Link
-              key={l.href + l.label}
-              href={l.href}
-              className="rounded-full px-3 py-1.5"
-            >
-              {l.label}
-            </Link>
-          ))}
-        </nav>
+      <nav
+        aria-label="Móvil"
+        className="nav-tab relative mr-2 flex items-center gap-1 px-2 py-2 text-sm text-neutral-900 md:hidden"
+      >
+        {links.slice(0, 2).map((l) => (
+          <Link
+            key={l.href + l.label}
+            href={l.href}
+            className="rounded-full px-3 py-1.5"
+          >
+            {l.label}
+          </Link>
+        ))}
+      </nav>
 
+      <div className="nav-tab relative z-10 flex items-center gap-1 px-2 py-1.5 text-sm text-neutral-900 md:px-2.5 md:py-2">
         <Link
           href="/propiedades"
-          className="rounded-full bg-white px-5 py-2.5 text-sm font-medium text-neutral-900 shadow-sm transition hover:bg-white/90 dark:bg-white/92 dark:hover:bg-white"
+          className="rounded-full px-4 py-1.5 font-medium transition hover:bg-black/5 md:px-5"
         >
           Ingresar
         </Link>
-        <ThemeToggle />
+        <ThemeToggle className="h-9 w-9 bg-transparent shadow-none hover:bg-black/5 dark:bg-transparent dark:hover:bg-black/5" />
       </div>
     </div>
   )

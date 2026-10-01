@@ -109,6 +109,49 @@ body {
   -webkit-backdrop-filter: blur(22px) saturate(1.3);
 }
 
+/* Ref-07: inverted tabs flush to hero top, concave scoops at TL/TR.
+   Caller sets position (relative|absolute) so ::before/::after can scoop. */
+.nav-tab {
+  background: #fff;
+  border-radius: 0 0 1.35rem 1.35rem;
+  --nav-scoop: 0.875rem;
+}
+
+.dark .nav-tab {
+  background: rgba(255, 255, 255, 0.94);
+}
+
+.nav-tab::before,
+.nav-tab::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: var(--nav-scoop);
+  height: var(--nav-scoop);
+  background: transparent;
+  pointer-events: none;
+}
+
+.nav-tab::before {
+  left: calc(var(--nav-scoop) * -1);
+  border-top-right-radius: var(--nav-scoop);
+  box-shadow: var(--nav-scoop) 0 0 0 #fff;
+}
+
+.nav-tab::after {
+  right: calc(var(--nav-scoop) * -1);
+  border-top-left-radius: var(--nav-scoop);
+  box-shadow: calc(var(--nav-scoop) * -1) 0 0 0 #fff;
+}
+
+.dark .nav-tab::before {
+  box-shadow: var(--nav-scoop) 0 0 0 rgba(255, 255, 255, 0.94);
+}
+
+.dark .nav-tab::after {
+  box-shadow: calc(var(--nav-scoop) * -1) 0 0 0 rgba(255, 255, 255, 0.94);
+}
+
 /* Ref-05 hero search: large white pill; soft tint in dark mode. */
 .hero-search {
   background: rgba(255, 255, 255, 0.96);

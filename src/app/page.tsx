@@ -55,7 +55,7 @@ export default async function HomePage() {
             />
           </div>
 
-          <div className="relative flex min-h-[calc(100dvh-1rem)] flex-col px-4 pb-4 pt-4 md:min-h-[calc(100dvh-1.5rem)] md:px-7 md:pb-6 md:pt-5">
+          <div className="relative flex min-h-[calc(100dvh-1rem)] flex-col px-4 pb-4 pt-0 md:min-h-[calc(100dvh-1.5rem)] md:px-7 md:pb-6">
             <LandingNav />
 
             <div className="my-auto max-w-xl py-10 md:py-14">
