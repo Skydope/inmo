@@ -52,30 +52,32 @@ export default async function HomePage() {
 
   return (
     <div>
-      <section className="sticky top-0 z-0 px-2 pt-2 md:px-3 md:pt-3">
+      <section data-cover-hero className="sticky top-0 z-0 px-2 pt-2 md:px-3 md:pt-3">
         <HeroInteractive>
           <LandingNav />
 
-          <div className="mt-auto max-w-xl pb-5 pt-[28rem]">
+          <div className="mt-auto max-w-sm pb-1 md:max-w-xl md:pb-5 md:pt-[28rem]">
             <div className="animate-rise inline-flex items-center gap-2 rounded-full glass px-3.5 py-1.5 text-xs uppercase tracking-[0.2em] text-accent backdrop-blur">
               <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
               San Carlos de Bolívar
             </div>
-            <p className="animate-rise-delay mt-4 max-w-sm text-sm leading-relaxed text-white/90 md:max-w-md md:text-base">
+            <p className="animate-rise-delay mt-3 max-w-sm rounded-2xl bg-black/55 px-3 py-2 text-sm leading-relaxed text-white backdrop-blur-sm md:mt-4 md:max-w-md md:bg-transparent md:px-0 md:py-0 md:text-base md:text-white/90 md:backdrop-blur-none">
               {brandName} conecta venta y alquiler en Bolívar con mapa interactivo,
               filtros vivos y un catálogo con verdadero carácter de ciudad.
             </p>
           </div>
 
-          <div className="pt-4">
+          <div className="mt-auto pt-4">
             <Link
               href="/propiedades"
-              className="animate-rise-delay mx-auto mb-3 flex w-fit items-center gap-2.5 rounded-full bg-gold px-5 py-2 text-base font-medium text-gold-fg transition hover:bg-gold-muted"
+              className="animate-rise-delay mx-auto flex w-fit items-center gap-2.5 rounded-full bg-gold px-5 py-2 text-base font-medium text-gold-fg transition hover:bg-gold-muted md:mb-3"
             >
               <Compass weight="fill" className="h-5 w-5" aria-hidden />
               Explorar
             </Link>
-            <HeroSearch />
+            <div className="hidden md:block">
+              <HeroSearch />
+            </div>
           </div>
         </HeroInteractive>
       </section>
@@ -96,7 +98,7 @@ export default async function HomePage() {
           ]}
         />
 
-        <div className="mt-12 grid gap-8 border-y border-glass-border py-10 sm:grid-cols-2 md:grid-cols-4">
+        <div className="mt-12 grid grid-cols-2 gap-x-6 gap-y-8 border-y border-glass-border py-10 md:grid-cols-4">
           {[
             { n: 2012, l: "Año de arranque local", plain: true },
             { n: properties.length, l: "Avisos activos" },
@@ -104,22 +106,29 @@ export default async function HomePage() {
             { n: agencies, l: "Inmobiliarias" },
           ].map((s) => (
             <div key={s.l}>
-              <p className="font-display text-4xl text-fg md:text-5xl">
+              <p className="font-display text-3xl text-fg md:text-5xl">
                 {"plain" in s ? s.n : <CountUp value={s.n} />}
               </p>
-              <p className="mt-2 text-sm text-fg-muted">{s.l}</p>
+              <p className="mt-2 text-balance text-sm leading-snug text-fg-muted">{s.l}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="py-10">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <section className="px-4 py-10">
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
           {CATEGORIES.map((c, i) => (
-            <Reveal key={c.label} delay={i * 140}>
+            <Reveal
+              key={c.label}
+              delay={i * 140}
+              className={i === CATEGORIES.length - 1 ? "col-span-2 lg:col-span-1" : undefined}
+            >
             <Link
               href={c.href}
-              className="group relative block aspect-[3/4] overflow-hidden rounded-panel"
+              className={cn(
+                "group relative block aspect-[5/3] overflow-hidden rounded-panel lg:aspect-[3/4]",
+                i === CATEGORIES.length - 1 && "max-lg:aspect-[2.4/1]",
+              )}
             >
               <CoverImage
                 src={c.image}
@@ -139,7 +148,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section id="servicios" className="py-6">
+      <section id="servicios" className="px-4 py-6">
         <div className="relative overflow-hidden rounded-panel">
           <CoverImage
             src="/images/properties/house-3.jpg"
@@ -168,7 +177,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="pb-8 pt-14">
+      <section className="px-4 pb-8 pt-14">
         <h2 className="mb-8 text-4xl tracking-tight text-fg md:text-5xl">
           Mejores <span className="font-accent">propiedades</span>
         </h2>

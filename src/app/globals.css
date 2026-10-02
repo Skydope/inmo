@@ -441,10 +441,10 @@ textarea:focus-visible,
 /* Keep the editable title in the sky, with its lower edge behind the roof. */
 .hero-depth-title {
   position: absolute;
-  top: calc(50% - 0.95em - 3.25rem);
-  left: 3%;
-  width: 94%;
-  font-size: clamp(4rem, 20vw, 10rem);
+  top: 4.5rem;
+  left: 0.25rem;
+  width: calc(100% - 0.5rem);
+  font-size: clamp(3.25rem, 17vw, 5.75rem);
 }
 
 @media (min-width: 768px) {

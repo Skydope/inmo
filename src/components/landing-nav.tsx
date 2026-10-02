@@ -1,17 +1,15 @@
 "use client"
 
 import Link from "next/link"
-import { Suspense, useState } from "react"
+import { Suspense, useEffect, useRef, useState } from "react"
+import { createPortal } from "react-dom"
 import { usePathname, useSearchParams } from "next/navigation"
 import {
   BuildingApartment,
   CaretDown,
   House,
-  Key,
   List,
-  Storefront,
-  SuitcaseRolling,
-  Tag,
+  SignIn,
   Tree,
   X,
 } from "@phosphor-icons/react"
@@ -21,8 +19,8 @@ import { cn } from "@/lib/utils"
 export type NavParams = { op: string | null; type: string | null }
 
 const OPERATIONS = [
-  { op: "sale", label: "Comprar", Icon: Tag },
-  { op: "rent", label: "Alquilar", Icon: Key },
+  { op: "sale", label: "Comprar" },
+  { op: "rent", label: "Alquilar" },
 ] as const
 
 const MARKETS = [
@@ -32,9 +30,15 @@ const MARKETS = [
 ] as const
 
 const EXTRA_LINKS = [
-  { href: "/propiedades?op=temporary", label: "Hoteles", Icon: SuitcaseRolling },
-  { href: "/inmobiliarias", label: "Inmobiliarias", Icon: Storefront },
+  { href: "/propiedades?op=temporary", label: "Hoteles" },
+  { href: "/inmobiliarias", label: "Inmobiliarias" },
 ] as const
+
+/** Pins once the sheet has covered a hero header, or a plain header has scrolled off. */
+export function navShouldPin(scrollY: number, coverAt: number | null, anchorTop: number) {
+  if (coverAt != null) return scrollY > coverAt
+  return anchorTop < 0
+}
 
 export function navItemActive(href: string, pathname: string, params: NavParams) {
   if (href === "/inmobiliarias") return pathname === "/inmobiliarias"
@@ -61,16 +65,98 @@ function BarWithSearch() {
 function Bar({ params }: { params: NavParams }) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
+  const [pinned, setPinned] = useState(false)
+  const anchorRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const anchor = anchorRef.current
+    if (!anchor) return
+    const mq = window.matchMedia("(max-width: 767px)")
+    const update = () => {
+      if (!mq.matches) {
+        setPinned(false)
+        return
+      }
+      const hero = anchor.closest("[data-cover-hero]")
+      const coverAt = hero instanceof HTMLElement ? hero.offsetHeight - 92 : null
+      setPinned(navShouldPin(window.scrollY, coverAt, anchor.getBoundingClientRect().top))
+    }
+    update()
+    window.addEventListener("scroll", update, { passive: true })
+    window.addEventListener("resize", update)
+    mq.addEventListener("change", update)
+    return () => {
+      window.removeEventListener("scroll", update)
+      window.removeEventListener("resize", update)
+      mq.removeEventListener("change", update)
+    }
+  }, [])
+
+  const surface = (bar: boolean) => (
+    <NavSurface
+      bar={bar}
+      open={open && bar === pinned}
+      onToggle={() => setOpen((v) => !v)}
+      onNavigate={() => setOpen(false)}
+      pathname={pathname}
+      params={params}
+    />
+  )
 
   return (
-    <div className="relative flex items-start justify-between">
-      <Link
-        href="/"
-        aria-label="Inicio"
-        className="nav-tab relative z-10 flex items-center px-3.5 py-2.5 md:px-4 md:py-3"
-      >
-        <House weight="fill" className="h-5 w-5" aria-hidden />
-      </Link>
+    <div ref={anchorRef}>
+      {surface(false)}
+      {pinned ? createPortal(surface(true), document.body) : null}
+    </div>
+  )
+}
+
+function NavSurface({
+  bar,
+  open,
+  onToggle,
+  onNavigate,
+  pathname,
+  params,
+}: {
+  bar: boolean
+  open: boolean
+  onToggle: () => void
+  onNavigate: () => void
+  pathname: string
+  params: NavParams
+}) {
+  return (
+    <div
+      className={cn(
+        bar
+          ? "fixed inset-x-0 top-0 z-50 flex items-center justify-between border-b border-black/10 bg-bg-elevated px-3 py-2 shadow-[0_8px_24px_rgba(0,0,0,0.12)] dark:border-white/10"
+          : "relative flex items-start justify-between",
+      )}
+    >
+      <div className={cn("relative z-10 flex items-center", !bar && "nav-tab")}>
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-expanded={open}
+          aria-controls="landing-nav-menu"
+          aria-label={open ? "Cerrar menú" : "Abrir menú"}
+          className="rounded-full p-2 transition hover:bg-black/5 md:hidden dark:hover:bg-white/10"
+        >
+          {open ? (
+            <X weight="bold" className="h-4 w-4" aria-hidden />
+          ) : (
+            <List weight="bold" className="h-4 w-4" aria-hidden />
+          )}
+        </button>
+        <Link
+          href="/"
+          aria-label="Inicio"
+          className={cn("flex items-center", bar ? "p-2" : "px-3.5 py-2.5 md:px-4 md:py-3")}
+        >
+          <House weight="fill" className="h-5 w-5" aria-hidden />
+        </Link>
+      </div>
 
       <nav
         aria-label="Principal"
@@ -81,7 +167,6 @@ function Bar({ params }: { params: NavParams }) {
             <NavLink
               href={`/propiedades?op=${operation.op}`}
               label={operation.label}
-              Icon={operation.Icon}
               pathname={pathname}
               params={params}
             >
@@ -112,33 +197,25 @@ function Bar({ params }: { params: NavParams }) {
             key={l.href}
             href={l.href}
             label={l.label}
-            Icon={l.Icon}
             pathname={pathname}
             params={params}
           />
         ))}
       </nav>
 
-      <div className="nav-tab relative z-10 flex items-center gap-1 px-2 py-1.5 text-sm md:px-2.5 md:py-2">
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          aria-expanded={open}
-          aria-controls="landing-nav-menu"
-          aria-label={open ? "Cerrar menú" : "Abrir menú"}
-          className="rounded-full p-2 transition hover:bg-black/5 md:hidden dark:hover:bg-white/10"
-        >
-          {open ? (
-            <X weight="bold" className="h-4 w-4" aria-hidden />
-          ) : (
-            <List weight="bold" className="h-4 w-4" aria-hidden />
-          )}
-        </button>
+      <div
+        className={cn(
+          "relative z-10 flex items-center gap-1 text-sm",
+          !bar && "nav-tab px-2 py-1.5 md:px-2.5 md:py-2",
+        )}
+      >
         <Link
           href="/ingresar"
-          className="rounded-full bg-fg px-3.5 py-1.5 text-sm font-medium text-bg transition hover:opacity-90"
+          aria-label="Ingresar"
+          className="grid h-9 w-9 place-items-center rounded-full bg-fg text-bg transition hover:opacity-90 md:flex md:h-auto md:w-auto md:px-3.5 md:py-1.5"
         >
-          Ingresar
+          <SignIn weight="fill" className="h-4 w-4 md:hidden" aria-hidden />
+          <span className="hidden text-sm font-medium md:inline">Ingresar</span>
         </Link>
         <ThemeToggle className="h-9 w-9 bg-transparent shadow-none hover:bg-black/5 dark:bg-transparent dark:hover:bg-white/10" />
       </div>
@@ -147,17 +224,16 @@ function Bar({ params }: { params: NavParams }) {
         <nav
           id="landing-nav-menu"
           aria-label="Menú móvil"
-          className="nav-tab absolute right-0 top-12 z-20 flex flex-col items-stretch gap-0.5 px-2 py-2 text-sm md:hidden"
+          className="absolute left-0 top-full z-20 mt-2 flex w-max max-w-[calc(100vw-1.5rem)] flex-col items-stretch gap-0.5 rounded-card bg-chrome p-1.5 text-sm shadow-[0_12px_40px_rgba(0,0,0,0.22)] md:hidden"
         >
           {OPERATIONS.map((operation) => (
             <div key={operation.op} className="flex flex-col gap-0.5">
               <NavLink
                 href={`/propiedades?op=${operation.op}`}
                 label={operation.label}
-                Icon={operation.Icon}
                 pathname={pathname}
                 params={params}
-                onClick={() => setOpen(false)}
+                onClick={onNavigate}
               />
               {MARKETS.map((market) => (
                 <NavLink
@@ -167,7 +243,7 @@ function Bar({ params }: { params: NavParams }) {
                   Icon={market.Icon}
                   pathname={pathname}
                   params={params}
-                  onClick={() => setOpen(false)}
+                  onClick={onNavigate}
                   sub
                 />
               ))}
@@ -178,10 +254,9 @@ function Bar({ params }: { params: NavParams }) {
               key={l.href}
               href={l.href}
               label={l.label}
-              Icon={l.Icon}
               pathname={pathname}
               params={params}
-              onClick={() => setOpen(false)}
+              onClick={onNavigate}
             />
           ))}
         </nav>
@@ -202,7 +277,7 @@ function NavLink({
 }: {
   href: string
   label: string
-  Icon: React.ComponentType<{ weight?: "fill"; className?: string }>
+  Icon?: React.ComponentType<{ weight?: "fill"; className?: string }>
   pathname: string
   params: NavParams
   onClick?: () => void
@@ -221,7 +296,9 @@ function NavLink({
         active ? "bg-fg text-bg" : "hover:bg-black/5 dark:hover:bg-white/10",
       )}
     >
-      <Icon weight="fill" className="h-4 w-4 shrink-0" aria-hidden />
+      {Icon ? (
+        <Icon weight="fill" className="h-4 w-4 shrink-0" aria-hidden />
+      ) : null}
       <span className="flex-1 whitespace-nowrap">{label}</span>
       {children}
     </Link>

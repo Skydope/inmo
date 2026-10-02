@@ -43,7 +43,7 @@ export default async function AgenciesPage() {
 
   return (
     <div>
-      <section className="sticky top-0 z-0 px-2 pt-2 md:px-3 md:pt-3">
+      <section data-cover-hero className="sticky top-0 z-0 px-2 pt-2 md:px-3 md:pt-3">
         <div className="relative overflow-hidden rounded-t-panel md:rounded-t-sheet">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={DAY} alt="" className="absolute inset-0 h-full w-full object-cover" />

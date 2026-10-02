@@ -7,21 +7,21 @@ export function LandingPropertyCard({ property }: { property: Property }) {
   return (
     <Link
       href={`/propiedades/${property.id}`}
-      className="group block overflow-hidden rounded-card bg-bg-elevated transition hover:-translate-y-0.5"
+      className="group flex overflow-hidden rounded-card bg-bg-elevated transition hover:-translate-y-0.5 sm:block"
     >
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className="relative aspect-square w-32 shrink-0 overflow-hidden sm:aspect-[4/3] sm:w-auto">
         <CoverImage
           src={property.coverUrl}
           alt={property.title}
           className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
         />
       </div>
-      <div className="space-y-3 px-4 pb-4 pt-3">
-        <div className="flex items-baseline justify-between gap-3">
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-2 px-3 py-3 sm:block sm:space-y-3 sm:px-4 sm:pb-4 sm:pt-3">
+        <div className="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
           <p className="text-lg font-semibold tracking-tight text-fg">
             {formatPrice(property.price, property.currency)}
           </p>
-          <p className="text-sm text-fg-muted">
+          <p className="truncate text-sm text-fg-muted">
             {property.areaM2} m² {typeLabel(property.type).toLowerCase()}
           </p>
         </div>

@@ -1,7 +1,16 @@
 import { describe, expect, it } from "vitest"
-import { navItemActive } from "./landing-nav"
+import { navItemActive, navShouldPin } from "./landing-nav"
 
 const params = (op: string | null, type: string | null = null) => ({ op, type })
+
+describe("navShouldPin", () => {
+  it("pins after the hero sheet covers the bar, and after a plain header scrolls off", () => {
+    expect(navShouldPin(0, 700, 12)).toBe(false)
+    expect(navShouldPin(701, 700, 12)).toBe(true)
+    expect(navShouldPin(0, null, 12)).toBe(false)
+    expect(navShouldPin(40, null, -1)).toBe(true)
+  })
+})
 
 describe("navItemActive", () => {
   it("marks the matching operation, ignoring type when the link has none", () => {

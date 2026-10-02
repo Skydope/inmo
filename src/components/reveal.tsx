@@ -4,9 +4,11 @@ import { useEffect, useRef, useState, type ReactNode } from "react"
 
 export function Reveal({
   delay = 0,
+  className,
   children,
 }: {
   delay?: number
+  className?: string
   children: ReactNode
 }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -32,7 +34,7 @@ export function Reveal({
   }, [delay])
 
   return (
-    <div ref={ref} className={on ? "reveal is-in" : "reveal"}>
+    <div ref={ref} className={`${on ? "reveal is-in" : "reveal"} ${className ?? ""}`}>
       {children}
     </div>
   )

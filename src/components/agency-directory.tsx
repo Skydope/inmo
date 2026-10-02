@@ -41,13 +41,13 @@ export function AgencyDirectory({ agencies }: { agencies: AgencyRow[] }) {
 
   return (
     <div>
-      <label className="flex max-w-md items-center gap-2 rounded-full border border-glass-border bg-bg-elevated px-4 py-2.5">
+      <label className="flex max-w-md items-center gap-2 rounded-full border border-glass-border bg-bg-elevated px-4 py-2.5 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent">
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Buscar por nombre o dirección"
           aria-label="Buscar inmobiliaria"
-          className="min-w-0 flex-1 bg-transparent text-sm text-fg outline-none placeholder:text-fg-muted"
+          className="min-w-0 flex-1 appearance-none rounded-full border-0 bg-transparent text-sm text-fg outline-none placeholder:text-fg-muted focus-visible:outline-none!"
         />
         <MagnifyingGlass className="h-4 w-4 shrink-0 text-fg-muted" aria-hidden />
       </label>
