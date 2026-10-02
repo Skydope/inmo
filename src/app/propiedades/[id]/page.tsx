@@ -11,7 +11,7 @@ import {
   WhatsappLogo,
 } from "@phosphor-icons/react/dist/ssr"
 import { CoverImage } from "@/components/cover-image"
-import { SiteNav } from "@/components/site-nav"
+import { LandingNav } from "@/components/landing-nav"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { contactLinkFor } from "@/lib/contact"
@@ -57,7 +57,11 @@ export default async function PropertyDetailPage({
 
   return (
     <div className="pb-20">
-      <SiteNav />
+      <div className="px-2 pt-2 md:px-3 md:pt-3">
+        <div className="px-4 md:px-7">
+          <LandingNav />
+        </div>
+      </div>
       <div className="mx-auto max-w-5xl px-4 pt-8">
       <Link
         href="/propiedades"

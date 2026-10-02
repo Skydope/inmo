@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest"
-import { linesFromNominatim, streetNamesFromPhoton } from "@/lib/streets"
+import {
+  filterBolivarStreets,
+  linesFromNominatim,
+  streetNamesFromPhoton,
+} from "@/lib/streets"
 import { BOLIVAR_CENTER } from "@/lib/brand"
 
 describe("streetNamesFromPhoton", () => {
@@ -38,5 +42,19 @@ describe("linesFromNominatim", () => {
     ])
     expect(lines.features).toHaveLength(1)
     expect(lines.features[0].geometry.coordinates).toHaveLength(2)
+  })
+})
+
+describe("filterBolivarStreets", () => {
+  it("finds streets by prefix or word match ignoring case and accents", () => {
+    expect(filterBolivarStreets("san martin")).toContain("Avenida San Martín")
+    expect(filterBolivarStreets("alsina")).toContain("Avenida Alsina")
+    expect(filterBolivarStreets("alvear")).toContain("Alvear")
+    expect(filterBolivarStreets("lavalle")).toContain("Avenida Lavalle")
+  })
+
+  it("returns empty array on empty query", () => {
+    expect(filterBolivarStreets("")).toEqual([])
+    expect(filterBolivarStreets("   ")).toEqual([])
   })
 })
