@@ -17,7 +17,9 @@ export const metadata: Metadata = {
 export default async function AgenciesPage() {
   const properties = await getProperties()
   const agencies = Object.entries(SEED_AGENCIES).map(([id, agency]) => {
-    const listings = properties.filter((p) => p.agency.name === agency.name)
+    const listings = properties
+      .filter((p) => p.agency.name === agency.name)
+      .sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)))
     const contact = contactLinkFor(agency)
     return {
       id,
@@ -26,6 +28,13 @@ export default async function AgenciesPage() {
       address: agency.address,
       sale: listings.filter((p) => p.operation === "sale").length,
       rent: listings.filter((p) => p.operation === "rent").length,
+      listings: listings.map((p) => ({
+        id: p.id,
+        title: p.title,
+        coverUrl: p.coverUrl,
+        price: p.price,
+        currency: p.currency,
+      })),
       contactHref: contact.href,
       contactKind: contact.kind,
       email: agency.email,
@@ -61,7 +70,7 @@ export default async function AgenciesPage() {
 
       <div className="relative z-10 -mt-8 px-2 md:-mt-12 md:px-3">
         <div className="sheet-over rounded-t-panel bg-bg pb-16 md:rounded-t-sheet">
-          <div className="mx-auto max-w-6xl px-4 pb-8 pt-10 md:pt-14">
+          <div className="px-4 pb-8 pt-10 md:px-6 md:pt-14">
             <AgencyDirectory agencies={agencies} />
           </div>
           <SiteFooter />

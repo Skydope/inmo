@@ -259,7 +259,7 @@ export function PropertyMap({
     const map = mapRef.current
     if (!map || appliedTheme.current === theme) return
     appliedTheme.current = theme
-    map.setStyle(STYLES[theme])
+    map.setStyle(STYLES[theme], { diff: false })
     map.once("style.load", () => {
       lockBarrios(map)
       drawStreet(map, streetRef.current ?? EMPTY_STREET, ACCENT[theme])

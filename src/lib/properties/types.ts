@@ -1,6 +1,6 @@
 export type PropertyType = "house" | "apartment" | "lot"
 export type Currency = "ARS" | "USD"
-export type Operation = "sale" | "rent"
+export type Operation = "sale" | "rent" | "temporary"
 
 export type Property = {
   id: string

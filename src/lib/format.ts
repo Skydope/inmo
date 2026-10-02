@@ -8,7 +8,9 @@ export function formatPrice(price: number, currency: Currency): string {
 }
 
 export function operationLabel(op: Operation): string {
-  return op === "sale" ? "Venta" : "Alquiler"
+  if (op === "sale") return "Venta"
+  if (op === "rent") return "Alquiler"
+  return "Temporaria"
 }
 
 export function typeLabel(type: PropertyType): string {

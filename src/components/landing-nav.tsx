@@ -3,37 +3,62 @@
 import Link from "next/link"
 import { Suspense, useState } from "react"
 import { usePathname, useSearchParams } from "next/navigation"
-import { House, List, X } from "@phosphor-icons/react"
+import {
+  BuildingApartment,
+  CaretDown,
+  House,
+  Key,
+  List,
+  Storefront,
+  SuitcaseRolling,
+  Tag,
+  Tree,
+  X,
+} from "@phosphor-icons/react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { cn } from "@/lib/utils"
 
-const links = [
-  { href: "/propiedades?op=sale", label: "Comprar" },
-  { href: "/propiedades?op=rent", label: "Alquilar" },
-  { href: "/inmobiliarias", label: "Inmobiliarias" },
-]
+export type NavParams = { op: string | null; type: string | null }
 
-export function navItemActive(href: string, pathname: string, op: string | null) {
+const OPERATIONS = [
+  { op: "sale", label: "Comprar", Icon: Tag },
+  { op: "rent", label: "Alquilar", Icon: Key },
+] as const
+
+const MARKETS = [
+  { type: "house", label: "Casas", Icon: House },
+  { type: "apartment", label: "Departamentos", Icon: BuildingApartment },
+  { type: "lot", label: "Terrenos", Icon: Tree },
+] as const
+
+const EXTRA_LINKS = [
+  { href: "/propiedades?op=temporary", label: "Hoteles", Icon: SuitcaseRolling },
+  { href: "/inmobiliarias", label: "Inmobiliarias", Icon: Storefront },
+] as const
+
+export function navItemActive(href: string, pathname: string, params: NavParams) {
   if (href === "/inmobiliarias") return pathname === "/inmobiliarias"
   if (pathname !== "/propiedades") return false
-  const wanted = new URL(href, "http://local").searchParams.get("op")
-  return (op ?? null) === wanted
+  const wanted = new URL(href, "http://local").searchParams
+  if ((params.op ?? null) !== wanted.get("op")) return false
+  const wantedType = wanted.get("type")
+  return !wantedType || params.type === wantedType
 }
 
 export function LandingNav() {
   return (
-    <Suspense fallback={<Bar op={null} />}>
+    <Suspense fallback={<Bar params={{ op: null, type: null }} />}>
       <BarWithSearch />
     </Suspense>
   )
 }
 
 function BarWithSearch() {
-  const op = useSearchParams().get("op")
-  return <Bar op={op} />
+  const sp = useSearchParams()
+  return <Bar params={{ op: sp.get("op"), type: sp.get("type") }} />
 }
 
-function Bar({ op }: { op: string | null }) {
+function Bar({ params }: { params: NavParams }) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
 
@@ -51,8 +76,46 @@ function Bar({ op }: { op: string | null }) {
         aria-label="Principal"
         className="nav-tab absolute left-1/2 top-0 z-10 hidden -translate-x-1/2 items-center gap-1 px-2 py-2.5 text-sm md:flex"
       >
-        {links.map((l) => (
-          <NavLink key={l.href} href={l.href} label={l.label} pathname={pathname} op={op} />
+        {OPERATIONS.map((operation) => (
+          <div key={operation.op} className="group relative">
+            <NavLink
+              href={`/propiedades?op=${operation.op}`}
+              label={operation.label}
+              Icon={operation.Icon}
+              pathname={pathname}
+              params={params}
+            >
+              <CaretDown
+                weight="fill"
+                className="h-3 w-3 opacity-60 transition group-hover:rotate-180"
+                aria-hidden
+              />
+            </NavLink>
+            <div className="invisible absolute left-0 top-full z-20 pt-2 opacity-0 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+              <div className="flex min-w-48 flex-col gap-0.5 rounded-card bg-chrome p-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.22)]">
+                {MARKETS.map((market) => (
+                  <NavLink
+                    key={market.type}
+                    href={`/propiedades?op=${operation.op}&type=${market.type}`}
+                    label={market.label}
+                    Icon={market.Icon}
+                    pathname={pathname}
+                    params={params}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+        {EXTRA_LINKS.map((l) => (
+          <NavLink
+            key={l.href}
+            href={l.href}
+            label={l.label}
+            Icon={l.Icon}
+            pathname={pathname}
+            params={params}
+          />
         ))}
       </nav>
 
@@ -84,15 +147,40 @@ function Bar({ op }: { op: string | null }) {
         <nav
           id="landing-nav-menu"
           aria-label="Menú móvil"
-          className="nav-tab absolute right-0 top-12 z-20 flex flex-col items-end gap-1 px-2 py-2 text-sm md:hidden"
+          className="nav-tab absolute right-0 top-12 z-20 flex flex-col items-stretch gap-0.5 px-2 py-2 text-sm md:hidden"
         >
-          {links.map((l) => (
+          {OPERATIONS.map((operation) => (
+            <div key={operation.op} className="flex flex-col gap-0.5">
+              <NavLink
+                href={`/propiedades?op=${operation.op}`}
+                label={operation.label}
+                Icon={operation.Icon}
+                pathname={pathname}
+                params={params}
+                onClick={() => setOpen(false)}
+              />
+              {MARKETS.map((market) => (
+                <NavLink
+                  key={market.type}
+                  href={`/propiedades?op=${operation.op}&type=${market.type}`}
+                  label={market.label}
+                  Icon={market.Icon}
+                  pathname={pathname}
+                  params={params}
+                  onClick={() => setOpen(false)}
+                  sub
+                />
+              ))}
+            </div>
+          ))}
+          {EXTRA_LINKS.map((l) => (
             <NavLink
               key={l.href}
               href={l.href}
               label={l.label}
+              Icon={l.Icon}
               pathname={pathname}
-              op={op}
+              params={params}
               onClick={() => setOpen(false)}
             />
           ))}
@@ -105,28 +193,37 @@ function Bar({ op }: { op: string | null }) {
 function NavLink({
   href,
   label,
+  Icon,
   pathname,
-  op,
+  params,
   onClick,
+  sub,
+  children,
 }: {
   href: string
   label: string
+  Icon: React.ComponentType<{ weight?: "fill"; className?: string }>
   pathname: string
-  op: string | null
+  params: NavParams
   onClick?: () => void
+  sub?: boolean
+  children?: React.ReactNode
 }) {
-  const active = navItemActive(href, pathname, op)
+  const active = navItemActive(href, pathname, params)
   return (
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
       onClick={onClick}
       className={cn(
-        "rounded-full px-4 py-1.5 transition",
+        "flex items-center gap-2 rounded-full transition",
+        sub ? "py-1.5 pl-6 pr-4" : "px-3.5 py-1.5",
         active ? "bg-fg text-bg" : "hover:bg-black/5 dark:hover:bg-white/10",
       )}
     >
-      {label}
+      <Icon weight="fill" className="h-4 w-4 shrink-0" aria-hidden />
+      <span className="flex-1 whitespace-nowrap">{label}</span>
+      {children}
     </Link>
   )
 }

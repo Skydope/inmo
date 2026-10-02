@@ -63,7 +63,7 @@ export function HeroSearch() {
       <label className="flex items-center gap-2 rounded-full px-2 py-3 md:gap-3 md:px-4 md:rounded-none">
         <SquaresFour weight="fill" className="h-5 w-5 shrink-0 text-fg" aria-hidden />
         <span className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-xs text-fg-muted">Ambientes</span>
+          <span className="text-xs text-fg-muted">Dormitorios</span>
           <select
             value={beds}
             onChange={(e) => setBeds(e.target.value)}

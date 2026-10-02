@@ -17,6 +17,8 @@ export type PropertyFilters = {
   min?: number
   max?: number
   beds?: number
+  /** Agency display name. Matches `property.agency.name`. */
+  agency?: string
   sort: SortKey
   view: ViewMode
 }
@@ -40,6 +42,7 @@ export function parseFilters(
   const min = get("min")
   const max = get("max")
   const beds = get("beds")
+  const agency = get("agencia")?.trim()
 
   const filters: PropertyFilters = {
     sort:
@@ -49,7 +52,7 @@ export function parseFilters(
     view: view === "grid" ? "grid" : "map",
   }
 
-  if (op === "sale" || op === "rent") filters.op = op
+  if (op === "sale" || op === "rent" || op === "temporary") filters.op = op
   if (type === "house" || type === "apartment" || type === "lot") filters.type = type
   if (cur === "ARS" || cur === "USD") filters.cur = cur
 
@@ -62,6 +65,7 @@ export function parseFilters(
   if (beds !== undefined && beds !== "" && !Number.isNaN(Number(beds))) {
     filters.beds = Number(beds)
   }
+  if (agency) filters.agency = agency
 
   return filters
 }
@@ -74,6 +78,7 @@ export function filtersToSearchParams(filters: PropertyFilters): URLSearchParams
   if (filters.min !== undefined) p.set("min", String(filters.min))
   if (filters.max !== undefined) p.set("max", String(filters.max))
   if (filters.beds !== undefined) p.set("beds", String(filters.beds))
+  if (filters.agency) p.set("agencia", filters.agency)
   if (filters.sort !== "recent") p.set("sort", filters.sort)
   if (filters.view !== "map") p.set("view", filters.view)
   return p
@@ -94,6 +99,7 @@ export function applyFilters(
     if (filters.type && p.type !== filters.type) return false
     if (filters.cur && p.currency !== filters.cur) return false
     if (filters.beds !== undefined && p.beds < filters.beds) return false
+    if (filters.agency && p.agency.name !== filters.agency) return false
     if (priceControlsEnabled(filters)) {
       if (filters.min !== undefined && p.price < filters.min) return false
       if (filters.max !== undefined && p.price > filters.max) return false

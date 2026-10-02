@@ -7,6 +7,7 @@ const LINKS = [
   { href: "/propiedades?type=house", label: "Casas" },
   { href: "/propiedades?type=apartment", label: "Departamentos" },
   { href: "/propiedades?op=rent", label: "Alquiler" },
+  { href: "/propiedades?op=temporary", label: "Hoteles" },
 ] as const
 
 export function SiteFooter() {

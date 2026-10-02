@@ -35,6 +35,11 @@ const CATEGORIES = [
     href: "/propiedades?op=rent",
     image: "/images/properties/apt-1.jpg",
   },
+  {
+    label: "Hoteles",
+    href: "/propiedades?op=temporary",
+    image: "/images/properties/apt-2.jpg",
+  },
 ] as const
 
 export default async function HomePage() {
@@ -109,7 +114,7 @@ export default async function HomePage() {
       </section>
 
       <section className="py-10">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {CATEGORIES.map((c, i) => (
             <Reveal key={c.label} delay={i * 140}>
             <Link

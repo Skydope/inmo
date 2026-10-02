@@ -33,6 +33,10 @@ describe("parseFilters / URL-state", () => {
     expect(f.view).toBe("map")
   })
 
+  it("parses the temporary operation", () => {
+    expect(parseFilters(new URLSearchParams("op=temporary")).op).toBe("temporary")
+  })
+
   it("round-trips to search params", () => {
     const f = parseFilters(new URLSearchParams("op=rent&cur=ARS&view=grid"))
     const qs = filtersToSearchParams(f).toString()
@@ -58,6 +62,16 @@ describe("applyFilters", () => {
     )
   })
 
+  it("filters by agency name from the query", () => {
+    const name = SEED_PROPERTIES[0].agency.name
+    const f = parseFilters(new URLSearchParams(`agencia=${encodeURIComponent(name)}`))
+    expect(f.agency).toBe(name)
+    const list = applyFilters(SEED_PROPERTIES, f)
+    expect(list.length).toBeGreaterThan(0)
+    expect(list.every((p) => p.agency.name === name)).toBe(true)
+    expect(filtersToSearchParams(f).get("agencia")).toBe(name)
+  })
+
   it("ignores min/max without currency", () => {
     const withRange = applyFilters(SEED_PROPERTIES, {
       min: 999999999,
@@ -80,6 +94,16 @@ describe("applyFilters", () => {
       true,
     )
     expect(list[0].price).toBeLessThanOrEqual(list[list.length - 1]?.price ?? Infinity)
+  })
+
+  it("filters temporary (short-stay) listings", () => {
+    const list = applyFilters(SEED_PROPERTIES, {
+      op: "temporary",
+      sort: "recent",
+      view: "map",
+    })
+    expect(list.length).toBeGreaterThan(0)
+    expect(list.every((p) => p.operation === "temporary")).toBe(true)
   })
 
   it("sorts by distance when GPS active", () => {

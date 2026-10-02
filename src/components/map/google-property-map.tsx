@@ -56,46 +56,57 @@ function chromePadding(container: HTMLElement | null) {
   }
 }
 
-class PropertyOverlay extends google.maps.OverlayView {
-  public element: HTMLElement
-  public position: google.maps.LatLng
+interface PropertyOverlayInstance {
+  element: HTMLElement
+  position: google.maps.LatLng
+  setMap(map: google.maps.Map | null): void
+  getContainerPixel(): { x: number; y: number } | null
+}
 
-  constructor(element: HTMLElement, position: google.maps.LatLng, map: google.maps.Map) {
-    super()
-    this.element = element
-    this.position = position
-    this.setMap(map)
-  }
+function createPropertyOverlay(
+  gMaps: typeof google.maps,
+  element: HTMLElement,
+  position: google.maps.LatLng,
+  map: google.maps.Map,
+): PropertyOverlayInstance {
+  class PropertyOverlay extends gMaps.OverlayView {
+    public element: HTMLElement = element
+    public position: google.maps.LatLng = position
 
-  onAdd() {
-    this.element.style.position = "absolute"
-    this.element.style.transform = "translate(-50%, -100%)"
-    const panes = this.getPanes()
-    panes?.overlayMouseTarget.appendChild(this.element)
-    google.maps.OverlayView.preventMapHitsAndGesturesFrom(this.element)
-  }
+    onAdd() {
+      this.element.style.position = "absolute"
+      this.element.style.transform = "translate(-50%, -100%)"
+      const panes = this.getPanes()
+      panes?.overlayMouseTarget.appendChild(this.element)
+      gMaps.OverlayView.preventMapHitsAndGesturesFrom(this.element)
+    }
 
-  draw() {
-    const projection = this.getProjection()
-    if (!projection) return
-    const point = projection.fromLatLngToDivPixel(this.position)
-    if (point) {
-      this.element.style.left = `${point.x}px`
-      this.element.style.top = `${point.y}px`
+    draw() {
+      const projection = this.getProjection()
+      if (!projection) return
+      const point = projection.fromLatLngToDivPixel(this.position)
+      if (point) {
+        this.element.style.left = `${point.x}px`
+        this.element.style.top = `${point.y}px`
+      }
+    }
+
+    onRemove() {
+      if (this.element.parentNode) {
+        this.element.parentNode.removeChild(this.element)
+      }
+    }
+
+    getContainerPixel(): { x: number; y: number } | null {
+      const projection = this.getProjection()
+      if (!projection) return null
+      return projection.fromLatLngToContainerPixel(this.position)
     }
   }
 
-  onRemove() {
-    if (this.element.parentNode) {
-      this.element.parentNode.removeChild(this.element)
-    }
-  }
-
-  getContainerPixel(): { x: number; y: number } | null {
-    const projection = this.getProjection()
-    if (!projection) return null
-    return projection.fromLatLngToContainerPixel(this.position)
-  }
+  const overlay = new PropertyOverlay()
+  overlay.setMap(map)
+  return overlay
 }
 
 export function GooglePropertyMap({
@@ -119,7 +130,7 @@ export function GooglePropertyMap({
 }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<google.maps.Map | null>(null)
-  const overlaysRef = useRef<Map<string, PropertyOverlay>>(new Map())
+  const overlaysRef = useRef<Map<string, PropertyOverlayInstance>>(new Map())
   const polylinesRef = useRef<google.maps.Polyline[]>([])
   const handlersRef = useRef({ onExpand, onCollapse, onSelect })
   handlersRef.current = { onExpand, onCollapse, onSelect }
@@ -328,7 +339,7 @@ export function GooglePropertyMap({
       }
 
       const position = new window.google.maps.LatLng(property.lat, property.lng)
-      const overlay = new PropertyOverlay(el, position, map)
+      const overlay = createPropertyOverlay(window.google.maps, el, position, map)
       existing.set(property.id, overlay)
     }
 
