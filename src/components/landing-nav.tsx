@@ -1,9 +1,11 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { Suspense, useState } from "react"
+import { usePathname, useSearchParams } from "next/navigation"
 import { House, List, X } from "@phosphor-icons/react"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { cn } from "@/lib/utils"
 
 const links = [
   { href: "/propiedades?op=sale", label: "Comprar" },
@@ -11,7 +13,28 @@ const links = [
   { href: "/inmobiliarias", label: "Inmobiliarias" },
 ]
 
+export function navItemActive(href: string, pathname: string, op: string | null) {
+  if (href === "/inmobiliarias") return pathname === "/inmobiliarias"
+  if (pathname !== "/propiedades") return false
+  const wanted = new URL(href, "http://local").searchParams.get("op")
+  return (op ?? null) === wanted
+}
+
 export function LandingNav() {
+  return (
+    <Suspense fallback={<Bar op={null} />}>
+      <BarWithSearch />
+    </Suspense>
+  )
+}
+
+function BarWithSearch() {
+  const op = useSearchParams().get("op")
+  return <Bar op={op} />
+}
+
+function Bar({ op }: { op: string | null }) {
+  const pathname = usePathname()
   const [open, setOpen] = useState(false)
 
   return (
@@ -19,7 +42,7 @@ export function LandingNav() {
       <Link
         href="/"
         aria-label="Inicio"
-        className="nav-tab relative z-10 ml-2 flex items-center px-3.5 py-2.5 md:ml-0 md:px-4 md:py-3"
+        className="nav-tab relative z-10 flex items-center px-3.5 py-2.5 md:px-4 md:py-3"
       >
         <House weight="fill" className="h-5 w-5" aria-hidden />
       </Link>
@@ -29,17 +52,11 @@ export function LandingNav() {
         className="nav-tab absolute left-1/2 top-0 z-10 hidden -translate-x-1/2 items-center gap-1 px-2 py-2.5 text-sm md:flex"
       >
         {links.map((l) => (
-          <Link
-            key={l.href}
-            href={l.href}
-            className="rounded-full px-4 py-1.5 transition hover:bg-black/5 dark:hover:bg-white/10"
-          >
-            {l.label}
-          </Link>
+          <NavLink key={l.href} href={l.href} label={l.label} pathname={pathname} op={op} />
         ))}
       </nav>
 
-      <div className="nav-tab relative z-10 mr-2 flex items-center gap-1 px-2 py-1.5 text-sm md:mr-0 md:px-2.5 md:py-2">
+      <div className="nav-tab relative z-10 flex items-center gap-1 px-2 py-1.5 text-sm md:px-2.5 md:py-2">
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
@@ -67,20 +84,49 @@ export function LandingNav() {
         <nav
           id="landing-nav-menu"
           aria-label="Menú móvil"
-          className="nav-tab absolute right-2 top-12 z-20 flex flex-col items-end gap-1 px-2 py-2 text-sm md:hidden"
+          className="nav-tab absolute right-0 top-12 z-20 flex flex-col items-end gap-1 px-2 py-2 text-sm md:hidden"
         >
           {links.map((l) => (
-            <Link
+            <NavLink
               key={l.href}
               href={l.href}
+              label={l.label}
+              pathname={pathname}
+              op={op}
               onClick={() => setOpen(false)}
-              className="rounded-full px-4 py-1.5 transition hover:bg-black/5 dark:hover:bg-white/10"
-            >
-              {l.label}
-            </Link>
+            />
           ))}
         </nav>
       ) : null}
     </div>
+  )
+}
+
+function NavLink({
+  href,
+  label,
+  pathname,
+  op,
+  onClick,
+}: {
+  href: string
+  label: string
+  pathname: string
+  op: string | null
+  onClick?: () => void
+}) {
+  const active = navItemActive(href, pathname, op)
+  return (
+    <Link
+      href={href}
+      aria-current={active ? "page" : undefined}
+      onClick={onClick}
+      className={cn(
+        "rounded-full px-4 py-1.5 transition",
+        active ? "bg-fg text-bg" : "hover:bg-black/5 dark:hover:bg-white/10",
+      )}
+    >
+      {label}
+    </Link>
   )
 }

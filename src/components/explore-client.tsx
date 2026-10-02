@@ -113,7 +113,7 @@ export function ExploreClient({ properties }: { properties: Property[] }) {
         </div>
 
         <div className="pointer-events-none relative z-10 flex h-full flex-col">
-          <div className="pointer-events-auto">
+          <div className="pointer-events-auto px-4 md:px-7">
             <LandingNav />
           </div>
 
