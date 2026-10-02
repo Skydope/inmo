@@ -1,13 +1,13 @@
 import Link from "next/link"
+import { House } from "@phosphor-icons/react/dist/ssr"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { brandName } from "@/lib/brand"
 import { cn } from "@/lib/utils"
 
 const links = [
-  { href: "/", label: "Inicio" },
-  { href: "/propiedades", label: "Catálogo" },
-  { href: "/propiedades?op=sale", label: "Venta" },
-  { href: "/propiedades?op=rent", label: "Alquiler" },
+  { href: "/propiedades?op=sale", label: "Comprar" },
+  { href: "/propiedades?op=rent", label: "Alquilar" },
+  { href: "/inmobiliarias", label: "Inmobiliarias" },
 ]
 
 export function SiteNav({ className }: { className?: string }) {
@@ -19,18 +19,7 @@ export function SiteNav({ className }: { className?: string }) {
             aria-hidden
             className="grid h-8 w-8 place-items-center rounded-full border border-accent/50 text-accent"
           >
-            <svg viewBox="0 0 32 32" className="h-5 w-5" fill="none">
-              <path
-                d="M16 4c4 4 7 7 7 12a7 7 0 1 1-14 0c0-5 3-8 7-12Z"
-                stroke="currentColor"
-                strokeWidth="1.6"
-              />
-              <path
-                d="M16 10c2.2 2.4 3.8 4.2 3.8 7a3.8 3.8 0 1 1-7.6 0c0-2.8 1.6-4.6 3.8-7Z"
-                stroke="currentColor"
-                strokeWidth="1.4"
-              />
-            </svg>
+            <House weight="fill" className="h-4 w-4" />
           </span>
           <span className="font-display text-lg tracking-tight text-fg">{brandName}</span>
         </Link>
@@ -52,10 +41,10 @@ export function SiteNav({ className }: { className?: string }) {
 
         <div className="flex items-center gap-1">
           <Link
-            href="/propiedades"
+            href="/ingresar"
             className="rounded-full bg-fg px-4 py-2 text-sm font-medium text-bg transition hover:opacity-90"
           >
-            Explorar
+            Ingresar
           </Link>
           <ThemeToggle className="h-9 w-9 bg-transparent shadow-none hover:bg-black/5 dark:bg-transparent dark:hover:bg-white/10" />
         </div>

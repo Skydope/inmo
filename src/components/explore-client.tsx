@@ -99,7 +99,7 @@ export function ExploreClient({ properties }: { properties: Property[] }) {
   return (
     <div className="px-2 pb-2 pt-2 md:px-3 md:pb-3 md:pt-3">
       <div className="relative h-[calc(100dvh-1rem)] md:h-[calc(100dvh-1.5rem)]">
-        <div className="absolute inset-0 overflow-hidden rounded-panel md:rounded-sheet">
+        <div className="absolute inset-0 z-0 isolate overflow-hidden rounded-panel md:rounded-sheet">
           <PropertyMapDynamic
             properties={list}
             selectedId={markerState.selectedId}
@@ -112,7 +112,7 @@ export function ExploreClient({ properties }: { properties: Property[] }) {
           />
         </div>
 
-        <div className="pointer-events-none relative flex h-full flex-col">
+        <div className="pointer-events-none relative z-10 flex h-full flex-col">
           <div className="pointer-events-auto">
             <LandingNav />
           </div>

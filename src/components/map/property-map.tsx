@@ -139,6 +139,36 @@ export function PropertyMap({
   const appliedTheme = useRef(theme)
   const streetRef = useRef<StreetLines | null>(street ?? null)
   streetRef.current = street ?? null
+  const selectedIdRef = useRef(selectedId)
+  selectedIdRef.current = selectedId
+  const layoutPricesRef = useRef<() => void>(() => {})
+
+  layoutPricesRef.current = () => {
+    const map = mapRef.current
+    if (!map) return
+    const items: { id: string; x: number; y: number; w: number; price: HTMLElement }[] = []
+    markersRef.current.forEach((marker, id) => {
+      const price = marker.getElement().querySelector(".map-pin-price") as HTMLElement | null
+      if (!price) return
+      price.style.visibility = "visible"
+      const pt = map.project(marker.getLngLat())
+      items.push({ id, x: pt.x, y: pt.y, w: price.offsetWidth, price })
+    })
+    // ponytail: O(n²) on each pan; fine while Bolívar stays under a few hundred pins.
+    items.sort((a, b) => Number(b.id === selectedIdRef.current) - Number(a.id === selectedIdRef.current))
+    const shown: { x: number; y: number; w: number }[] = []
+    for (const item of items) {
+      // Price sits above the badge; keep it off other pins, not only off other prices.
+      const hit = shown.some((s) => {
+        const gap = 4
+        const horizontal = Math.abs(item.x - s.x) < (item.w + s.w) / 2 + gap
+        const vertical = Math.abs(item.y - s.y) < 64
+        return horizontal && vertical
+      })
+      item.price.style.visibility = hit ? "hidden" : "visible"
+      if (!hit) shown.push(item)
+    }
+  }
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return
@@ -172,6 +202,7 @@ export function PropertyMap({
     attrib?.classList.remove("maplibregl-compact-show")
     attrib?.removeAttribute("open")
     map.on("click", () => handlersRef.current.onCollapse())
+    map.on("move", () => layoutPricesRef.current())
     mapRef.current = map
     appliedTheme.current = themeRef.current
 
@@ -291,6 +322,7 @@ export function PropertyMap({
         .addTo(map)
       existing.set(property.id, marker)
     }
+    layoutPricesRef.current()
   }, [properties, selectedId, expandedId])
 
   return (

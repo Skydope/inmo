@@ -322,7 +322,7 @@ textarea:focus-visible,
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   cursor: pointer;
 }
 .map-pin-badge {
@@ -354,15 +354,16 @@ textarea:focus-visible,
 .map-pin-price {
   width: max-content;
   position: relative;
-  font-family: var(--font-archivo), Impact, sans-serif;
   background: #1a1a1a;
   color: #f3efe6;
-  border: 1px solid var(--gold);
   border-radius: 999px;
-  padding: 0.28rem 0.65rem;
-  font-size: 0.78rem;
+  padding: 0.32rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 650;
+  line-height: 1;
+  letter-spacing: -0.01em;
   white-space: nowrap;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
 }
 .map-pin-price::after,
 .map-pin-preview::after {
@@ -373,10 +374,7 @@ textarea:focus-visible,
   transform: translateX(-50%);
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
-  border-top: 7px solid #1a1a1a;
-}
-.map-pin.is-selected .map-pin-price {
-  border-color: #f3efe6;
+  border-top: 6px solid #1a1a1a;
 }
 
 .map-pin-preview {
