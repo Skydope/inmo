@@ -11,7 +11,7 @@ import { useTheme } from "@/components/theme-provider"
 import { BOLIVAR_CENTER } from "@/lib/brand"
 import { formatPrice } from "@/lib/format"
 import type { PropertyType, PropertyWithDistance } from "@/lib/properties/types"
-import type { StreetLines } from "@/lib/streets"
+import { getStreetMidpoint, type StreetLines } from "@/lib/streets"
 
 const STYLES = {
   light: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
@@ -49,11 +49,18 @@ function fitStreet(map: MapLibreMap, data: StreetLines) {
     for (const coord of feature.geometry.coordinates) bounds.extend(coord)
   }
   if (bounds.isEmpty()) return
+  const h = map.getContainer().clientHeight || 640
   map.fitBounds(bounds, {
-    padding: chromePadding(map),
-    pitch: MAP_PITCH,
+    padding: {
+      top: 60,
+      bottom: Math.min(160, Math.round(h * 0.22)),
+      left: 40,
+      right: 40,
+    },
+    pitch: 24,
     bearing: MAP_BEARING,
-    maxZoom: 16,
+    minZoom: 14.8,
+    maxZoom: 16.2,
     duration: 700,
   })
 }
@@ -130,6 +137,7 @@ export function PropertyMap({
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const markersRef = useRef<Map<string, Marker>>(new Map())
+  const streetMarkerRef = useRef<Marker | null>(null)
   const frameRef = useRef<() => void>(() => {})
   const handlersRef = useRef({ onExpand, onCollapse, onSelect })
   handlersRef.current = { onExpand, onCollapse, onSelect }
@@ -216,6 +224,10 @@ export function PropertyMap({
       ro.disconnect()
       markersRef.current.forEach((m) => m.remove())
       markersRef.current.clear()
+      if (streetMarkerRef.current) {
+        streetMarkerRef.current.remove()
+        streetMarkerRef.current = null
+      }
       map.remove()
       mapRef.current = null
     }
@@ -263,16 +275,47 @@ export function PropertyMap({
     map.once("style.load", () => {
       lockBarrios(map)
       drawStreet(map, streetRef.current ?? EMPTY_STREET, ACCENT[theme])
+      if (streetRef.current?.features.length && !streetMarkerRef.current) {
+        const mid = getStreetMidpoint(streetRef.current)
+        const streetName = streetRef.current.name || streetRef.current.features[0]?.properties?.name
+        if (mid && streetName) {
+          const el = document.createElement("div")
+          el.className = "map-street-pill"
+          el.innerHTML = `<svg viewBox="0 0 256 256" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M224,120H136V40h40a8,8,0,0,0,0-16H80a8,8,0,0,0,0,16h40v80H32a8,8,0,0,0-5.66,13.66l24,24a8,8,0,0,0,11.32,0L78.34,136H120v80H104a8,8,0,0,0,0,16h48a8,8,0,0,0,0-16H136V136h72l16.68,16.68a8,8,0,0,0,11.32,0l24-24A8,8,0,0,0,224,120Z"/></svg><span>${esc(streetName)}</span>`
+          streetMarkerRef.current = new maplibregl.Marker({ element: el, anchor: "bottom" })
+            .setLngLat([mid.lng, mid.lat])
+            .addTo(map)
+        }
+      }
     })
   }, [theme])
 
   useEffect(() => {
     const map = mapRef.current
     if (!map) return
+
+    if (streetMarkerRef.current) {
+      streetMarkerRef.current.remove()
+      streetMarkerRef.current = null
+    }
+
     const data = street ?? EMPTY_STREET
     const run = () => {
       drawStreet(map, data, ACCENT[themeRef.current])
-      if (data.features.length) fitStreet(map, data)
+      if (data.features.length) {
+        fitStreet(map, data)
+
+        const mid = getStreetMidpoint(data)
+        const streetName = data.name || data.features[0]?.properties?.name
+        if (mid && streetName) {
+          const el = document.createElement("div")
+          el.className = "map-street-pill"
+          el.innerHTML = `<svg viewBox="0 0 256 256" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M224,120H136V40h40a8,8,0,0,0,0-16H80a8,8,0,0,0,0,16h40v80H32a8,8,0,0,0-5.66,13.66l24,24a8,8,0,0,0,11.32,0L78.34,136H120v80H104a8,8,0,0,0,0,16h48a8,8,0,0,0,0-16H136V136h72l16.68,16.68a8,8,0,0,0,11.32,0l24-24A8,8,0,0,0,224,120Z"/></svg><span>${esc(streetName)}</span>`
+          streetMarkerRef.current = new maplibregl.Marker({ element: el, anchor: "bottom" })
+            .setLngLat([mid.lng, mid.lat])
+            .addTo(map)
+        }
+      }
     }
     if (map.isStyleLoaded()) run()
     else map.once("style.load", run)

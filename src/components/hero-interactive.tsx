@@ -49,7 +49,7 @@ export function HeroInteractive({ children }: { children: React.ReactNode }) {
       </div>
 
       <div aria-hidden className="pointer-events-none absolute inset-0 z-20 rounded-[inherit] bg-gradient-to-t from-black/55 via-transparent to-transparent" />
-      <div className="relative z-30 flex min-h-[32rem] flex-col px-4 pb-5 pt-0 md:min-h-[max(780px,calc(100svh-1.5rem))] md:px-7 md:pb-16">
+      <div className="relative z-30 flex min-h-[26rem] flex-col px-4 pb-5 pt-0 md:min-h-[max(780px,calc(100svh-1.5rem))] md:px-7 md:pb-16">
         {children}
       </div>
     </div>

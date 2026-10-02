@@ -212,10 +212,10 @@ function NavSurface({
         <Link
           href="/ingresar"
           aria-label="Ingresar"
-          className="grid h-9 w-9 place-items-center rounded-full bg-fg text-bg transition hover:opacity-90 md:flex md:h-auto md:w-auto md:px-3.5 md:py-1.5"
+          className="inline-flex h-9 items-center gap-1.5 rounded-full bg-fg px-3 text-sm font-medium text-bg transition hover:opacity-90 md:h-auto md:w-auto md:px-3.5 md:py-1.5"
         >
           <SignIn weight="fill" className="h-4 w-4 md:hidden" aria-hidden />
-          <span className="hidden text-sm font-medium md:inline">Ingresar</span>
+          <span className="text-sm font-medium">Ingresar</span>
         </Link>
         <ThemeToggle className="h-9 w-9 bg-transparent shadow-none hover:bg-black/5 dark:bg-transparent dark:hover:bg-white/10" />
       </div>

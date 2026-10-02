@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
     try {
       let res = await fetch(url, { headers: { "User-Agent": UA } })
       if (res.ok) {
-        const parsed = linesFromNominatim(await res.json())
+        const parsed = linesFromNominatim(await res.json(), name)
         if (parsed.features.length > 0) {
           return NextResponse.json(parsed)
         }
@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
       fallbackUrl.searchParams.set("limit", "20")
       res = await fetch(fallbackUrl, { headers: { "User-Agent": UA } })
       if (res.ok) {
-        return NextResponse.json(linesFromNominatim(await res.json()))
+        return NextResponse.json(linesFromNominatim(await res.json(), name))
       }
     } catch {
       return NextResponse.json({ type: "FeatureCollection", features: [] }, { status: 502 })

@@ -143,7 +143,7 @@ export function ExploreClient({ properties }: { properties: Property[] }) {
                 </Link>
               </div>
             ) : (
-              <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-1">
+              <div className="-mx-3 -my-3 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-3 py-3">
                 {list.map((p) => (
                   <PropertyCard
                     key={p.id}
@@ -177,7 +177,7 @@ function FilterBar({
   const priceOk = priceControlsEnabled(filters)
 
   return (
-    <div className="flex w-fit max-w-full items-center gap-2 rounded-full bg-chrome px-2 py-1.5 text-fg shadow-[0_12px_40px_rgba(0,0,0,0.18)]">
+    <div className="mx-auto flex w-fit max-w-full items-center gap-2 rounded-full bg-chrome px-2 py-1.5 text-fg shadow-[0_12px_40px_rgba(0,0,0,0.18)]">
       <StreetSearch onStreet={onStreet} />
       <div className="flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto">
         {filters.agency ? (

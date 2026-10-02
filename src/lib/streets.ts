@@ -6,9 +6,10 @@ const MAX_KM = 15
 
 export type StreetLines = {
   type: "FeatureCollection"
+  name?: string
   features: {
     type: "Feature"
-    properties: Record<string, never>
+    properties: { name?: string }
     geometry: { type: "LineString"; coordinates: [number, number][] }
   }[]
 }
@@ -318,9 +319,10 @@ export function streetNamesFromPhoton(features: PhotonFeature[]): string[] {
   return names
 }
 
-export function linesFromNominatim(hits: NominatimHit[]): StreetLines {
+export function linesFromNominatim(hits: NominatimHit[], streetName?: string): StreetLines {
   return {
     type: "FeatureCollection",
+    name: streetName,
     features: hits.flatMap((hit) => {
       const geo = hit.geojson
       if (
@@ -335,7 +337,7 @@ export function linesFromNominatim(hits: NominatimHit[]): StreetLines {
       return [
         {
           type: "Feature" as const,
-          properties: {},
+          properties: { name: streetName },
           geometry: {
             type: "LineString" as const,
             coordinates: geo.coordinates as [number, number][],
@@ -344,4 +346,30 @@ export function linesFromNominatim(hits: NominatimHit[]): StreetLines {
       ]
     }),
   }
+}
+
+export function getStreetMidpoint(data: StreetLines): { lng: number; lat: number } | null {
+  const allCoords = data.features.flatMap((f) => f.geometry.coordinates)
+  if (!allCoords.length) return null
+
+  let sumLat = 0
+  let sumLng = 0
+  for (const [lng, lat] of allCoords) {
+    sumLat += lat
+    sumLng += lng
+  }
+  const avgLat = sumLat / allCoords.length
+  const avgLng = sumLng / allCoords.length
+
+  let closest = allCoords[0]
+  let minDist = Infinity
+  for (const coord of allCoords) {
+    const d = (coord[0] - avgLng) ** 2 + (coord[1] - avgLat) ** 2
+    if (d < minDist) {
+      minDist = d
+      closest = coord
+    }
+  }
+
+  return { lng: closest[0], lat: closest[1] }
 }

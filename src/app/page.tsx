@@ -56,8 +56,9 @@ export default async function HomePage() {
         <HeroInteractive>
           <LandingNav />
 
-          <div className="mt-auto max-w-sm pb-1 md:max-w-xl md:pb-5 md:pt-[28rem]">
-            <div className="animate-rise inline-flex items-center gap-2 rounded-full glass px-3.5 py-1.5 text-xs uppercase tracking-[0.2em] text-accent backdrop-blur">
+          <div className="mt-auto md:contents">
+          <div className="order-2 max-w-sm pb-1 md:order-1 md:mt-auto md:max-w-xl md:pb-5 md:pt-[28rem]">
+            <div className="animate-rise hidden items-center gap-2 rounded-full glass px-3.5 py-1.5 text-xs uppercase tracking-[0.2em] text-accent backdrop-blur md:inline-flex">
               <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
               San Carlos de Bolívar
             </div>
@@ -67,10 +68,10 @@ export default async function HomePage() {
             </p>
           </div>
 
-          <div className="mt-auto pt-4">
+          <div className="order-1 md:order-2 md:pt-3 lg:pt-4">
             <Link
               href="/propiedades"
-              className="animate-rise-delay mx-auto flex w-fit items-center gap-2.5 rounded-full bg-gold px-5 py-2 text-base font-medium text-gold-fg transition hover:bg-gold-muted md:mb-3"
+              className="animate-rise-delay mx-auto flex w-full max-w-xs items-center justify-center gap-2.5 rounded-full bg-gold px-7 py-3 text-lg font-medium text-gold-fg transition hover:bg-gold-muted md:mb-3 md:w-fit md:px-5 md:py-2 md:text-base"
             >
               <Compass weight="fill" className="h-5 w-5" aria-hidden />
               Explorar
@@ -78,6 +79,7 @@ export default async function HomePage() {
             <div className="hidden md:block">
               <HeroSearch />
             </div>
+          </div>
           </div>
         </HeroInteractive>
       </section>
