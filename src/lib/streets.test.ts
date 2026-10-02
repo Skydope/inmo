@@ -43,6 +43,16 @@ describe("linesFromNominatim", () => {
     expect(lines.features).toHaveLength(1)
     expect(lines.features[0].geometry.coordinates).toHaveLength(2)
   })
+
+  it("drops linestrings outside Bolivar municipality radius", () => {
+    const lines = linesFromNominatim([
+      {
+        category: "highway",
+        geojson: { type: "LineString", coordinates: [[-60.32, -36.87], [-60.33, -36.88]] },
+      },
+    ])
+    expect(lines.features).toHaveLength(0)
+  })
 })
 
 describe("filterBolivarStreets", () => {

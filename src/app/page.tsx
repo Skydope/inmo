@@ -56,19 +56,19 @@ export default async function HomePage() {
         <HeroInteractive>
           <LandingNav />
 
-          <div className="mt-auto md:contents">
-          <div className="order-2 max-w-sm pb-1 md:order-1 md:mt-auto md:max-w-xl md:pb-5 md:pt-[28rem]">
-            <div className="animate-rise hidden items-center gap-2 rounded-full glass px-3.5 py-1.5 text-xs uppercase tracking-[0.2em] text-accent backdrop-blur md:inline-flex">
+          <div className="mt-auto flex w-full flex-col items-center gap-5 md:contents">
+          <div className="flex max-w-sm flex-col items-center text-center md:mt-auto md:max-w-xl md:items-start md:pb-5 md:pt-[28rem] md:text-left">
+            <div className="animate-rise inline-flex items-center gap-2 rounded-full glass px-3.5 py-1.5 text-xs uppercase tracking-[0.2em] text-accent backdrop-blur">
               <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
               San Carlos de Bolívar
             </div>
-            <p className="animate-rise-delay mt-3 max-w-sm rounded-2xl bg-black/55 px-3 py-2 text-sm leading-relaxed text-white backdrop-blur-sm md:mt-4 md:max-w-md md:bg-transparent md:px-0 md:py-0 md:text-base md:text-white/90 md:backdrop-blur-none">
+            <p className="animate-rise-delay mt-3 max-w-xs text-sm leading-relaxed text-white/90 drop-shadow-[0_1px_10px_rgba(0,0,0,0.85)] md:mt-4 md:max-w-md md:text-base md:drop-shadow-none">
               {brandName} conecta venta y alquiler en Bolívar con mapa interactivo,
               filtros vivos y un catálogo con verdadero carácter de ciudad.
             </p>
           </div>
 
-          <div className="order-1 md:order-2 md:pt-3 lg:pt-4">
+          <div className="w-full md:w-auto md:pt-3 lg:pt-4">
             <Link
               href="/propiedades"
               className="animate-rise-delay mx-auto flex w-full max-w-xs items-center justify-center gap-2.5 rounded-full bg-gold px-7 py-3 text-lg font-medium text-gold-fg transition hover:bg-gold-muted md:mb-3 md:w-fit md:px-5 md:py-2 md:text-base"

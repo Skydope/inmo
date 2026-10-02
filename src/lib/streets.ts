@@ -334,13 +334,18 @@ export function linesFromNominatim(hits: NominatimHit[], streetName?: string): S
       ) {
         return []
       }
+      const coords = geo.coordinates as [number, number][]
+      const midCoord = coords[Math.floor(coords.length / 2)]
+      if (midCoord && haversineKm(BOLIVAR_CENTER, { lng: midCoord[0], lat: midCoord[1] }) > MAX_KM) {
+        return []
+      }
       return [
         {
           type: "Feature" as const,
           properties: { name: streetName },
           geometry: {
             type: "LineString" as const,
-            coordinates: geo.coordinates as [number, number][],
+            coordinates: coords,
           },
         },
       ]

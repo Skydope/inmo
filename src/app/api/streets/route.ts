@@ -11,37 +11,56 @@ const UA = "Inmo/bolivar (property map street search)"
 export async function GET(req: NextRequest) {
   const name = req.nextUrl.searchParams.get("name")?.trim() ?? ""
   if (name) {
-    const url = new URL("https://nominatim.openstreetmap.org/search")
-    url.searchParams.set("format", "jsonv2")
-    url.searchParams.set("street", name)
-    url.searchParams.set("city", "San Carlos de Bolivar")
-    url.searchParams.set("country", "Argentina")
-    url.searchParams.set("polygon_geojson", "1")
-    url.searchParams.set("dedupe", "0")
-    url.searchParams.set("limit", "20")
+    const candidates = [name]
+    const lower = name.toLowerCase()
+    if (!lower.startsWith("avenida ") && !lower.startsWith("av. ")) {
+      candidates.push(`Avenida ${name}`)
+    } else if (lower.startsWith("avenida ")) {
+      candidates.push(name.slice(8).trim())
+    }
+
     try {
-      let res = await fetch(url, { headers: { "User-Agent": UA } })
-      if (res.ok) {
-        const parsed = linesFromNominatim(await res.json(), name)
+      for (const cand of candidates) {
+        const url = new URL("https://nominatim.openstreetmap.org/search")
+        url.searchParams.set("format", "jsonv2")
+        url.searchParams.set("street", cand)
+        url.searchParams.set("city", "San Carlos de Bolivar")
+        url.searchParams.set("country", "Argentina")
+        url.searchParams.set("viewbox", "-61.20,-36.18,-61.02,-36.28")
+        url.searchParams.set("bounded", "1")
+        url.searchParams.set("polygon_geojson", "1")
+        url.searchParams.set("dedupe", "0")
+        url.searchParams.set("limit", "20")
+
+        const res = await fetch(url, { headers: { "User-Agent": UA } })
+        if (res.ok) {
+          const parsed = linesFromNominatim(await res.json(), name)
+          if (parsed.features.length > 0) {
+            return NextResponse.json(parsed)
+          }
+        }
+      }
+
+      // Fallback free-form query bounded to Bolívar
+      const fallbackUrl = new URL("https://nominatim.openstreetmap.org/search")
+      fallbackUrl.searchParams.set("format", "jsonv2")
+      fallbackUrl.searchParams.set("q", `${name}, San Carlos de Bolívar, Argentina`)
+      fallbackUrl.searchParams.set("viewbox", "-61.20,-36.18,-61.02,-36.28")
+      fallbackUrl.searchParams.set("bounded", "1")
+      fallbackUrl.searchParams.set("polygon_geojson", "1")
+      fallbackUrl.searchParams.set("dedupe", "0")
+      fallbackUrl.searchParams.set("limit", "20")
+      const fallbackRes = await fetch(fallbackUrl, { headers: { "User-Agent": UA } })
+      if (fallbackRes.ok) {
+        const parsed = linesFromNominatim(await fallbackRes.json(), name)
         if (parsed.features.length > 0) {
           return NextResponse.json(parsed)
         }
       }
-      // Fallback free-form query in case structured search missed it
-      const fallbackUrl = new URL("https://nominatim.openstreetmap.org/search")
-      fallbackUrl.searchParams.set("format", "jsonv2")
-      fallbackUrl.searchParams.set("q", `${name}, San Carlos de Bolívar, Argentina`)
-      fallbackUrl.searchParams.set("polygon_geojson", "1")
-      fallbackUrl.searchParams.set("dedupe", "0")
-      fallbackUrl.searchParams.set("limit", "20")
-      res = await fetch(fallbackUrl, { headers: { "User-Agent": UA } })
-      if (res.ok) {
-        return NextResponse.json(linesFromNominatim(await res.json(), name))
-      }
     } catch {
-      return NextResponse.json({ type: "FeatureCollection", features: [] }, { status: 502 })
+      return NextResponse.json({ type: "FeatureCollection", name, features: [] }, { status: 502 })
     }
-    return NextResponse.json({ type: "FeatureCollection", features: [] })
+    return NextResponse.json({ type: "FeatureCollection", name, features: [] })
   }
 
   const q = req.nextUrl.searchParams.get("q")?.trim() ?? ""

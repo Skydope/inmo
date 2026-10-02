@@ -50,19 +50,61 @@ function fitStreet(map: MapLibreMap, data: StreetLines) {
   }
   if (bounds.isEmpty()) return
   const h = map.getContainer().clientHeight || 640
-  map.fitBounds(bounds, {
-    padding: {
-      top: 60,
-      bottom: Math.min(160, Math.round(h * 0.22)),
-      left: 40,
-      right: 40,
-    },
-    pitch: 24,
+  const pad = {
+    top: 60,
+    bottom: Math.min(160, Math.round(h * 0.22)),
+    left: 40,
+    right: 40,
+  }
+  const cam = map.cameraForBounds(bounds, {
+    padding: pad,
     bearing: MAP_BEARING,
-    minZoom: 14.8,
     maxZoom: 16.2,
-    duration: 700,
   })
+  if (cam && typeof cam.zoom === "number") {
+    map.easeTo({
+      center: cam.center,
+      zoom: Math.max(14.8, Math.min(16.2, cam.zoom)),
+      pitch: 24,
+      bearing: MAP_BEARING,
+      duration: 700,
+    })
+  } else {
+    const mid = getStreetMidpoint(data)
+    if (mid) {
+      map.easeTo({
+        center: [mid.lng, mid.lat],
+        zoom: 15.5,
+        pitch: 24,
+        bearing: MAP_BEARING,
+        duration: 700,
+      })
+    }
+  }
+}
+
+function updateStreetMarker(
+  map: MapLibreMap,
+  data: StreetLines | null,
+  markerRef: React.MutableRefObject<Marker | null>,
+) {
+  if (markerRef.current) {
+    markerRef.current.remove()
+    markerRef.current = null
+  }
+  if (!data?.features.length) return
+
+  const mid = getStreetMidpoint(data)
+  const streetName = data.name || data.features[0]?.properties?.name
+  if (!mid || !streetName) return
+
+  const el = document.createElement("div")
+  el.className = "map-street-marker"
+  el.innerHTML = `<div class="map-street-pill"><svg viewBox="0 0 256 256" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M224,120H136V40h40a8,8,0,0,0,0-16H80a8,8,0,0,0,0,16h40v80H32a8,8,0,0,0-5.66,13.66l24,24a8,8,0,0,0,11.32,0L78.34,136H120v80H104a8,8,0,0,0,0,16h48a8,8,0,0,0,0-16H136V136h72l16.68,16.68a8,8,0,0,0,11.32,0l24-24A8,8,0,0,0,224,120Z"/></svg><span>${esc(streetName)}</span></div>`
+
+  markerRef.current = new maplibregl.Marker({ element: el, anchor: "bottom" })
+    .setLngLat([mid.lng, mid.lat])
+    .addTo(map)
 }
 
 /** Small filled glyphs in the Phosphor house / buildings / polygon family. */
@@ -275,18 +317,7 @@ export function PropertyMap({
     map.once("style.load", () => {
       lockBarrios(map)
       drawStreet(map, streetRef.current ?? EMPTY_STREET, ACCENT[theme])
-      if (streetRef.current?.features.length && !streetMarkerRef.current) {
-        const mid = getStreetMidpoint(streetRef.current)
-        const streetName = streetRef.current.name || streetRef.current.features[0]?.properties?.name
-        if (mid && streetName) {
-          const el = document.createElement("div")
-          el.className = "map-street-pill"
-          el.innerHTML = `<svg viewBox="0 0 256 256" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M224,120H136V40h40a8,8,0,0,0,0-16H80a8,8,0,0,0,0,16h40v80H32a8,8,0,0,0-5.66,13.66l24,24a8,8,0,0,0,11.32,0L78.34,136H120v80H104a8,8,0,0,0,0,16h48a8,8,0,0,0,0-16H136V136h72l16.68,16.68a8,8,0,0,0,11.32,0l24-24A8,8,0,0,0,224,120Z"/></svg><span>${esc(streetName)}</span>`
-          streetMarkerRef.current = new maplibregl.Marker({ element: el, anchor: "bottom" })
-            .setLngLat([mid.lng, mid.lat])
-            .addTo(map)
-        }
-      }
+      updateStreetMarker(map, streetRef.current, streetMarkerRef)
     })
   }, [theme])
 
@@ -294,28 +325,13 @@ export function PropertyMap({
     const map = mapRef.current
     if (!map) return
 
-    if (streetMarkerRef.current) {
-      streetMarkerRef.current.remove()
-      streetMarkerRef.current = null
-    }
-
     const data = street ?? EMPTY_STREET
     const run = () => {
       drawStreet(map, data, ACCENT[themeRef.current])
       if (data.features.length) {
         fitStreet(map, data)
-
-        const mid = getStreetMidpoint(data)
-        const streetName = data.name || data.features[0]?.properties?.name
-        if (mid && streetName) {
-          const el = document.createElement("div")
-          el.className = "map-street-pill"
-          el.innerHTML = `<svg viewBox="0 0 256 256" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M224,120H136V40h40a8,8,0,0,0,0-16H80a8,8,0,0,0,0,16h40v80H32a8,8,0,0,0-5.66,13.66l24,24a8,8,0,0,0,11.32,0L78.34,136H120v80H104a8,8,0,0,0,0,16h48a8,8,0,0,0,0-16H136V136h72l16.68,16.68a8,8,0,0,0,11.32,0l24-24A8,8,0,0,0,224,120Z"/></svg><span>${esc(streetName)}</span>`
-          streetMarkerRef.current = new maplibregl.Marker({ element: el, anchor: "bottom" })
-            .setLngLat([mid.lng, mid.lat])
-            .addTo(map)
-        }
       }
+      updateStreetMarker(map, street ?? null, streetMarkerRef)
     }
     if (map.isStyleLoaded()) run()
     else map.once("style.load", run)

@@ -368,6 +368,7 @@ function StreetSearch({ onStreet }: { onStreet: (lines: StreetLines | null) => v
     try {
       const res = await fetch(`/api/streets?name=${encodeURIComponent(name)}`)
       const data = (await res.json()) as StreetLines
+      data.name = data.name || name
       onStreet(data.features?.length ? data : null)
     } catch {
       onStreet(null)

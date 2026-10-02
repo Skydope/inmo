@@ -271,6 +271,21 @@ textarea:focus-visible,
   animation: soft-pulse 2.4s ease-in-out infinite;
 }
 
+@keyframes nav-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-nav-drop {
+  animation: nav-drop 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 /* MapLibre attribution stays visible (legal). */
 .maplibregl-ctrl-attrib {
   background: rgba(26, 26, 26, 0.82) !important;
@@ -378,6 +393,11 @@ textarea:focus-visible,
   border-top: 6px solid #1a1a1a;
 }
 
+.map-street-marker {
+  pointer-events: none;
+  z-index: 10;
+}
+
 .map-street-pill {
   position: relative;
   display: inline-flex;
@@ -393,12 +413,10 @@ textarea:focus-visible,
   letter-spacing: -0.01em;
   white-space: nowrap;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.32);
-  transform: translate(-50%, -100%);
   pointer-events: none;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  z-index: 8;
-  animation: rise-in 0.3s ease-out both;
+  margin-bottom: 8px;
 }
 
 .map-street-pill svg {
@@ -477,20 +495,26 @@ textarea:focus-visible,
   color: #f3efe6;
 }
 
-/* Keep the editable title in the sky, with its lower edge behind the roof. */
+/* Mobile: the roof crosses the word near 43% of the photo. Pin the bottom of
+   Bolívar just under that line so the letters stay readable and only the
+   lower edge sits behind the house. */
 .hero-depth-title {
   position: absolute;
-  top: 4.5rem;
-  left: 0.25rem;
-  width: calc(100% - 0.5rem);
-  font-size: clamp(3.25rem, 17vw, 5.75rem);
+  bottom: 56%;
+  left: 0;
+  width: 100%;
+  padding-inline: 1.25rem;
+  text-align: center;
+  font-size: clamp(3.25rem, 16vw, 5.75rem);
 }
 
 @media (min-width: 768px) {
   .hero-depth-title {
     top: calc(50% - 0.95em - 3.25rem);
+    bottom: auto;
     left: 8%;
     width: 84%;
+    text-align: left;
     font-size: clamp(8rem, 17vw, 20rem);
   }
 }

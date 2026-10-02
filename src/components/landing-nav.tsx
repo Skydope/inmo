@@ -5,11 +5,14 @@ import { Suspense, useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { usePathname, useSearchParams } from "next/navigation"
 import {
+  Bed,
   BuildingApartment,
+  Buildings,
   CaretDown,
   House,
+  Key,
   List,
-  SignIn,
+  Tag,
   Tree,
   X,
 } from "@phosphor-icons/react"
@@ -19,8 +22,8 @@ import { cn } from "@/lib/utils"
 export type NavParams = { op: string | null; type: string | null }
 
 const OPERATIONS = [
-  { op: "sale", label: "Comprar" },
-  { op: "rent", label: "Alquilar" },
+  { op: "sale", label: "Comprar", Icon: Tag },
+  { op: "rent", label: "Alquilar", Icon: Key },
 ] as const
 
 const MARKETS = [
@@ -30,8 +33,8 @@ const MARKETS = [
 ] as const
 
 const EXTRA_LINKS = [
-  { href: "/propiedades?op=temporary", label: "Hoteles" },
-  { href: "/inmobiliarias", label: "Inmobiliarias" },
+  { href: "/propiedades?op=temporary", label: "Hoteles", Icon: Bed },
+  { href: "/inmobiliarias", label: "Inmobiliarias", Icon: Buildings },
 ] as const
 
 /** Pins once the sheet has covered a hero header, or a plain header has scrolled off. */
@@ -104,7 +107,7 @@ function Bar({ params }: { params: NavParams }) {
   )
 
   return (
-    <div ref={anchorRef}>
+    <div ref={anchorRef} className={pinned ? "max-md:invisible" : undefined} aria-hidden={pinned || undefined}>
       {surface(false)}
       {pinned ? createPortal(surface(true), document.body) : null}
     </div>
@@ -130,32 +133,51 @@ function NavSurface({
     <div
       className={cn(
         bar
-          ? "fixed inset-x-0 top-0 z-50 flex items-center justify-between border-b border-black/10 bg-bg-elevated px-3 py-2 shadow-[0_8px_24px_rgba(0,0,0,0.12)] dark:border-white/10"
-          : "relative flex items-start justify-between",
+          ? "fixed inset-x-0 top-0 z-50 animate-nav-drop border-b border-glass-border bg-chrome px-6 py-2 shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
+          : "relative flex items-start justify-between max-md:block",
       )}
     >
-      <div className={cn("relative z-10 flex items-center", !bar && "nav-tab")}>
-        <button
-          type="button"
-          onClick={onToggle}
-          aria-expanded={open}
-          aria-controls="landing-nav-menu"
-          aria-label={open ? "Cerrar menú" : "Abrir menú"}
-          className="rounded-full p-2 transition hover:bg-black/5 md:hidden dark:hover:bg-white/10"
-        >
-          {open ? (
-            <X weight="bold" className="h-4 w-4" aria-hidden />
-          ) : (
-            <List weight="bold" className="h-4 w-4" aria-hidden />
-          )}
-        </button>
-        <Link
-          href="/"
-          aria-label="Inicio"
-          className={cn("flex items-center", bar ? "p-2" : "px-3.5 py-2.5 md:px-4 md:py-3")}
-        >
-          <House weight="fill" className="h-5 w-5" aria-hidden />
-        </Link>
+      <Link
+        href="/"
+        aria-label="Inicio"
+        className="nav-tab relative z-10 hidden items-center px-3.5 py-2.5 md:flex md:px-4 md:py-3"
+      >
+        <House weight="fill" className="h-5 w-5" aria-hidden />
+      </Link>
+
+      <div className={cn("flex items-center justify-between px-1.5 md:hidden", !bar && "nav-tab w-full py-1")}>
+        <div className="flex items-center">
+          <button
+            type="button"
+            onClick={onToggle}
+            aria-expanded={open}
+            aria-controls="landing-nav-menu"
+            aria-label={open ? "Cerrar menú" : "Abrir menú"}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full transition hover:bg-black/5 dark:hover:bg-white/10"
+          >
+            {open ? (
+              <X weight="bold" className="h-5 w-5" aria-hidden />
+            ) : (
+              <List weight="bold" className="h-5 w-5" aria-hidden />
+            )}
+          </button>
+          <Link
+            href="/"
+            aria-label="Inicio"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full"
+          >
+            <House weight="fill" className="h-5 w-5" aria-hidden />
+          </Link>
+        </div>
+        <div className="flex items-center gap-1">
+          <Link
+            href="/ingresar"
+            className="inline-flex h-9 items-center rounded-full bg-fg px-3.5 text-sm font-medium text-bg transition hover:opacity-90"
+          >
+            Ingresar
+          </Link>
+          <ThemeToggle className="h-9 w-9 bg-transparent shadow-none hover:bg-black/5 dark:bg-transparent dark:hover:bg-white/10" />
+        </div>
       </div>
 
       <nav
@@ -205,17 +227,16 @@ function NavSurface({
 
       <div
         className={cn(
-          "relative z-10 flex items-center gap-1 text-sm",
+          "relative z-10 flex items-center gap-1 text-sm max-md:hidden",
           !bar && "nav-tab px-2 py-1.5 md:px-2.5 md:py-2",
         )}
       >
         <Link
           href="/ingresar"
           aria-label="Ingresar"
-          className="inline-flex h-9 items-center gap-1.5 rounded-full bg-fg px-3 text-sm font-medium text-bg transition hover:opacity-90 md:h-auto md:w-auto md:px-3.5 md:py-1.5"
+          className="inline-flex items-center rounded-full bg-fg px-3.5 py-1.5 text-sm font-medium text-bg transition hover:opacity-90"
         >
-          <SignIn weight="fill" className="h-4 w-4 md:hidden" aria-hidden />
-          <span className="text-sm font-medium">Ingresar</span>
+          Ingresar
         </Link>
         <ThemeToggle className="h-9 w-9 bg-transparent shadow-none hover:bg-black/5 dark:bg-transparent dark:hover:bg-white/10" />
       </div>
@@ -224,13 +245,14 @@ function NavSurface({
         <nav
           id="landing-nav-menu"
           aria-label="Menú móvil"
-          className="absolute left-0 top-full z-20 mt-2 flex w-max max-w-[calc(100vw-1.5rem)] flex-col items-stretch gap-0.5 rounded-card bg-chrome p-1.5 text-sm shadow-[0_12px_40px_rgba(0,0,0,0.22)] md:hidden"
+          className="absolute inset-x-0 top-full z-20 mt-2 flex flex-col items-stretch gap-0.5 rounded-card bg-chrome p-1.5 text-sm shadow-[0_12px_40px_rgba(0,0,0,0.22)] md:hidden"
         >
           {OPERATIONS.map((operation) => (
             <div key={operation.op} className="flex flex-col gap-0.5">
               <NavLink
                 href={`/propiedades?op=${operation.op}`}
                 label={operation.label}
+                Icon={operation.Icon}
                 pathname={pathname}
                 params={params}
                 onClick={onNavigate}
@@ -254,6 +276,7 @@ function NavSurface({
               key={l.href}
               href={l.href}
               label={l.label}
+              Icon={l.Icon}
               pathname={pathname}
               params={params}
               onClick={onNavigate}

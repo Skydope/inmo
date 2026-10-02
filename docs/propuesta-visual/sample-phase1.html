@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inmo · Muestra visual de la propuesta</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="review-bar" aria-label="Vista de revisión">
+    <span><strong>INMO</strong> / Propuesta · muestra visual 01</span>
+    <span>Portada + página interior <button onclick="window.print()">Guardar PDF</button></span>
+  </nav>
+  <main>
+    <section class="page cover" aria-label="Portada">
+      <header class="masthead">
+        <span class="wordmark">{{icon:House}} inmo<span class="dot">.</span></span>
+        <span class="eyebrow">SAN CARLOS DE BOLÍVAR<br>PROPUESTA · OCTUBRE 2026</span>
+      </header>
+      <div class="cover-copy">
+        <p class="eyebrow gold">UNA PLATAFORMA LOCAL</p>
+        <h1>Un solo lugar<br>para las propiedades<br>de <em>Bolívar.</em></h1>
+        <p class="lede">Una plataforma local que reúne la oferta de las inmobiliarias de la ciudad y lleva cada consulta directo al profesional responsable.</p>
+      </div>
+      <figure class="desktop-figure">
+        <div class="macbook" role="img" aria-label="Captura real de la portada web de Inmo en un mockup de MacBook">
+          <div class="mac-screen"><div class="camera"></div><img src="assets/web-desktop.jpg" alt="Portada actual de Inmo: Viví Bolívar, navegación y buscador de propiedades"></div>
+          <div class="mac-base"><span></span></div>
+        </div>
+        <figcaption>La plataforma, desde la computadora.</figcaption>
+      </figure>
+      <div class="cover-meta">
+        <div><p class="eyebrow">PRESENTACIÓN PARA</p><p>Inmobiliarias y<br>Centro de Martilleros</p></div>
+        <div><p class="eyebrow">IMPULSAN EL PROYECTO</p><p>Matías Asin · Manuel Alejandro García<br>Augusto Natiello</p></div>
+      </div>
+      <footer class="page-footer"><span>PLATAFORMA INMOBILIARIA BOLÍVAR</span><span>01</span></footer>
+    </section>
+
+    <section class="page interior" aria-label="La propuesta">
+      <header class="masthead"><span class="wordmark">{{icon:House}} inmo<span class="dot">.</span></span><span class="eyebrow">02 / LA PROPUESTA</span></header>
+      <h2>Todas las propiedades<br>de la ciudad, en<br><em>un mismo lugar.</em></h2>
+      <p class="intro">Una plataforma web para usar desde el celular o la computadora, sin descargar nada. Funciona sobre cinco ideas:</p>
+      <div class="product-layout">
+        <div class="features">
+          <article><span class="feature-icon">{{icon:House}}</span><div><h3>Catálogo común</h3><p>Casas, departamentos, terrenos, campos, locales y quintas de todas las inmobiliarias, con filtros.</p></div></article>
+          <article><span class="feature-icon">{{icon:MapPin}}</span><div><h3>Mapa de Bolívar</h3><p>Recorrer la ciudad y ver qué hay disponible en cada zona.</p></div></article>
+          <article><span class="feature-icon">{{icon:Images}}</span><div><h3>Fichas completas</h3><p>Fotos, videos, ubicación, precio, características y profesional responsable.</p></div></article>
+          <article><span class="feature-icon">{{icon:Buildings}}</span><div><h3>Vidriera por inmobiliaria</h3><p>Perfil propio con logo, contacto y todas sus propiedades.</p></div></article>
+          <article><span class="feature-icon">{{icon:WhatsappLogo}}</span><div><h3>Contacto directo</h3><p>WhatsApp, teléfono o formulario con la inmobiliaria. La operación sigue siendo suya.</p></div></article>
+        </div>
+        <figure class="mobile-figure">
+          <div class="iphone" role="img" aria-label="Captura real del mapa de Inmo en un mockup de iPhone">
+            <div class="phone-top"><span>9:41</span><span class="phone-signals">▮▮▮ ▰</span></div>
+            <div class="island"></div>
+            <div class="map-capture"><img src="assets/web-mobile-map.png" alt="Mapa móvil de Bolívar: calles alrededor de Plaza Alsina y Plaza Mitre, precios y tarjetas de propiedades"></div>
+            <div class="phone-bottom"><span></span></div>
+          </div>
+          <figcaption>Mapa de Bolívar · versión móvil<br><span>Captura de la aplicación con datos de ejemplo.</span></figcaption>
+        </figure>
+      </div>
+      <aside class="statement"><span>{{icon:ArrowUpRight}}</span><div><p class="eyebrow">CONTACTO DIRECTO</p><p>El cliente queda<br>en la inmobiliaria.</p></div></aside>
+      <footer class="page-footer"><span>PLATAFORMA INMOBILIARIA BOLÍVAR</span><span>02</span></footer>
+    </section>
+  </main>
+</body>
+</html>

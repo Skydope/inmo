@@ -33,8 +33,8 @@ export function HeroInteractive({ children }: { children: React.ReactNode }) {
 
       <div className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-[inherit]">
         <h1 className="hero-depth-title font-display uppercase text-fg transition-colors duration-[1200ms]">
-          <span className="relative top-2 block text-left text-[0.42em] leading-none tracking-[0.14em] md:-top-6 md:text-center md:text-[0.34em] md:tracking-[0.16em]">Viví</span>
-          <span className="mt-2 block text-left leading-[0.86] tracking-[-0.055em] md:mt-[calc(0.04em+1.25rem)] md:text-center">Bolívar</span>
+          <span className="relative block text-center text-[0.34em] leading-[1.45] tracking-[0.2em] md:-top-6 md:text-[0.34em] md:leading-none md:tracking-[0.16em]">Viví</span>
+          <span className="mt-3 block text-center leading-[0.88] tracking-[-0.04em] md:mt-[calc(0.04em+1.25rem)] md:leading-[0.86] md:tracking-[-0.055em]">Bolívar</span>
         </h1>
       </div>
 
@@ -49,7 +49,7 @@ export function HeroInteractive({ children }: { children: React.ReactNode }) {
       </div>
 
       <div aria-hidden className="pointer-events-none absolute inset-0 z-20 rounded-[inherit] bg-gradient-to-t from-black/55 via-transparent to-transparent" />
-      <div className="relative z-30 flex min-h-[26rem] flex-col px-4 pb-5 pt-0 md:min-h-[max(780px,calc(100svh-1.5rem))] md:px-7 md:pb-16">
+      <div className="relative z-30 flex min-h-[calc(100svh-1rem)] flex-col px-4 pb-28 pt-0 md:min-h-[max(780px,calc(100svh-1.5rem))] md:px-7 md:pb-16">
         {children}
       </div>
     </div>
