@@ -1,5 +1,5 @@
 /** Single rename point when brand is finalized. */
-export const brandName = "Inmo"
+export const brandName = "Inmu"
 
 export const BOLIVAR_CENTER = {
   lat: -36.2308,

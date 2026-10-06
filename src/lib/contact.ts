@@ -1,4 +1,4 @@
-import type { Property } from "@/lib/properties/types"
+import type { Agency } from "@/lib/agencies/types"
 
 export type ContactLink = {
   href: string
@@ -7,7 +7,7 @@ export type ContactLink = {
 }
 
 /** Prefer wa.me (intl/mobile) → tel → mailto; never a dead button. */
-export function contactLinkFor(agency: Property["agency"]): ContactLink {
+export function contactLinkFor(agency: Agency): ContactLink {
   const raw = agency.phone?.trim()
   const phone = raw?.replace(/\D/g, "")
   if (phone) {

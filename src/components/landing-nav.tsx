@@ -4,37 +4,17 @@ import Link from "next/link"
 import { Suspense, useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { usePathname, useSearchParams } from "next/navigation"
-import {
-  Bed,
-  BuildingApartment,
-  Buildings,
-  CaretDown,
-  House,
-  Key,
-  List,
-  Tag,
-  Tree,
-  X,
-} from "@phosphor-icons/react"
+import { House, List, X } from "@phosphor-icons/react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { cn } from "@/lib/utils"
 
 export type NavParams = { op: string | null; type: string | null }
 
-const OPERATIONS = [
-  { op: "sale", label: "Comprar", Icon: Tag },
-  { op: "rent", label: "Alquilar", Icon: Key },
-] as const
-
-const MARKETS = [
-  { type: "house", label: "Casas", Icon: House },
-  { type: "apartment", label: "Departamentos", Icon: BuildingApartment },
-  { type: "lot", label: "Terrenos", Icon: Tree },
-] as const
-
-const EXTRA_LINKS = [
-  { href: "/propiedades?op=temporary", label: "Hoteles", Icon: Bed },
-  { href: "/inmobiliarias", label: "Inmobiliarias", Icon: Buildings },
+const LINKS = [
+  { href: "/propiedades?op=sale", label: "Comprar" },
+  { href: "/propiedades?op=rent", label: "Alquilar" },
+  { href: "/propiedades?op=temporary", label: "Temporal" },
+  { href: "/inmobiliarias", label: "Inmobiliarias" },
 ] as const
 
 /** Pins once the sheet has covered a hero header, or a plain header has scrolled off. */
@@ -184,37 +164,7 @@ function NavSurface({
         aria-label="Principal"
         className="nav-tab absolute left-1/2 top-0 z-10 hidden -translate-x-1/2 items-center gap-1 px-2 py-2.5 text-sm md:flex"
       >
-        {OPERATIONS.map((operation) => (
-          <div key={operation.op} className="group relative">
-            <NavLink
-              href={`/propiedades?op=${operation.op}`}
-              label={operation.label}
-              pathname={pathname}
-              params={params}
-            >
-              <CaretDown
-                weight="fill"
-                className="h-3 w-3 opacity-60 transition group-hover:rotate-180"
-                aria-hidden
-              />
-            </NavLink>
-            <div className="invisible absolute left-0 top-full z-20 pt-2 opacity-0 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-              <div className="flex min-w-48 flex-col gap-0.5 rounded-card bg-chrome p-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.22)]">
-                {MARKETS.map((market) => (
-                  <NavLink
-                    key={market.type}
-                    href={`/propiedades?op=${operation.op}&type=${market.type}`}
-                    label={market.label}
-                    Icon={market.Icon}
-                    pathname={pathname}
-                    params={params}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        ))}
-        {EXTRA_LINKS.map((l) => (
+        {LINKS.map((l) => (
           <NavLink
             key={l.href}
             href={l.href}
@@ -247,36 +197,11 @@ function NavSurface({
           aria-label="Menú móvil"
           className="absolute inset-x-0 top-full z-20 mt-2 flex flex-col items-stretch gap-0.5 rounded-card bg-chrome p-1.5 text-sm shadow-[0_12px_40px_rgba(0,0,0,0.22)] md:hidden"
         >
-          {OPERATIONS.map((operation) => (
-            <div key={operation.op} className="flex flex-col gap-0.5">
-              <NavLink
-                href={`/propiedades?op=${operation.op}`}
-                label={operation.label}
-                Icon={operation.Icon}
-                pathname={pathname}
-                params={params}
-                onClick={onNavigate}
-              />
-              {MARKETS.map((market) => (
-                <NavLink
-                  key={market.type}
-                  href={`/propiedades?op=${operation.op}&type=${market.type}`}
-                  label={market.label}
-                  Icon={market.Icon}
-                  pathname={pathname}
-                  params={params}
-                  onClick={onNavigate}
-                  sub
-                />
-              ))}
-            </div>
-          ))}
-          {EXTRA_LINKS.map((l) => (
+          {LINKS.map((l) => (
             <NavLink
               key={l.href}
               href={l.href}
               label={l.label}
-              Icon={l.Icon}
               pathname={pathname}
               params={params}
               onClick={onNavigate}
@@ -291,21 +216,15 @@ function NavSurface({
 function NavLink({
   href,
   label,
-  Icon,
   pathname,
   params,
   onClick,
-  sub,
-  children,
 }: {
   href: string
   label: string
-  Icon?: React.ComponentType<{ weight?: "fill"; className?: string }>
   pathname: string
   params: NavParams
   onClick?: () => void
-  sub?: boolean
-  children?: React.ReactNode
 }) {
   const active = navItemActive(href, pathname, params)
   return (
@@ -314,16 +233,11 @@ function NavLink({
       aria-current={active ? "page" : undefined}
       onClick={onClick}
       className={cn(
-        "flex items-center gap-2 rounded-full transition",
-        sub ? "py-1.5 pl-6 pr-4" : "px-3.5 py-1.5",
+        "flex items-center gap-2 rounded-full px-3.5 py-1.5 transition",
         active ? "bg-fg text-bg" : "hover:bg-black/5 dark:hover:bg-white/10",
       )}
     >
-      {Icon ? (
-        <Icon weight="fill" className="h-4 w-4 shrink-0" aria-hidden />
-      ) : null}
       <span className="flex-1 whitespace-nowrap">{label}</span>
-      {children}
     </Link>
   )
 }

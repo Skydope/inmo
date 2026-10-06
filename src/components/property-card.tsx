@@ -1,12 +1,11 @@
 "use client"
 
 import Link from "next/link"
-import { Envelope, MapPin, Phone, WhatsappLogo } from "@phosphor-icons/react"
+import { Envelope, Phone, WhatsappLogo } from "@phosphor-icons/react"
 import { CoverImage } from "@/components/cover-image"
 import { contactLinkFor } from "@/lib/contact"
-import { formatDistanceKm } from "@/lib/geo"
 import { formatPrice, typeLabel } from "@/lib/format"
-import type { PropertyWithDistance } from "@/lib/properties/types"
+import type { Property } from "@/lib/properties/types"
 import { cn } from "@/lib/utils"
 
 export function PropertyCard({
@@ -16,7 +15,7 @@ export function PropertyCard({
   onSelect,
   id,
 }: {
-  property: PropertyWithDistance
+  property: Property
   selected?: boolean
   onHover?: (id: string | null) => void
   onSelect?: (id: string) => void
@@ -29,13 +28,23 @@ export function PropertyCard({
   return (
     <article
       id={id}
+      role="button"
+      tabIndex={0}
+      aria-selected={Boolean(selected)}
+      aria-label={`${property.title}, ${formatPrice(property.price, property.currency)}`}
       className={cn(
-        "w-[17.5rem] shrink-0 snap-start overflow-hidden rounded-card bg-bg-elevated shadow-[0_12px_40px_rgba(0,0,0,0.28)] transition",
+        "w-[17.5rem] shrink-0 snap-start overflow-hidden rounded-card bg-bg-elevated shadow-[0_12px_40px_rgba(0,0,0,0.28)] transition cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-accent",
         selected && "ring-2 ring-fg",
       )}
       onMouseEnter={() => onHover?.(property.id)}
       onMouseLeave={() => onHover?.(null)}
       onClick={() => onSelect?.(property.id)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault()
+          onSelect?.(property.id)
+        }
+      }}
     >
       <div className="relative aspect-[5/3] overflow-hidden">
         <CoverImage
@@ -64,16 +73,7 @@ export function PropertyCard({
               {property.baths} baño{property.baths === 1 ? "" : "s"}
             </span>
           ) : null}
-          <span className="rounded-full bg-fg px-2 py-0.5 text-[11px] text-bg">
-            {property.areaM2} m²
-          </span>
         </div>
-        {property.distanceKm !== undefined ? (
-          <p className="inline-flex items-center gap-1 text-[11px] text-fg-muted">
-            <MapPin weight="fill" className="h-3.5 w-3.5" aria-hidden />
-            {formatDistanceKm(property.distanceKm)}
-          </p>
-        ) : null}
         <div className="flex items-center gap-2 pt-0.5">
           <Link
             href={`/propiedades/${property.id}`}
@@ -85,7 +85,7 @@ export function PropertyCard({
           <a
             href={contact.href}
             target={contact.kind === "whatsapp" ? "_blank" : undefined}
-            rel={contact.kind === "whatsapp" ? "noreferrer" : undefined}
+            rel={contact.kind === "whatsapp" ? "noopener noreferrer" : undefined}
             className="inline-flex items-center gap-1 rounded-full px-2 py-1.5 text-xs text-fg hover:bg-black/5 dark:hover:bg-white/10"
             onClick={(e) => e.stopPropagation()}
           >

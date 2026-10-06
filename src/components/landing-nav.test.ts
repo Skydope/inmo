@@ -16,6 +16,7 @@ describe("navItemActive", () => {
   it("marks the matching operation, ignoring type when the link has none", () => {
     expect(navItemActive("/propiedades?op=sale", "/propiedades", params("sale"))).toBe(true)
     expect(navItemActive("/propiedades?op=sale", "/propiedades", params("rent"))).toBe(false)
+    expect(navItemActive("/propiedades?op=rent", "/propiedades", params("rent"))).toBe(true)
     expect(navItemActive("/propiedades?op=temporary", "/propiedades", params("temporary"))).toBe(true)
     expect(navItemActive("/inmobiliarias", "/inmobiliarias", params(null))).toBe(true)
     expect(navItemActive("/propiedades?op=sale", "/propiedades/bol-01", params("sale"))).toBe(false)

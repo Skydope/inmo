@@ -7,6 +7,7 @@ export type MarkerAction =
   | { type: "select"; id: string }
   | { type: "expand"; id: string }
   | { type: "collapse" }
+  | { type: "deselect" }
   | { type: "hover-card"; id: string | null }
 
 /** Single expanded marker; selection shared with list highlight. */
@@ -29,6 +30,8 @@ export function markerReducer(
       }
     case "collapse":
       return { ...state, expandedId: null }
+    case "deselect":
+      return { expandedId: null, selectedId: null }
     default:
       return state
   }
@@ -37,4 +40,18 @@ export function markerReducer(
 export const initialMarkerState: MarkerState = {
   expandedId: null,
   selectedId: null,
+}
+
+/** Keep MapLibre's positioning classes when the pin opens or closes. */
+export function markerElementClass(
+  current: string,
+  type: string,
+  selected: boolean,
+  expanded: boolean,
+) {
+  const lib = current.split(/\s+/).filter((name) => name.startsWith("maplibregl-"))
+  const own = ["map-pin", `is-${type}`]
+  if (selected) own.push("is-selected")
+  if (expanded) own.push("is-open")
+  return [...own, ...lib].join(" ")
 }

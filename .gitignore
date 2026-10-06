@@ -43,3 +43,8 @@ next-env.d.ts
 # docs de trabajo (referencias y spec inicial)
 /docs/references/
 /docs/spec-alcance-v1.md
+
+# tooling de agentes (skill local, binario compilado y screenshots del tool)
+/.agents/
+/.cursor/
+/.impeccable/

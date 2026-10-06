@@ -6,6 +6,7 @@ describe("contactLinkFor", () => {
     const link = contactLinkFor({
       name: "Agencia",
       logoUrl: "",
+      address: "",
       phone: "5492281421101",
     })
     expect(link.kind).toBe("whatsapp")
@@ -16,6 +17,7 @@ describe("contactLinkFor", () => {
     const link = contactLinkFor({
       name: "Agencia",
       logoUrl: "",
+      address: "",
       phone: "2281443322",
     })
     expect(link.kind).toBe("tel")
@@ -26,6 +28,7 @@ describe("contactLinkFor", () => {
     const link = contactLinkFor({
       name: "Agencia",
       logoUrl: "",
+      address: "",
       email: "hola@demo.local",
     })
     expect(link.kind).toBe("mailto")

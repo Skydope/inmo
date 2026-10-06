@@ -6,7 +6,7 @@ import {
   priceControlsEnabled,
 } from "@/lib/filters"
 import { SEED_PROPERTIES } from "@/lib/properties/seed"
-import { BOLIVAR_CENTER } from "@/lib/brand"
+import type { Property } from "@/lib/properties/types"
 
 describe("parseFilters / URL-state", () => {
   it("parses known query keys", () => {
@@ -35,6 +35,31 @@ describe("parseFilters / URL-state", () => {
 
   it("parses the temporary operation", () => {
     expect(parseFilters(new URLSearchParams("op=temporary")).op).toBe("temporary")
+  })
+
+  it("parses the extended property types", () => {
+    expect(parseFilters(new URLSearchParams("type=ph")).type).toBe("ph")
+    expect(parseFilters(new URLSearchParams("type=commercial")).type).toBe("commercial")
+    expect(parseFilters(new URLSearchParams("type=vacational_house")).type).toBe(
+      "vacational_house",
+    )
+    expect(parseFilters(new URLSearchParams("type=rural")).type).toBe("rural")
+  })
+
+  it("parses numeric price bounds", () => {
+    const f = parseFilters(new URLSearchParams("cur=USD&min=20&max=900"))
+    expect(f.min).toBe(20)
+    expect(f.max).toBe(900)
+    expect(f.cur).toBe("USD")
+  })
+
+  it("drops cleared keys on the way back to the URL", () => {
+    const f = parseFilters(new URLSearchParams("type=house&min=100"))
+    delete f.type
+    delete f.min
+    const qs = filtersToSearchParams(f).toString()
+    expect(qs).not.toContain("type=")
+    expect(qs).not.toContain("min=")
   })
 
   it("round-trips to search params", () => {
@@ -106,15 +131,51 @@ describe("applyFilters", () => {
     expect(list.every((p) => p.operation === "temporary")).toBe(true)
   })
 
-  it("sorts by distance when GPS active", () => {
-    const list = applyFilters(
-      SEED_PROPERTIES,
-      { sort: "distance", view: "map" },
-      BOLIVAR_CENTER,
-    )
-    expect(list[0].distanceKm).toBeDefined()
-    for (let i = 1; i < list.length; i++) {
-      expect(list[i].distanceKm!).toBeGreaterThanOrEqual(list[i - 1].distanceKm!)
-    }
+  it("filters the extended types", () => {
+    const list = applyFilters(EXTENDED, { type: "ph", sort: "recent", view: "map" })
+    expect(list.map((p) => p.id)).toEqual(["p-ph"])
+    const commercial = applyFilters(EXTENDED, {
+      type: "commercial",
+      sort: "recent",
+      view: "map",
+    })
+    expect(commercial.map((p) => p.id)).toEqual(["p-commercial"])
   })
 })
+
+const EXTENDED: Property[] = [
+  {
+    id: "p-ph",
+    title: "PH Luminoso centro",
+    type: "ph",
+    price: 45000,
+    currency: "USD",
+    operation: "sale",
+    beds: 2,
+    baths: 1,
+    areaM2: 70,
+    address: "Alvear 120",
+    lat: -36.23,
+    lng: -61.11,
+    photoCount: 3,
+    coverUrl: "/mock.jpg",
+    agency: { name: "Bolívar Prop", logoUrl: "/logo.png", address: "Belgrano 100" },
+  },
+  {
+    id: "p-commercial",
+    title: "Local comercial estratégico",
+    type: "commercial",
+    price: 350000,
+    currency: "ARS",
+    operation: "rent",
+    beds: 0,
+    baths: 1,
+    areaM2: 50,
+    address: "San Martín 400",
+    lat: -36.23,
+    lng: -61.11,
+    photoCount: 2,
+    coverUrl: "/mock.jpg",
+    agency: { name: "Bolívar Prop", logoUrl: "/logo.png", address: "Belgrano 100" },
+  },
+]

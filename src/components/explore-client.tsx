@@ -2,24 +2,21 @@
 
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useMemo, useReducer, useRef, useState, useTransition } from "react"
+import { useEffect, useId, useMemo, useReducer, useRef, useState, useTransition } from "react"
 import {
   ArrowsDownUp,
   Bed,
-  BuildingApartment,
-  Coins,
-  House,
-  Key,
+  CaretDown,
   MagnifyingGlass,
-  SuitcaseRolling,
-  Tag,
-  Tree,
+  PlusCircle,
+  Storefront,
   X,
 } from "@phosphor-icons/react"
 import { LandingNav } from "@/components/landing-nav"
 import { PropertyMapDynamic } from "@/components/map/property-map-dynamic"
 import { PropertyCard } from "@/components/property-card"
 import { buttonVariants } from "@/components/ui/button"
+import { formatPriceCompact } from "@/lib/format"
 import {
   applyFilters,
   filtersToSearchParams,
@@ -28,12 +25,13 @@ import {
   type PropertyFilters,
   type SortKey,
 } from "@/lib/filters"
-import { gpsBannerMessage, type GpsStatus } from "@/lib/gps"
+import { clampPriceRange, PRICE_BOUNDS } from "@/lib/price-range"
 import {
   initialMarkerState,
   markerReducer,
 } from "@/lib/markers"
-import type { Property } from "@/lib/properties/types"
+import type { Currency, Operation, Property, PropertyType } from "@/lib/properties/types"
+import { cn } from "@/lib/utils"
 import { filterBolivarStreets, STREET_QUERY_MIN, type StreetLines } from "@/lib/streets"
 
 export function ExploreClient({ properties }: { properties: Property[] }) {
@@ -47,21 +45,10 @@ export function ExploreClient({ properties }: { properties: Property[] }) {
     [searchParams],
   )
 
-  const [gps] = useState<GpsStatus>({ kind: "idle" })
   const [street, setStreet] = useState<StreetLines | null>(null)
   const [markerState, dispatchMarker] = useReducer(markerReducer, initialMarkerState)
 
-  const userPos = useMemo(
-    () => (gps.kind === "success" ? { lat: gps.lat, lng: gps.lng } : null),
-    [gps],
-  )
-
-  const list = useMemo(
-    () => applyFilters(properties, filters, userPos),
-    [properties, filters, userPos],
-  )
-
-  const banner = gpsBannerMessage(gps)
+  const list = useMemo(() => applyFilters(properties, filters), [properties, filters])
 
   function pushFilters(next: PropertyFilters) {
     const qs = filtersToSearchParams(next).toString()
@@ -73,8 +60,8 @@ export function ExploreClient({ properties }: { properties: Property[] }) {
   function patch(partial: Partial<PropertyFilters>) {
     const next = { ...filters, ...partial }
     if (!priceControlsEnabled(next)) {
-      delete next.min
-      delete next.max
+      next.min = undefined
+      next.max = undefined
       if (next.sort === "price-asc" || next.sort === "price-desc") next.sort = "recent"
     }
     pushFilters(next)
@@ -102,10 +89,10 @@ export function ExploreClient({ properties }: { properties: Property[] }) {
             properties={list}
             selectedId={markerState.selectedId}
             expandedId={markerState.expandedId}
-            center={userPos}
             street={street}
             onExpand={(id) => dispatchMarker({ type: "expand", id })}
             onCollapse={() => dispatchMarker({ type: "collapse" })}
+            onDeselect={() => dispatchMarker({ type: "deselect" })}
             onSelect={(id) => dispatchMarker({ type: "select", id })}
           />
         </div>
@@ -116,21 +103,7 @@ export function ExploreClient({ properties }: { properties: Property[] }) {
           </div>
 
           <div className="pointer-events-auto mt-auto flex flex-col gap-2.5 px-3 pb-3 md:px-5 md:pb-5">
-            {banner ? (
-              <div
-                role="status"
-                className="w-fit max-w-md rounded-full bg-chrome px-4 py-2 text-sm text-fg shadow-[0_8px_30px_rgba(0,0,0,0.18)]"
-              >
-                {banner}
-              </div>
-            ) : null}
-
-            <FilterBar
-              filters={filters}
-              onChange={patch}
-              gpsActive={Boolean(userPos)}
-              onStreet={setStreet}
-            />
+            <FilterBar filters={filters} onChange={patch} onStreet={setStreet} />
 
             {list.length === 0 ? (
               <div className="flex w-fit max-w-md flex-col items-start gap-3 rounded-card bg-chrome p-5 shadow-[0_12px_40px_rgba(0,0,0,0.18)]">
@@ -166,133 +139,169 @@ export function ExploreClient({ properties }: { properties: Property[] }) {
 function FilterBar({
   filters,
   onChange,
-  gpsActive,
   onStreet,
 }: {
   filters: PropertyFilters
   onChange: (partial: Partial<PropertyFilters>) => void
-  gpsActive: boolean
   onStreet: (lines: StreetLines | null) => void
 }) {
   const priceOk = priceControlsEnabled(filters)
+  const [menu, setMenu] = useState<FilterMenu | null>(null)
+  const barRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function onDown(e: MouseEvent) {
+      if (!barRef.current?.contains(e.target as Node)) setMenu(null)
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setMenu(null)
+    }
+    document.addEventListener("mousedown", onDown)
+    window.addEventListener("keydown", onKey)
+    return () => {
+      document.removeEventListener("mousedown", onDown)
+      window.removeEventListener("keydown", onKey)
+    }
+  }, [])
+
+  function toggle(id: FilterMenu) {
+    setMenu((current) => (current === id ? null : id))
+  }
+
+  const typeName = TYPE_OPTIONS.find((o) => o.value === filters.type)?.label ?? "Tipo"
 
   return (
-    <div className="mx-auto flex w-fit max-w-full items-center gap-2 rounded-full bg-chrome px-2 py-1.5 text-fg shadow-[0_12px_40px_rgba(0,0,0,0.18)]">
+    <div
+      ref={barRef}
+      className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-1.5 rounded-3xl bg-chrome px-2 py-1.5 text-fg shadow-[0_12px_40px_rgba(0,0,0,0.18)] sm:w-fit sm:rounded-full"
+    >
       <StreetSearch onStreet={onStreet} />
-      <div className="flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto">
-        {filters.agency ? (
-          <button
-            type="button"
-            onClick={() => onChange({ agency: undefined })}
-            className="inline-flex max-w-48 shrink-0 items-center gap-1.5 rounded-full bg-fg px-3 py-1.5 text-xs font-medium text-bg"
+      {filters.agency ? (
+        <button
+          type="button"
+          onClick={() => onChange({ agency: undefined })}
+          className="inline-flex max-w-48 shrink-0 items-center gap-1.5 rounded-full bg-fg px-3 py-1.5 text-xs font-medium text-bg"
+        >
+          <span className="truncate">{filters.agency}</span>
+          <span aria-hidden>×</span>
+          <span className="sr-only">Quitar filtro de inmobiliaria</span>
+        </button>
+      ) : null}
+      <FilterMenuButton
+        label={opLabel(filters.op)}
+        icon={<Storefront weight="fill" className="h-3.5 w-3.5" aria-hidden />}
+        active={Boolean(filters.op)}
+        open={menu === "operation"}
+        onToggle={() => toggle("operation")}
+      >
+        <MenuHeader
+          title="Operación"
+          onClear={filters.op ? () => onChange({ op: undefined }) : undefined}
+        />
+        {OPERATION_OPTIONS.map((o) => (
+          <MenuOption
+            key={o.value}
+            selected={filters.op === o.value}
+            onClick={() => {
+              onChange({ op: filters.op === o.value ? undefined : o.value })
+              setMenu(null)
+            }}
           >
-            <span className="truncate">{filters.agency}</span>
-            <span aria-hidden>×</span>
-            <span className="sr-only">Quitar filtro de inmobiliaria</span>
-          </button>
-        ) : null}
-        <Segment
-          label="Tipo"
-          value={filters.type ?? ""}
-          options={[
-            { value: "", label: "Todos" },
-            { value: "house", label: "Casa", Icon: House },
-            { value: "apartment", label: "Depto", Icon: BuildingApartment },
-            { value: "lot", label: "Lote", Icon: Tree },
-          ]}
-          onChange={(v) => onChange({ type: (v || undefined) as PropertyFilters["type"] })}
+            {o.label}
+          </MenuOption>
+        ))}
+      </FilterMenuButton>
+      <FilterMenuButton
+        label={typeName}
+        active={Boolean(filters.type)}
+        open={menu === "type"}
+        onToggle={() => toggle("type")}
+      >
+        <MenuHeader
+          title="Tipo"
+          onClear={filters.type ? () => onChange({ type: undefined }) : undefined}
         />
-        <Segment
-          label="Operación"
-          value={filters.op ?? ""}
-          options={[
-            { value: "", label: "Todas" },
-            { value: "sale", label: "Venta", Icon: Tag },
-            { value: "rent", label: "Alquiler", Icon: Key },
-            { value: "temporary", label: "Temporaria", Icon: SuitcaseRolling },
-          ]}
-          onChange={(v) => onChange({ op: (v || undefined) as PropertyFilters["op"] })}
-        />
-
-        <label className="flex shrink-0 items-center gap-1.5 text-xs text-fg-muted">
-          <Bed weight="fill" className="h-3.5 w-3.5" aria-hidden />
-          Dorm.
-          <select
-            className="rounded-full border border-glass-border bg-bg px-2 py-1.5 text-sm text-fg"
-            value={filters.beds ?? ""}
-            onChange={(e) =>
-              onChange({ beds: e.target.value ? Number(e.target.value) : undefined })
-            }
+        {TYPE_OPTIONS.map((o) => (
+          <MenuOption
+            key={o.value}
+            selected={filters.type === o.value}
+            onClick={() => {
+              onChange({ type: filters.type === o.value ? undefined : o.value })
+              setMenu(null)
+            }}
           >
-            <option value="">Cualquiera</option>
-            <option value="1">1+</option>
-            <option value="2">2+</option>
-            <option value="3">3+</option>
-            <option value="4">4+</option>
-          </select>
-        </label>
-
-        <label className="flex shrink-0 items-center gap-1.5 text-xs text-fg-muted">
-          <ArrowsDownUp weight="fill" className="h-3.5 w-3.5" aria-hidden />
-          Orden
-          <select
-            className="rounded-full border border-glass-border bg-bg px-2 py-1.5 text-sm text-fg"
-            value={filters.sort}
-            onChange={(e) => onChange({ sort: e.target.value as SortKey })}
+            {o.label}
+          </MenuOption>
+        ))}
+      </FilterMenuButton>
+      <FilterMenuButton
+        label={bedsLabel(filters.beds)}
+        icon={<Bed weight="fill" className="h-3.5 w-3.5" aria-hidden />}
+        active={filters.beds != null}
+        open={menu === "rooms"}
+        onToggle={() => toggle("rooms")}
+      >
+        <MenuHeader
+          title="Ambientes"
+          onClear={filters.beds != null ? () => onChange({ beds: undefined }) : undefined}
+        />
+        <MenuOption
+          selected={filters.beds == null}
+          onClick={() => {
+            onChange({ beds: undefined })
+            setMenu(null)
+          }}
+        >
+          Cualquiera
+        </MenuOption>
+        {BED_OPTIONS.map((o) => (
+          <MenuOption
+            key={o.value}
+            selected={filters.beds === o.value}
+            onClick={() => {
+              onChange({ beds: filters.beds === o.value ? undefined : o.value })
+              setMenu(null)
+            }}
           >
-            <option value="recent">Recientes</option>
-            <option value="price-asc" disabled={!priceOk}>
-              Precio ↑
-            </option>
-            <option value="price-desc" disabled={!priceOk}>
-              Precio ↓
-            </option>
-            <option value="distance" disabled={!gpsActive}>
-              Distancia
-            </option>
-          </select>
-        </label>
-      </div>
-
-      <div className="flex shrink-0 items-center gap-1.5 border-l border-glass-border pl-2">
-        <Coins
-          weight="fill"
-          className={`h-3.5 w-3.5 shrink-0 ${priceOk ? "text-fg-muted" : "text-fg-muted/40"}`}
-          aria-hidden
-        />
-        <Segment
-          label="Moneda"
-          value={filters.cur ?? ""}
-          options={[
-            { value: "", label: "Todas" },
-            { value: "ARS", label: "ARS" },
-            { value: "USD", label: "USD" },
-          ]}
-          onChange={(v) => onChange({ cur: (v || undefined) as PropertyFilters["cur"] })}
-        />
-        <input
-          type="number"
-          disabled={!priceOk}
-          aria-label="Precio mínimo"
-          className="w-20 rounded-full border border-glass-border bg-bg px-2 py-1.5 text-sm text-fg disabled:opacity-40"
-          value={filters.min ?? ""}
-          onChange={(e) =>
-            onChange({ min: e.target.value ? Number(e.target.value) : undefined })
-          }
-          placeholder="Min"
-        />
-        <input
-          type="number"
-          disabled={!priceOk}
-          aria-label="Precio máximo"
-          className="w-20 rounded-full border border-glass-border bg-bg px-2 py-1.5 text-sm text-fg disabled:opacity-40"
-          value={filters.max ?? ""}
-          onChange={(e) =>
-            onChange({ max: e.target.value ? Number(e.target.value) : undefined })
-          }
-          placeholder="Max"
-        />
-      </div>
+            {o.label}
+          </MenuOption>
+        ))}
+      </FilterMenuButton>
+      <PriceFilter
+        filters={filters}
+        open={menu === "price"}
+        onToggle={() => toggle("price")}
+        onChange={onChange}
+      />
+      <FilterMenuButton
+        label={sortLabel(filters.sort)}
+        icon={<ArrowsDownUp weight="fill" className="h-3.5 w-3.5" aria-hidden />}
+        active={filters.sort !== "recent"}
+        open={menu === "sort"}
+        onToggle={() => toggle("sort")}
+        align="end"
+      >
+        {SORTS.map((o) => (
+          <MenuOption
+            key={o.value}
+            selected={filters.sort === o.value}
+            disabled={o.needsCurrency ? !priceOk : false}
+            onClick={() => {
+              onChange({ sort: o.value })
+              setMenu(null)
+            }}
+          >
+            {o.label}
+          </MenuOption>
+        ))}
+      </FilterMenuButton>
+      <Link
+        href="/publicar"
+        className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-fg px-3.5 py-1.5 text-xs font-medium text-bg transition hover:opacity-90"
+      >
+        <PlusCircle weight="fill" className="h-4 w-4" aria-hidden />
+        Crear aviso
+      </Link>
     </div>
   )
 }
@@ -352,7 +361,12 @@ function StreetSearch({ onStreet }: { onStreet: (lines: StreetLines | null) => v
             setOpen(false)
           }
         })
-        .catch(() => {})
+        .catch(() => {
+          if (local.length === 0) {
+            setNames(["Error al buscar calles"])
+            setOpen(true)
+          }
+        })
     }, 280)
 
     return () => {
@@ -446,38 +460,376 @@ function StreetSearch({ onStreet }: { onStreet: (lines: StreetLines | null) => v
   )
 }
 
-function Segment({
+const TYPE_OPTIONS: { value: PropertyType; label: string }[] = [
+  { value: "apartment", label: "Departamento" },
+  { value: "house", label: "Casa" },
+  { value: "ph", label: "PH" },
+  { value: "lot", label: "Terreno" },
+  { value: "commercial", label: "Local comercial" },
+  { value: "rural", label: "Campo" },
+  { value: "vacational_house", label: "Quinta vacacional" },
+]
+
+const BED_OPTIONS = [
+  { value: 1, label: "1+ dorm." },
+  { value: 2, label: "2+ dorm." },
+  { value: 3, label: "3+ dorm." },
+  { value: 4, label: "4+ dorm." },
+] as const
+
+const SORTS: { value: SortKey; label: string; needsCurrency?: boolean }[] = [
+  { value: "recent", label: "Recientes" },
+  { value: "price-asc", label: "Precio ↑", needsCurrency: true },
+  { value: "price-desc", label: "Precio ↓", needsCurrency: true },
+]
+
+type FilterMenu = "operation" | "type" | "rooms" | "price" | "sort"
+
+const OPERATION_OPTIONS: { value: Operation; label: string }[] = [
+  { value: "sale", label: "Venta" },
+  { value: "rent", label: "Alquiler" },
+  { value: "temporary", label: "Temporal" },
+]
+
+function rangeLabelShift(pct: number) {
+  if (pct < 12) return "translateX(0)"
+  if (pct > 88) return "translateX(-100%)"
+  return "translateX(-50%)"
+}
+
+function bedsLabel(beds?: number) {
+  if (beds == null) return "Ambientes"
+  return BED_OPTIONS.find((o) => o.value === beds)?.label ?? `${beds}+ dorm.`
+}
+
+function sortLabel(sort: SortKey) {
+  if (sort === "recent") return "Orden"
+  return SORTS.find((o) => o.value === sort)?.label ?? "Orden"
+}
+
+function opLabel(op?: Operation) {
+  if (!op) return "Operación"
+  return OPERATION_OPTIONS.find((o) => o.value === op)?.label ?? "Operación"
+}
+
+function FilterMenuButton({
   label,
-  value,
-  options,
-  onChange,
+  icon,
+  active,
+  open,
+  onToggle,
+  align = "start",
+  panelClassName,
+  children,
 }: {
   label: string
-  value: string
-  options: {
-    value: string
-    label: string
-    Icon?: React.ComponentType<{ weight?: "fill"; className?: string }>
-  }[]
-  onChange: (v: string) => void
+  icon?: React.ReactNode
+  active?: boolean
+  open: boolean
+  onToggle: () => void
+  align?: "start" | "end"
+  panelClassName?: string
+  children: React.ReactNode
+}) {
+  const id = useId()
+  const panelRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!open || !panelRef.current) return
+    const buttons = panelRef.current.querySelectorAll<HTMLButtonElement>("button:not([disabled])")
+    if (buttons.length > 0) buttons[0].focus()
+  }, [open])
+
+  function onPanelKeyDown(e: React.KeyboardEvent) {
+    if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return
+    e.preventDefault()
+    const panel = panelRef.current
+    if (!panel) return
+    const buttons = Array.from(panel.querySelectorAll<HTMLButtonElement>("button:not([disabled])"))
+    const idx = buttons.indexOf(document.activeElement as HTMLButtonElement)
+    if (idx === -1) return
+    const next = e.key === "ArrowDown" ? (idx + 1) % buttons.length : (idx - 1 + buttons.length) % buttons.length
+    buttons[next].focus()
+  }
+
+  return (
+    <div className="relative shrink-0">
+      <button
+        type="button"
+        id={id}
+        aria-expanded={open}
+        aria-haspopup="menu"
+        aria-controls={open ? `${id}-panel` : undefined}
+        onClick={onToggle}
+        className={cn(
+          "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs transition",
+          active || open
+            ? "bg-fg text-bg"
+            : "text-fg-muted hover:bg-black/5 hover:text-fg dark:hover:bg-white/10",
+        )}
+      >
+        {icon}
+        <span className="max-w-40 truncate whitespace-nowrap">{label}</span>
+        <CaretDown
+          weight="fill"
+          className={cn("h-3 w-3 opacity-60 transition", open && "rotate-180")}
+          aria-hidden
+        />
+      </button>
+      {open ? (
+        <div
+          ref={panelRef}
+          id={`${id}-panel`}
+          role="menu"
+          aria-labelledby={id}
+          onKeyDown={onPanelKeyDown}
+          className={cn(
+            "absolute bottom-full z-30 mb-2 min-w-52 rounded-2xl border border-glass-border bg-chrome p-2 text-sm shadow-[0_12px_40px_rgba(0,0,0,0.22)]",
+            align === "end" ? "right-0" : "left-0",
+            panelClassName,
+          )}
+        >
+          {children}
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+function MenuHeader({ title, onClear }: { title: string; onClear?: () => void }) {
+  return (
+    <div className="mb-1 flex items-center justify-between px-2 py-1">
+      <span className="text-xs font-medium text-fg-muted">{title}</span>
+      {onClear ? (
+        <button type="button" onClick={onClear} className="text-xs font-medium text-accent">
+          Limpiar
+        </button>
+      ) : null}
+    </div>
+  )
+}
+
+function MenuOption({
+  selected,
+  disabled,
+  onClick,
+  children,
+}: {
+  selected?: boolean
+  disabled?: boolean
+  onClick: () => void
+  children: React.ReactNode
 }) {
   return (
-    <div className="flex shrink-0 items-center gap-1" role="group" aria-label={label}>
-      {options.map((o) => (
+    <button
+      type="button"
+      role="menuitem"
+      aria-checked={selected}
+      disabled={disabled}
+      onClick={onClick}
+      className={cn(
+        "block w-full rounded-xl px-3 py-1.5 text-left text-sm transition disabled:opacity-40",
+        selected ? "bg-fg text-bg" : "hover:bg-black/5 dark:hover:bg-white/10",
+      )}
+    >
+      {children}
+    </button>
+  )
+}
+
+function PriceFilter({
+  filters,
+  open,
+  onToggle,
+  onChange,
+}: {
+  filters: PropertyFilters
+  open: boolean
+  onToggle: () => void
+  onChange: (partial: Partial<PropertyFilters>) => void
+}) {
+  const cur: Currency = filters.cur ?? "USD"
+  const bounds = PRICE_BOUNDS[cur]
+  const [draft, setDraft] = useState<{ min: number; max: number } | null>(null)
+  const draftRef = useRef(draft)
+  const pending = useRef(false)
+  const min = draft?.min ?? filters.min ?? bounds.min
+  const max = draft?.max ?? filters.max ?? bounds.max
+  const span = bounds.max - bounds.min || 1
+  const left = ((min - bounds.min) / span) * 100
+  const right = ((max - bounds.min) / span) * 100
+  const ranged = filters.min != null || filters.max != null
+  const trigger = ranged
+    ? `${formatPriceCompact(filters.min ?? bounds.min, cur)}–${formatPriceCompact(filters.max ?? bounds.max, cur)}`
+    : filters.cur
+      ? filters.cur === "USD"
+        ? "USD"
+        : "Pesos"
+      : "Precio"
+
+  useEffect(() => {
+    draftRef.current = null
+    pending.current = false
+    setDraft(null)
+  }, [filters.cur, filters.min, filters.max])
+
+  function commit(nextMin: number, nextMax: number, currency: Currency) {
+    const domain = PRICE_BOUNDS[currency]
+    const clamped = clampPriceRange(nextMin, nextMax, domain.min, domain.max)
+    onChange({
+      cur: currency,
+      min: clamped.min <= domain.min ? undefined : clamped.min,
+      max: clamped.max >= domain.max ? undefined : clamped.max,
+    })
+  }
+
+  function preview(nextMin: number, nextMax: number) {
+    const clamped = clampPriceRange(nextMin, nextMax, bounds.min, bounds.max)
+    pending.current = true
+    draftRef.current = clamped
+    setDraft(clamped)
+  }
+
+  function flush() {
+    const d = draftRef.current
+    if (!pending.current || !d) return
+    pending.current = false
+    const nextMin = d.min <= bounds.min ? undefined : d.min
+    const nextMax = d.max >= bounds.max ? undefined : d.max
+    if (nextMin === filters.min && nextMax === filters.max) {
+      draftRef.current = null
+      setDraft(null)
+      return
+    }
+    onChange({ cur, min: nextMin, max: nextMax })
+  }
+
+  const flushRef = useRef(flush)
+  flushRef.current = flush
+  useEffect(() => {
+    function onUp() {
+      flushRef.current()
+    }
+    window.addEventListener("pointerup", onUp)
+    return () => window.removeEventListener("pointerup", onUp)
+  }, [])
+
+  return (
+    <FilterMenuButton
+      label={trigger}
+      active={Boolean(filters.cur) || ranged}
+      open={open}
+      onToggle={onToggle}
+      align="end"
+      panelClassName="w-80 p-3"
+    >
+      <div className="flex items-center justify-between px-1">
+        <span className="text-sm font-medium">Precio</span>
         <button
-          key={o.value || "all"}
           type="button"
-          onClick={() => onChange(o.value)}
-          className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs transition ${
-            value === o.value
-              ? "bg-fg text-bg"
-              : "text-fg-muted hover:bg-black/5 hover:text-fg dark:hover:bg-white/10"
-          }`}
+          onClick={() => onChange({ cur: undefined, min: undefined, max: undefined })}
+          className="text-sm font-medium text-accent"
         >
-          {o.Icon ? <o.Icon weight="fill" className="h-3.5 w-3.5" aria-hidden /> : null}
-          {o.label}
+          Limpiar
         </button>
-      ))}
-    </div>
+      </div>
+      <div className="mt-3 flex gap-2">
+        <PriceField label="Min." value={min} onCommit={(n) => commit(n, max, cur)} />
+        <PriceField label="Max." value={max} onCommit={(n) => commit(min, n, cur)} />
+      </div>
+      <div className="dual-range relative mt-8 h-7">
+        <div className="absolute top-1/2 right-0 left-0 h-1 -translate-y-1/2 rounded-full bg-black/10 dark:bg-white/15" />
+        <div
+          className="absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-accent"
+          style={{ left: `${left}%`, width: `${Math.max(0, right - left)}%` }}
+        />
+        <span
+          className="pointer-events-none absolute -top-5 text-[11px] whitespace-nowrap text-fg-muted"
+          style={{ left: `${left}%`, transform: rangeLabelShift(left) }}
+        >
+          {formatPriceCompact(min, cur)}
+        </span>
+        <span
+          className="pointer-events-none absolute -top-5 text-[11px] whitespace-nowrap text-fg-muted"
+          style={{ left: `${right}%`, transform: rangeLabelShift(right) }}
+        >
+          {formatPriceCompact(max, cur)}
+        </span>
+        <input
+          type="range"
+          min={bounds.min}
+          max={bounds.max}
+          step={1}
+          value={min}
+          aria-label="Precio mínimo"
+          style={{ zIndex: min > bounds.min + span / 2 ? 5 : 3 }}
+          onChange={(e) => preview(Number(e.target.value), max)}
+          onPointerUp={flush}
+          onKeyUp={flush}
+        />
+        <input
+          type="range"
+          min={bounds.min}
+          max={bounds.max}
+          step={1}
+          value={max}
+          aria-label="Precio máximo"
+          style={{ zIndex: 4 }}
+          onChange={(e) => preview(min, Number(e.target.value))}
+          onPointerUp={flush}
+          onKeyUp={flush}
+        />
+      </div>
+      <div className="mt-4 flex rounded-full bg-bg p-1" role="group" aria-label="Moneda">
+        {(
+          [
+            ["ARS", "Pesos ($)"],
+            ["USD", "USD (u$s)"],
+          ] as const
+        ).map(([value, label]) => (
+          <button
+            key={value}
+            type="button"
+            aria-pressed={filters.cur === value}
+            onClick={() => onChange({ cur: value, min: undefined, max: undefined })}
+            className={cn(
+              "flex-1 rounded-full px-3 py-1.5 text-xs transition",
+              filters.cur === value ? "bg-fg text-bg" : "text-fg-muted hover:text-fg",
+            )}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+    </FilterMenuButton>
+  )
+}
+
+function PriceField({
+  label,
+  value,
+  onCommit,
+}: {
+  label: string
+  value: number
+  onCommit: (n: number) => void
+}) {
+  return (
+    <label className="relative block min-w-0 flex-1 rounded-xl border border-glass-border bg-bg px-3 pt-5 pb-2 focus-within:border-accent">
+      <span className="absolute top-1.5 left-3 text-[10px] text-fg-muted">{label}</span>
+      <input
+        type="number"
+        inputMode="numeric"
+        value={value}
+        aria-label={label}
+        onChange={(e) => {
+          if (e.target.value === "") return
+          const n = Number(e.target.value)
+          if (Number.isNaN(n)) return
+          onCommit(n)
+        }}
+        className="w-full bg-transparent text-sm text-fg outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+      />
+    </label>
   )
 }

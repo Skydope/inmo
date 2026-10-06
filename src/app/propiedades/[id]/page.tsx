@@ -30,11 +30,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params
   const property = await getPropertyById(id)
-  if (!property) return {}
+  if (!property) return { title: "Propiedad no encontrada", robots: { index: false } }
   return {
     title: property.title,
     description: `${operationLabel(property.operation)} · ${typeLabel(property.type)} en ${property.address} — ${formatPrice(property.price, property.currency)}.`,
-    openGraph: { images: [{ url: property.coverUrl }] },
+    openGraph: {
+      images: [{ url: property.coverUrl, width: 1200, height: 675, alt: property.title }],
+    },
   }
 }
 
@@ -131,7 +133,7 @@ export default async function PropertyDetailPage({
             <a
               href={contact.href}
               target={contact.kind === "whatsapp" ? "_blank" : undefined}
-              rel={contact.kind === "whatsapp" ? "noreferrer" : undefined}
+              rel={contact.kind === "whatsapp" ? "noopener noreferrer" : undefined}
               className={cn(buttonVariants({ size: "lg" }))}
             >
               <ContactIcon className="h-4 w-4" aria-hidden />

@@ -9,8 +9,9 @@ maplibregl.setWorkerUrl("/maplibre/maplibre-gl-worker.mjs")
 import type { GeoJSONSource, Map as MapLibreMap, Marker } from "maplibre-gl"
 import { useTheme } from "@/components/theme-provider"
 import { BOLIVAR_CENTER } from "@/lib/brand"
-import { formatPrice } from "@/lib/format"
-import type { PropertyType, PropertyWithDistance } from "@/lib/properties/types"
+import { formatPrice, formatPriceCompact } from "@/lib/format"
+import type { PropertyType, Property } from "@/lib/properties/types"
+import { markerElementClass } from "@/lib/markers"
 import { getStreetMidpoint, type StreetLines } from "@/lib/streets"
 
 const STYLES = {
@@ -108,10 +109,18 @@ function updateStreetMarker(
 }
 
 /** Small filled glyphs in the Phosphor house / buildings / polygon family. */
+const ICON_HOUSE = `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 3.1 2.8 11h2.2v9h5.2v-5.6h3.6V20h5.2v-9h2.2L12 3.1z"/></svg>`
+const ICON_APARTMENT = `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M3 21V8.2L9.5 5l6.5 3.2V21H3zm2.2-2h2.2v-2.4H5.2V19zm4.2 0h2.2v-2.4H9.4V19zM5.2 14h2.2v-2.4H5.2V14zm4.2 0h2.2v-2.4H9.4V14zM5.2 9.4h2.2V7H5.2v2.4zm4.2 0h2.2V7H9.4v2.4zM17.2 21V10.4h3.6V21h-3.6zm.9-7.2h1.8V12h-1.8v1.8zm0 3.2h1.8v-1.8h-1.8V17z"/></svg>`
+const ICON_LOT = `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M3.5 8.2 12 4l8.5 4.2V16L12 20.2 3.5 16V8.2zm8.5 1.15L6.2 12v3.05L12 17.3l5.8-2.25V12L12 9.35z"/></svg>`
+
 const TYPE_ICON: Record<PropertyType, string> = {
-  house: `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 3.1 2.8 11h2.2v9h5.2v-5.6h3.6V20h5.2v-9h2.2L12 3.1z"/></svg>`,
-  apartment: `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M3 21V8.2L9.5 5l6.5 3.2V21H3zm2.2-2h2.2v-2.4H5.2V19zm4.2 0h2.2v-2.4H9.4V19zM5.2 14h2.2v-2.4H5.2V14zm4.2 0h2.2v-2.4H9.4V14zM5.2 9.4h2.2V7H5.2v2.4zm4.2 0h2.2V7H9.4v2.4zM17.2 21V10.4h3.6V21h-3.6zm.9-7.2h1.8V12h-1.8v1.8zm0 3.2h1.8v-1.8h-1.8V17z"/></svg>`,
-  lot: `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M3.5 8.2 12 4l8.5 4.2V16L12 20.2 3.5 16V8.2zm8.5 1.15L6.2 12v3.05L12 17.3l5.8-2.25V12L12 9.35z"/></svg>`,
+  house: ICON_HOUSE,
+  apartment: ICON_APARTMENT,
+  ph: ICON_APARTMENT,
+  lot: ICON_LOT,
+  commercial: ICON_APARTMENT,
+  rural: ICON_LOT,
+  vacational_house: ICON_HOUSE,
 }
 
 function esc(value: string) {
@@ -120,7 +129,7 @@ function esc(value: string) {
   )
 }
 
-function previewHtml(property: PropertyWithDistance) {
+function previewHtml(property: Property) {
   const meta = [
     property.beds > 0 ? `${property.beds} dorm` : "",
     property.baths > 0 ? `${property.baths} baños` : "",
@@ -157,69 +166,45 @@ function chromePadding(map: MapLibreMap) {
   }
 }
 
+type MarkerEntry = {
+  marker: Marker
+  el: HTMLDivElement
+  isExpanded: boolean
+  isSelected: boolean
+}
+
 export function PropertyMap({
   properties,
   selectedId,
   expandedId,
-  center,
   street,
   onExpand,
   onCollapse,
+  onDeselect,
   onSelect,
 }: {
-  properties: PropertyWithDistance[]
+  properties: Property[]
   selectedId: string | null
   expandedId: string | null
-  center?: { lat: number; lng: number } | null
   street?: StreetLines | null
   onExpand: (id: string) => void
   onCollapse: () => void
+  onDeselect: () => void
   onSelect: (id: string) => void
 }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
-  const markersRef = useRef<Map<string, Marker>>(new Map())
+  const markersRef = useRef<Map<string, MarkerEntry>>(new Map())
   const streetMarkerRef = useRef<Marker | null>(null)
   const frameRef = useRef<() => void>(() => {})
-  const handlersRef = useRef({ onExpand, onCollapse, onSelect })
-  handlersRef.current = { onExpand, onCollapse, onSelect }
+  const handlersRef = useRef({ onExpand, onCollapse, onDeselect, onSelect })
+  handlersRef.current = { onExpand, onCollapse, onDeselect, onSelect }
   const { theme } = useTheme()
   const themeRef = useRef(theme)
   themeRef.current = theme
   const appliedTheme = useRef(theme)
   const streetRef = useRef<StreetLines | null>(street ?? null)
   streetRef.current = street ?? null
-  const selectedIdRef = useRef(selectedId)
-  selectedIdRef.current = selectedId
-  const layoutPricesRef = useRef<() => void>(() => {})
-
-  layoutPricesRef.current = () => {
-    const map = mapRef.current
-    if (!map) return
-    const items: { id: string; x: number; y: number; w: number; price: HTMLElement }[] = []
-    markersRef.current.forEach((marker, id) => {
-      const price = marker.getElement().querySelector(".map-pin-price") as HTMLElement | null
-      if (!price) return
-      price.style.visibility = "visible"
-      const pt = map.project(marker.getLngLat())
-      items.push({ id, x: pt.x, y: pt.y, w: price.offsetWidth, price })
-    })
-    // ponytail: O(n²) on each pan; fine while Bolívar stays under a few hundred pins.
-    items.sort((a, b) => Number(b.id === selectedIdRef.current) - Number(a.id === selectedIdRef.current))
-    const shown: { x: number; y: number; w: number }[] = []
-    for (const item of items) {
-      // Price sits above the badge; keep it off other pins, not only off other prices.
-      const hit = shown.some((s) => {
-        const gap = 4
-        const horizontal = Math.abs(item.x - s.x) < (item.w + s.w) / 2 + gap
-        const vertical = Math.abs(item.y - s.y) < 64
-        return horizontal && vertical
-      })
-      item.price.style.visibility = hit ? "hidden" : "visible"
-      if (!hit) shown.push(item)
-    }
-  }
-
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return
 
@@ -251,8 +236,11 @@ export function PropertyMap({
     const attrib = map.getContainer().querySelector(".maplibregl-ctrl-attrib")
     attrib?.classList.remove("maplibregl-compact-show")
     attrib?.removeAttribute("open")
-    map.on("click", () => handlersRef.current.onCollapse())
-    map.on("move", () => layoutPricesRef.current())
+    map.on("click", (e) => {
+      const target = e.originalEvent.target
+      if (target instanceof Element && target.closest(".map-pin, .maplibregl-ctrl")) return
+      handlersRef.current.onDeselect()
+    })
     mapRef.current = map
     appliedTheme.current = themeRef.current
 
@@ -264,7 +252,7 @@ export function PropertyMap({
 
     return () => {
       ro.disconnect()
-      markersRef.current.forEach((m) => m.remove())
+      markersRef.current.forEach((m) => m.marker.remove())
       markersRef.current.clear()
       if (streetMarkerRef.current) {
         streetMarkerRef.current.remove()
@@ -282,24 +270,13 @@ export function PropertyMap({
     const frame = () => {
       const h = map.getContainer().clientHeight
       if (h < 200) return
-      const pad = chromePadding(map)
-      if (center) {
-        map.easeTo({
-          center: [center.lng, center.lat],
-          zoom: Math.max(map.getZoom(), 14),
-          pitch: MAP_PITCH,
-          bearing: MAP_BEARING,
-          padding: pad,
-        })
-        return
-      }
       if (streetRef.current?.features.length) return
       map.easeTo({
         center: [BOLIVAR_CENTER.lng, BOLIVAR_CENTER.lat],
         zoom: CITY_ZOOM,
         pitch: MAP_PITCH,
         bearing: MAP_BEARING,
-        padding: pad,
+        padding: chromePadding(map),
         duration: 600,
       })
     }
@@ -307,7 +284,7 @@ export function PropertyMap({
     frameRef.current = frame
     if (map.loaded()) frame()
     else map.once("load", () => frameRef.current())
-  }, [center])
+  }, [])
 
   useEffect(() => {
     const map = mapRef.current
@@ -344,9 +321,9 @@ export function PropertyMap({
     const existing = markersRef.current
     const nextIds = new Set(properties.map((p) => p.id))
 
-    for (const [id, marker] of existing) {
+    for (const [id, entry] of existing) {
       if (!nextIds.has(id)) {
-        marker.remove()
+        entry.marker.remove()
         existing.delete(id)
       }
     }
@@ -354,34 +331,77 @@ export function PropertyMap({
     for (const property of properties) {
       const isExpanded = expandedId === property.id
       const isSelected = selectedId === property.id
-      const el = document.createElement("div")
+      const prev = existing.get(property.id)
 
-      el.className = `map-pin is-${property.type}${isSelected ? " is-selected" : ""}${isExpanded ? " is-open" : ""}`
+      if (prev) {
+        if (prev.isExpanded === isExpanded && prev.isSelected === isSelected) {
+          continue
+        }
+
+        const el = prev.el
+        el.className = markerElementClass(el.className, property.type, isSelected, isExpanded)
+        el.style.zIndex = isExpanded || isSelected ? "10" : "1"
+        el.setAttribute("aria-expanded", String(isExpanded))
+
+        if (prev.isExpanded !== isExpanded) {
+          el.innerHTML = `${
+            isExpanded
+              ? previewHtml(property)
+              : `<div class="map-pin-price">${esc(formatPriceCompact(property.price, property.currency))}</div>`
+          }<div class="map-pin-badge">${TYPE_ICON[property.type]}</div>`
+        }
+
+        prev.isExpanded = isExpanded
+        prev.isSelected = isSelected
+        continue
+      }
+
+      const el = document.createElement("div")
+      el.setAttribute("role", "button")
+      el.setAttribute("tabindex", "0")
+      el.setAttribute("aria-label", `${property.title}, ${formatPrice(property.price, property.currency)}`)
+      el.setAttribute("aria-expanded", String(isExpanded))
+      el.className = markerElementClass(el.className, property.type, isSelected, isExpanded)
       el.innerHTML = `${
         isExpanded
           ? previewHtml(property)
-          : `<div class="map-pin-price">${esc(formatPrice(property.price, property.currency))}</div>`
+          : `<div class="map-pin-price">${esc(formatPriceCompact(property.price, property.currency))}</div>`
       }<div class="map-pin-badge">${TYPE_ICON[property.type]}</div>`
+      el.style.zIndex = isExpanded || isSelected ? "10" : "1"
+
       el.addEventListener("click", (e) => {
         e.stopPropagation()
         const target = e.target as HTMLElement
         if (target.closest(".map-pin-detail")) return
-        if (isExpanded && target.closest(".map-pin-badge")) handlersRef.current.onCollapse()
-        else if (!isExpanded) handlersRef.current.onExpand(property.id)
+        if (el.classList.contains("is-open") && target.closest(".map-pin-badge")) {
+          handlersRef.current.onCollapse()
+        } else if (!el.classList.contains("is-open")) {
+          handlersRef.current.onExpand(property.id)
+        }
       })
 
-      el.style.zIndex = isExpanded ? "3" : isSelected ? "2" : "1"
+      el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault()
+          if (el.classList.contains("is-open")) {
+            handlersRef.current.onCollapse()
+          } else {
+            handlersRef.current.onExpand(property.id)
+          }
+        }
+      })
 
-      const prev = existing.get(property.id)
-      if (prev) {
-        prev.remove()
-      }
       const marker = new maplibregl.Marker({ element: el, anchor: "bottom" })
         .setLngLat([property.lng, property.lat])
         .addTo(map)
-      existing.set(property.id, marker)
+
+      existing.set(property.id, {
+        marker,
+        el,
+        isExpanded,
+        isSelected,
+      })
     }
-    layoutPricesRef.current()
   }, [properties, selectedId, expandedId])
 
   return (

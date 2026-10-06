@@ -1,4 +1,16 @@
-export type PropertyType = "house" | "apartment" | "lot"
+import type { Agency } from "@/lib/agencies/types"
+
+export const PROPERTY_TYPES = [
+  "apartment",
+  "house",
+  "ph",
+  "lot",
+  "commercial",
+  "rural",
+  "vacational_house",
+] as const
+
+export type PropertyType = (typeof PROPERTY_TYPES)[number]
 export type Currency = "ARS" | "USD"
 export type Operation = "sale" | "rent" | "temporary"
 
@@ -20,13 +32,5 @@ export type Property = {
   description?: string
   features?: string[]
   featured?: boolean
-  agency: {
-    name: string
-    logoUrl: string
-    phone?: string
-    email?: string
-    address?: string
-  }
+  agency: Agency
 }
-
-export type PropertyWithDistance = Property & { distanceKm?: number }

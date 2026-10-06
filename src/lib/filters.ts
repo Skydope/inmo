@@ -1,13 +1,12 @@
-import type {
-  Currency,
-  Operation,
-  Property,
-  PropertyType,
-  PropertyWithDistance,
+import {
+  PROPERTY_TYPES,
+  type Currency,
+  type Operation,
+  type Property,
+  type PropertyType,
 } from "@/lib/properties/types"
-import { haversineKm } from "@/lib/geo"
 
-export type SortKey = "recent" | "price-asc" | "price-desc" | "distance"
+export type SortKey = "recent" | "price-asc" | "price-desc"
 export type ViewMode = "map" | "grid"
 
 export type PropertyFilters = {
@@ -45,15 +44,14 @@ export function parseFilters(
   const agency = get("agencia")?.trim()
 
   const filters: PropertyFilters = {
-    sort:
-      sort === "price-asc" || sort === "price-desc" || sort === "distance"
-        ? sort
-        : "recent",
+    sort: sort === "price-asc" || sort === "price-desc" ? sort : "recent",
     view: view === "grid" ? "grid" : "map",
   }
 
   if (op === "sale" || op === "rent" || op === "temporary") filters.op = op
-  if (type === "house" || type === "apartment" || type === "lot") filters.type = type
+  if (type && (PROPERTY_TYPES as readonly string[]).includes(type)) {
+    filters.type = type as PropertyType
+  }
   if (cur === "ARS" || cur === "USD") filters.cur = cur
 
   if (min !== undefined && min !== "" && !Number.isNaN(Number(min))) {
@@ -92,9 +90,8 @@ export function priceControlsEnabled(filters: PropertyFilters): boolean {
 export function applyFilters(
   properties: Property[],
   filters: PropertyFilters,
-  userPos?: { lat: number; lng: number } | null,
-): PropertyWithDistance[] {
-  let list: PropertyWithDistance[] = properties.filter((p) => {
+): Property[] {
+  let list = properties.filter((p) => {
     if (filters.op && p.operation !== filters.op) return false
     if (filters.type && p.type !== filters.type) return false
     if (filters.cur && p.currency !== filters.cur) return false
@@ -107,17 +104,8 @@ export function applyFilters(
     return true
   })
 
-  if (userPos) {
-    list = list.map((p) => ({
-      ...p,
-      distanceKm: haversineKm(userPos, { lat: p.lat, lng: p.lng }),
-    }))
-  }
-
   const sort = filters.sort
-  if (sort === "distance" && userPos) {
-    list = [...list].sort((a, b) => (a.distanceKm ?? 0) - (b.distanceKm ?? 0))
-  } else if (sort === "price-asc" && priceControlsEnabled(filters)) {
+  if (sort === "price-asc" && priceControlsEnabled(filters)) {
     list = [...list].sort((a, b) => a.price - b.price)
   } else if (sort === "price-desc" && priceControlsEnabled(filters)) {
     list = [...list].sort((a, b) => b.price - a.price)

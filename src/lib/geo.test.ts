@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { formatDistanceKm, haversineKm } from "@/lib/geo"
+import { haversineKm } from "@/lib/geo"
 import { BOLIVAR_CENTER } from "@/lib/brand"
 
 describe("haversineKm", () => {
@@ -12,15 +12,5 @@ describe("haversineKm", () => {
     const km = haversineKm(BOLIVAR_CENTER, near)
     expect(km).toBeGreaterThan(0.9)
     expect(km).toBeLessThan(1.1)
-  })
-})
-
-describe("formatDistanceKm", () => {
-  it("formats under 100m", () => {
-    expect(formatDistanceKm(0.05)).toMatch(/100 m/)
-  })
-
-  it("uses comma decimal for short distances", () => {
-    expect(formatDistanceKm(1.2)).toBe("a 1,2 km de vos")
   })
 })

@@ -29,13 +29,7 @@ export const SEED_PROPERTIES: Property[] = [
       "Aberturas DVH de alta prestación",
       "Gas natural y todos los servicios",
     ],
-    agency: {
-      name: SEED_AGENCIES.norte.name,
-      logoUrl: SEED_AGENCIES.norte.logoUrl,
-      phone: SEED_AGENCIES.norte.phone,
-      email: SEED_AGENCIES.norte.email,
-      address: SEED_AGENCIES.norte.address,
-    },
+    agency: SEED_AGENCIES.norte,
   },
   {
     id: "bol-02",
@@ -63,13 +57,7 @@ export const SEED_PROPERTIES: Property[] = [
       "Conexión para lavarropas",
       "Edificio con ascensor de última generación",
     ],
-    agency: {
-      name: SEED_AGENCIES.centro.name,
-      logoUrl: SEED_AGENCIES.centro.logoUrl,
-      phone: SEED_AGENCIES.centro.phone,
-      email: SEED_AGENCIES.centro.email,
-      address: SEED_AGENCIES.centro.address,
-    },
+    agency: SEED_AGENCIES.centro,
   },
   {
     id: "bol-03",
@@ -95,13 +83,7 @@ export const SEED_PROPERTIES: Property[] = [
       "Agua corriente y gas en vereda",
       "Barrio en constante valorización",
     ],
-    agency: {
-      name: SEED_AGENCIES.campoCiudad.name,
-      logoUrl: SEED_AGENCIES.campoCiudad.logoUrl,
-      phone: SEED_AGENCIES.campoCiudad.phone,
-      email: SEED_AGENCIES.campoCiudad.email,
-      address: SEED_AGENCIES.campoCiudad.address,
-    },
+    agency: SEED_AGENCIES.campoCiudad,
   },
   {
     id: "bol-04",
@@ -127,13 +109,7 @@ export const SEED_PROPERTIES: Property[] = [
       "Instalaciones eléctricas y sanitarias 100% nuevas",
       "Cocina tipo americana con isla desayunadora",
     ],
-    agency: {
-      name: SEED_AGENCIES.norte.name,
-      logoUrl: SEED_AGENCIES.norte.logoUrl,
-      phone: SEED_AGENCIES.norte.phone,
-      email: SEED_AGENCIES.norte.email,
-      address: SEED_AGENCIES.norte.address,
-    },
+    agency: SEED_AGENCIES.norte,
   },
   {
     id: "bol-05",
@@ -159,13 +135,7 @@ export const SEED_PROPERTIES: Property[] = [
       "Conexión Wi-Fi de alta velocidad lista",
       "Edificio con control de acceso electrónico",
     ],
-    agency: {
-      name: SEED_AGENCIES.bolivarHomes.name,
-      logoUrl: SEED_AGENCIES.bolivarHomes.logoUrl,
-      phone: SEED_AGENCIES.bolivarHomes.phone,
-      email: SEED_AGENCIES.bolivarHomes.email,
-      address: SEED_AGENCIES.bolivarHomes.address,
-    },
+    agency: SEED_AGENCIES.bolivarHomes,
   },
   {
     id: "bol-06",
@@ -193,13 +163,7 @@ export const SEED_PROPERTIES: Property[] = [
       "Fácil acceso pavimentado sobre Ruta 226",
       "Portón automatizado perimetral",
     ],
-    agency: {
-      name: SEED_AGENCIES.campoCiudad.name,
-      logoUrl: SEED_AGENCIES.campoCiudad.logoUrl,
-      phone: SEED_AGENCIES.campoCiudad.phone,
-      email: SEED_AGENCIES.campoCiudad.email,
-      address: SEED_AGENCIES.campoCiudad.address,
-    },
+    agency: SEED_AGENCIES.campoCiudad,
   },
   {
     id: "bol-07",
@@ -225,13 +189,7 @@ export const SEED_PROPERTIES: Property[] = [
       "Griferías de alta gama y sanitarios suspendidos",
       "Portero visor con cámara de seguridad",
     ],
-    agency: {
-      name: SEED_AGENCIES.centro.name,
-      logoUrl: SEED_AGENCIES.centro.logoUrl,
-      phone: SEED_AGENCIES.centro.phone,
-      email: SEED_AGENCIES.centro.email,
-      address: SEED_AGENCIES.centro.address,
-    },
+    agency: SEED_AGENCIES.centro,
   },
   {
     id: "bol-08",
@@ -257,13 +215,7 @@ export const SEED_PROPERTIES: Property[] = [
       "Persiana metálica motorizada",
       "Servicios trifásicos instalados",
     ],
-    agency: {
-      name: SEED_AGENCIES.bolivarHomes.name,
-      logoUrl: SEED_AGENCIES.bolivarHomes.logoUrl,
-      phone: SEED_AGENCIES.bolivarHomes.phone,
-      email: SEED_AGENCIES.bolivarHomes.email,
-      address: SEED_AGENCIES.bolivarHomes.address,
-    },
+    agency: SEED_AGENCIES.bolivarHomes,
   },
   {
     id: "bol-09",
@@ -288,13 +240,7 @@ export const SEED_PROPERTIES: Property[] = [
       "Factibilidad de construcción en altura FOT y FOS amplios",
       "Asfalto reforzado y alumbrado público LED",
     ],
-    agency: {
-      name: SEED_AGENCIES.norte.name,
-      logoUrl: SEED_AGENCIES.norte.logoUrl,
-      phone: SEED_AGENCIES.norte.phone,
-      email: SEED_AGENCIES.norte.email,
-      address: SEED_AGENCIES.norte.address,
-    },
+    agency: SEED_AGENCIES.norte,
   },
   {
     id: "bol-10",
@@ -320,13 +266,7 @@ export const SEED_PROPERTIES: Property[] = [
       "Master suite con hidromasaje y vestidor",
       "Tranquilidad absoluta a minutos del centro",
     ],
-    agency: {
-      name: SEED_AGENCIES.centro.name,
-      logoUrl: SEED_AGENCIES.centro.logoUrl,
-      phone: SEED_AGENCIES.centro.phone,
-      email: SEED_AGENCIES.centro.email,
-      address: SEED_AGENCIES.centro.address,
-    },
+    agency: SEED_AGENCIES.centro,
   },
   {
     id: "bol-11",
@@ -352,13 +292,7 @@ export const SEED_PROPERTIES: Property[] = [
       "Limpieza final incluida",
       "Check-in autónomo con cerradura digital",
     ],
-    agency: {
-      name: SEED_AGENCIES.centro.name,
-      logoUrl: SEED_AGENCIES.centro.logoUrl,
-      phone: SEED_AGENCIES.centro.phone,
-      email: SEED_AGENCIES.centro.email,
-      address: SEED_AGENCIES.centro.address,
-    },
+    agency: SEED_AGENCIES.centro,
   },
   {
     id: "bol-12",
@@ -384,12 +318,6 @@ export const SEED_PROPERTIES: Property[] = [
       "Parque arbolado de 2.500 m²",
       "Estadías de fin de semana o temporada",
     ],
-    agency: {
-      name: SEED_AGENCIES.campoCiudad.name,
-      logoUrl: SEED_AGENCIES.campoCiudad.logoUrl,
-      phone: SEED_AGENCIES.campoCiudad.phone,
-      email: SEED_AGENCIES.campoCiudad.email,
-      address: SEED_AGENCIES.campoCiudad.address,
-    },
+    agency: SEED_AGENCIES.campoCiudad,
   },
 ]
