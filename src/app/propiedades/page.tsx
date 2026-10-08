@@ -8,6 +8,7 @@ import {
   esIndexable,
   filtrarPropiedades,
   hrefDeBusqueda,
+  indiceDeBusqueda,
   leerBusqueda,
   ordenarPropiedades,
   tituloDeBusqueda,
@@ -51,7 +52,14 @@ export default async function PropiedadesPage({ searchParams }: Props) {
       <Header />
       <main className="flex flex-1 flex-col">
         <Encabezado titulo={tituloDeBusqueda(busqueda)} total={propiedades.length} />
-        <ResultadosCliente tarjetas={propiedades.map(aTarjeta)} busqueda={busqueda} ampliar={ampliar} />
+        {/* Otra búsqueda (los filtros navegan acá mismo) arranca de cero: carrusel, selección. */}
+        <ResultadosCliente
+          key={canonica(busqueda)}
+          tarjetas={propiedades.map(aTarjeta)}
+          busqueda={busqueda}
+          ampliar={ampliar}
+          indice={indiceDeBusqueda(todas)}
+        />
       </main>
     </div>
   )

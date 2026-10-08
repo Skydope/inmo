@@ -3,8 +3,9 @@
 import Form from "next/form"
 import Link from "next/link"
 import { X } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import { useRef } from "react"
 import { Button } from "@/components/ui/button"
+import { datosDe, useBusquedaDelFormulario } from "./use-busqueda-del-formulario"
 import {
   contarResultados,
   escribirBusqueda,
@@ -36,11 +37,6 @@ function sincronizarConUrl(form: HTMLFormElement, url: URLSearchParams) {
   }
 }
 
-function datosDe(form: HTMLFormElement): URLSearchParams {
-  const datos = new URLSearchParams()
-  for (const [clave, valor] of new FormData(form)) datos.append(clave, String(valor))
-  return datos
-}
 
 /**
  * El formulario de un paso. Sin JavaScript es un formulario GET común: "Continuar" va al
@@ -71,30 +67,18 @@ export function FormularioDePaso({
 }) {
   // `next/form` no pasa la ref al <form>: se escucha desde un contenedor propio.
   const contenedor = useRef<HTMLDivElement>(null)
-  const [actual, setActual] = useState(busqueda)
   // La búsqueda con la que se armó este paso (el componente se re-crea con cada URL de paso).
   const busquedaInicial = useRef(busqueda)
-  const conteo = contarResultados(indice, actual)
-
-  // Escuchas nativas (no onChange de React): así también cuentan los cambios hechos por
-  // código, como tocar un rango de precio sugerido.
-  useEffect(() => {
-    const form = contenedor.current?.closest("form")
-    if (!form) return
-    const recalcular = () => setActual(leerBusqueda(datosDe(form)))
+  const actual = useBusquedaDelFormulario(contenedor, busqueda, (form) => {
     // Al volver con "atrás", Next reconstruye el paso desde su caché (armado antes de marcar
     // nada) aunque la URL ya tenga lo elegido: la URL manda. Solo cuando no coinciden: si no,
     // un toque hecho antes de hidratar (celular lento) se perdería.
     const url = new URLSearchParams(window.location.search)
-    if (escribirBusqueda(leerBusqueda(url)) !== escribirBusqueda(busquedaInicial.current)) sincronizarConUrl(form, url)
-    recalcular()
-    form.addEventListener("input", recalcular)
-    form.addEventListener("change", recalcular)
-    return () => {
-      form.removeEventListener("input", recalcular)
-      form.removeEventListener("change", recalcular)
+    if (escribirBusqueda(leerBusqueda(url)) !== escribirBusqueda(busquedaInicial.current)) {
+      sincronizarConUrl(form, url)
     }
-  }, [])
+  })
+  const conteo = contarResultados(indice, actual)
 
   const sugerencias = conteo === 0 ? sugerenciasSinResultados(indice, actual).slice(0, 4) : []
 

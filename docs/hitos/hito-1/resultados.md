@@ -344,10 +344,13 @@ Ninguno nuevo. Al cliente viajan solo las tarjetas (no la descripción ni todas 
 - [ ] Gates + `pnpm e2e`.
 
 **Bloque 4 — Hoja de filtros** · commit "Resultados: hoja de filtros con conteo en vivo"
-- [ ] `hoja-de-filtros.tsx` con los campos compartidos (variante compacta), operación y orden.
-- [ ] Sin JS: "Filtros" es link al paso 2.
-- [ ] E2E de la hoja.
-- [ ] Gates + `pnpm e2e`.
+- [x] `hoja-de-filtros.tsx` con los campos compartidos (variante compacta), operación y orden.
+      El conteo en vivo sale de `useBusquedaDelFormulario` (compartido con el buscador);
+      "Todo Bolívar" es botón en la hoja (`CampoZonas modo="boton"`); cambiar la operación y
+      "Limpiar" rearman el formulario.
+- [x] Sin JS: "Filtros" es link al paso 2.
+- [x] E2E de la hoja (`resultados.spec.ts`, `resultados-sin-js.spec.ts`).
+- [x] Gates + `pnpm e2e`.
 
 **Bloque 5 — Vacío y escritorio** · commit "Resultados: estado vacío con sugerencias y vista de escritorio"
 - [ ] `sin-resultados.tsx` (lista y mapa).

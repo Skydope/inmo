@@ -98,3 +98,74 @@ test.describe("resultados: la propiedad elegida vive en la URL", () => {
   })
 })
 
+
+test.describe("resultados: hoja de filtros", () => {
+  test.beforeEach(({}, info) => {
+    test.skip(info.project.name === "escritorio", "en escritorio los filtros van al costado (bloque 5)")
+  })
+
+  const abrir = async (page: import("@playwright/test").Page) => {
+    await page.getByRole("link", { name: /^Filtros/ }).click()
+    const hoja = page.getByRole("dialog", { name: "Filtros" })
+    await expect(hoja).toBeVisible()
+    return hoja
+  }
+  const opcion = (hoja: import("@playwright/test").Locator, texto: string) =>
+    hoja.locator("label", { hasText: new RegExp(`^${texto}\\s*\\d*$`) }).locator("input")
+
+  test("cambiar algo recuenta sin navegar y aplicar va a la URL canónica", async ({ page }) => {
+    await page.goto("/propiedades?operacion=venta&tipo=casa")
+    const hoja = await abrir(page)
+    const aplicar = hoja.getByRole("button", { name: /^Ver \d+ propiedad/ })
+    await expect(aplicar).toHaveText("Ver 6 propiedades")
+    await opcion(hoja, "Departamento").check()
+    await expect(aplicar).toHaveText("Ver 10 propiedades")
+    await expect(page).toHaveURL(/\?operacion=venta&tipo=casa$/)
+
+    await opcion(hoja, "Centro").check()
+    const n = Number((await aplicar.textContent())!.match(/\d+/)![0])
+    await aplicar.click()
+    await expect(hoja).toBeHidden()
+    await expect(page).toHaveURL(/\/propiedades\?operacion=venta&tipo=casa,departamento&zona=centro$/)
+    await expect(page.getByText(new RegExp(`^1 de ${n}$`))).toBeVisible()
+  })
+
+  test("cerrar sin aplicar descarta lo tocado", async ({ page }) => {
+    await page.goto("/propiedades?operacion=venta&tipo=casa")
+    let hoja = await abrir(page)
+    await opcion(hoja, "Departamento").check()
+    await hoja.getByRole("button", { name: "Cerrar sin aplicar" }).click()
+    await expect(hoja).toBeHidden()
+    await expect(page).toHaveURL(/\?operacion=venta&tipo=casa$/)
+
+    hoja = await abrir(page)
+    await expect(opcion(hoja, "Departamento")).not.toBeChecked()
+    await expect(hoja.getByRole("button", { name: /^Ver \d+ propiedad/ })).toHaveText("Ver 6 propiedades")
+  })
+
+  test("Todo Bolívar y Limpiar desmarcan sin cerrar la hoja", async ({ page }) => {
+    await page.goto("/propiedades?operacion=venta&tipo=casa&zona=centro")
+    const hoja = await abrir(page)
+    const aplicar = hoja.getByRole("button", { name: /^Ver \d+ propiedad/ })
+    await expect(opcion(hoja, "Centro")).toBeChecked()
+    await hoja.getByRole("button", { name: /^Todo Bolívar/ }).click()
+    await expect(opcion(hoja, "Centro")).not.toBeChecked()
+    await expect(aplicar).toHaveText("Ver 6 propiedades")
+
+    await hoja.getByRole("button", { name: "Limpiar" }).click()
+    await expect(opcion(hoja, "Casa")).not.toBeChecked()
+    await expect(opcion(hoja, "Comprar")).toBeChecked()
+    await expect(aplicar).toHaveText("Ver 22 propiedades")
+  })
+
+  test("cambiar la operación saca lo que no aplica", async ({ page }) => {
+    await page.goto("/propiedades?operacion=venta&tipo=casa&moneda=USD&hasta=100000")
+    const hoja = await abrir(page)
+    await opcion(hoja, "Alquilar").check()
+    await expect(opcion(hoja, "Alquilar")).toBeChecked()
+    await expect(hoja.getByLabel(/^Hasta/)).toHaveValue("")
+    await expect(opcion(hoja, "Pesos")).toBeChecked()
+    await hoja.getByRole("button", { name: /^Ver \d+ propiedad/ }).click()
+    await expect(page).toHaveURL(/\/propiedades\?operacion=alquiler&tipo=casa$/)
+  })
+})

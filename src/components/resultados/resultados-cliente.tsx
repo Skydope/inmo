@@ -1,19 +1,39 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { filtrosActivos, hrefDeBusqueda, rutaDePaso, type Busqueda, type Sugerencia, type Vista } from "@/lib/busqueda"
+import {
+  escribirBusqueda,
+  filtrosActivos,
+  hrefDeBusqueda,
+  leerBusqueda,
+  rutaDePaso,
+  type Busqueda,
+  type Filtrable,
+  type Sugerencia,
+  type Vista,
+} from "@/lib/busqueda"
 import type { Tarjeta } from "@/lib/properties/tarjeta"
 import { precargarMapa } from "@/components/map/property-map-dynamic"
 import { Carrusel } from "./carrusel"
 import { FinDeResultados } from "./fin-de-resultados"
+import { HojaDeFiltros } from "./hoja-de-filtros"
 import { SelectorDeVista } from "./selector-de-vista"
 import { VistaMapa } from "./vista-mapa"
 
 const ESPERA_PARA_LA_URL = 300
 
-function desdeLaUrl(clave: "vista" | "sel", porDefecto: string | undefined) {
-  if (typeof window === "undefined") return porDefecto
-  return new URLSearchParams(window.location.search).get(clave) ?? porDefecto
+const sinVista = (b: Busqueda) => escribirBusqueda({ ...b, vista: "lista", sel: undefined })
+
+/**
+ * Vista y sel de la URL actual: al volver de la ficha, Next reconstruye la página desde su
+ * caché con las props de la primera visita, pero la URL ya tiene lo que se estaba mirando.
+ * Si la URL es de otra búsqueda (se está navegando a una nueva y todavía no cambió), valen
+ * las props. En el servidor y al hidratar coinciden.
+ */
+function desdeLaUrl(busqueda: Busqueda): Busqueda {
+  if (typeof window === "undefined") return busqueda
+  const url = leerBusqueda(new URLSearchParams(window.location.search), { conVista: true })
+  return sinVista(url) === sinVista(busqueda) ? url : busqueda
 }
 
 /**
@@ -25,20 +45,24 @@ export function ResultadosCliente({
   tarjetas,
   busqueda,
   ampliar,
+  indice,
 }: {
   tarjetas: Tarjeta[]
   busqueda: Busqueda
   ampliar: Sugerencia[]
+  /** Todas las propiedades, compactas: la hoja de filtros cuenta en vivo con esto. */
+  indice: Filtrable[]
 }) {
   const indiceDe = useCallback(
     (id: string | undefined) => Math.max(0, tarjetas.findIndex((t) => t.id === id)),
     [tarjetas]
   )
-  // La URL actual manda: al volver de la ficha, Next reconstruye la página desde su caché con
-  // las props de la primera visita, pero la URL ya tiene la vista y la propiedad elegida.
-  // (En el servidor y al hidratar, la URL y las props coinciden.)
-  const [vista, setVista] = useState<Vista>(() => desdeLaUrl("vista", busqueda.vista) === "mapa" ? "mapa" : "lista")
-  const [sel, setSel] = useState<string | undefined>(() => desdeLaUrl("sel", busqueda.sel))
+  const [vista, setVista] = useState<Vista>(() => desdeLaUrl(busqueda).vista)
+  const [sel, setSel] = useState<string | undefined>(() => {
+    const id = desdeLaUrl(busqueda).sel
+    return tarjetas.some((t) => t.id === id) ? id : undefined
+  })
+  const [filtrosAbiertos, setFiltrosAbiertos] = useState(false)
   const [inicial, setInicial] = useState(() => indiceDe(sel))
   const urlTieneSel = useRef(Boolean(sel))
 
@@ -98,7 +122,15 @@ export function ResultadosCliente({
         hrefMapa={hrefDeBusqueda("/propiedades", { ...busqueda, vista: "mapa", sel })}
         onCambiar={cambiarVista}
         hrefFiltros={rutaDePaso("tipo", busqueda)}
+        onFiltros={() => setFiltrosAbiertos(true)}
         filtros={filtrosActivos(busqueda)}
+      />
+      <HojaDeFiltros
+        abierta={filtrosAbiertos}
+        onAbiertaChange={setFiltrosAbiertos}
+        busqueda={busqueda}
+        indice={indice}
+        vista={vista}
       />
       {vista === "lista" ? (
         <Carrusel

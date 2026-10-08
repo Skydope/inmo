@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Opcion } from "@/components/ui/opcion"
 import { GRUPOS_DE_ZONA, nombreZona, zonasDelGrupo, type Zona } from "@/lib/busqueda"
 import { cn } from "@/lib/utils"
+import { BotonTodoBolivar } from "./boton-todo-bolivar"
 
 /**
  * Las zonas agrupadas, con el conteo para lo que ya se eligió. Las zonas sin propiedades no
@@ -13,15 +14,22 @@ export function CampoZonas({
   conteo,
   hrefTodo,
   total,
+  modo = "link",
 }: {
   elegidas: Zona[]
   conteo: Record<string, number>
-  hrefTodo: string
+  /** Solo en modo "link" (el paso del buscador). */
+  hrefTodo?: string
   total: number
+  /** "link": navega (anda sin JS). "boton": desmarca en el lugar (la hoja de filtros). */
+  modo?: "link" | "boton"
 }) {
   const todo = elegidas.length === 0
   return (
     <div className="flex flex-col gap-5">
+      {modo === "boton" || !hrefTodo ? (
+        <BotonTodoBolivar activo={todo} total={total} />
+      ) : (
       <Link
         href={hrefTodo}
         aria-current={todo ? "true" : undefined}
@@ -32,6 +40,7 @@ export function CampoZonas({
       >
         Todo Bolívar <span className="text-sm font-normal text-tinta-suave tabular-nums">{total}</span>
       </Link>
+      )}
 
       {GRUPOS_DE_ZONA.map((grupo) => {
         const zonas = zonasDelGrupo(grupo.slug).filter(
