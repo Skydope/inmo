@@ -355,7 +355,7 @@ Ninguno nuevo. Al cliente viajan solo las tarjetas (no la descripción ni todas 
 - [ ] E2E: vacío; escritorio.
 - [ ] Gates + `pnpm e2e`.
 
-**Bloque 6 — Recién publicadas en el inicio** · commit "Inicio: recién publicadas"
+**Bloque 6 — Recién publicadas en el inicio** · ➜ **pasó a [`inicio-y-pie.md`](inicio-y-pie.md)** (pedido de Manuel: el inicio entero con más contenido)
 - [ ] Variante `chica` de la tarjeta; `recien-publicadas.tsx` debajo del pliegue de `/`.
 - [ ] Gates + `pnpm e2e` (el pliegue del inicio sigue igual).
 

@@ -240,6 +240,7 @@ flowchart LR
 | 2 | [`modelo-de-busqueda.md`](modelo-de-busqueda.md) | `done` (2026-10-08) | Operaciones, tipos, zonas y características; contrato de URL; filtrar, contar, ordenar, rangos de precio, resumen; tipo `Property` nuevo y datos de prueba ampliados |
 | 3 | [`buscador-guiado.md`](buscador-guiado.md) | `in-progress` (falta 👀 Manuel) | El inicio y los pasos 2 a 4 |
 | 4 | [`resultados.md`](resultados.md) | `approved` | `/propiedades`: resumen, selector de vista, carrusel, mapa con tarjeta flotante, hoja de filtros, vacío; escritorio en dos columnas; tiles de OpenFreeMap |
+| 6 | [`inicio-y-pie.md`](inicio-y-pie.md) | `draft` | Debajo de la foto del inicio: recién publicadas, por tipo, destacadas, por zona e inmobiliarias deslizando; pie completo (pedido de Manuel, 2026-10-08) |
 | 5 | [`ficha.md`](ficha.md) | `approved` | `/propiedades/[id]`: galería, precio, datos, descripción, ubicación, inmobiliaria, similares, contacto fijo, vista previa al compartir |
 
 Referencia relevada: [`referencia-tandilprop.md`](referencia-tandilprop.md).
