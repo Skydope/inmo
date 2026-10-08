@@ -225,6 +225,6 @@ right.
 ### Don't:
 
 - Animate entrances, counters or scroll.
-- Put photos or gradients behind controls.
+- Put photos or gradients behind controls, except the home hero: a real photo of Bolívar with a tinta veil behind the title and the options on a solid white card.
 - Use blue for decoration.
 - Add dark mode styles without the decision recorded in the skill.

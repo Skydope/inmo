@@ -114,7 +114,9 @@ cifras tabulares (`tnum`). Si no trae alguna de las dos, la alternativa es **Bar
   `ease-out`, solo `transform` y `opacity`. `prefers-reduced-motion` lo apaga. Sin entradas
   animadas, sin parallax, sin contadores que suben.
 - **Fotos**: 4:3, sin filtros ni velos. Sin foto: fondo `papel` con el ícono del tipo en
-  `tinta-suave` (no una foto genérica).
+  `tinta-suave` (no una foto genérica). **Excepción, decidida por Manuel el 2026-10-08**: el
+  inicio lleva una foto real de Bolívar de fondo, con el buscador en una tarjeta blanca encima
+  (ver `buscador-guiado.md` § Paso 1).
 
 ### Tono de copy
 

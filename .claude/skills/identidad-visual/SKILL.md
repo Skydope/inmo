@@ -29,8 +29,8 @@ La identidad sale de los dos objetos del mundo inmobiliario de un pueblo:
   bordes finos, la grilla de 4 px. Y el color: **el azul de las copias heliográficas**, como
   se copiaban los planos.
 
-Lo que **no** es: ni crema, ni serif en itálica, ni vidrio, ni dorado, ni gradientes, ni
-fotos de fondo detrás de los controles, ni sombras de color.
+Lo que **no** es: ni crema, ni serif en itálica, ni vidrio, ni dorado, ni gradientes de
+color, ni sombras de color. Fotos de fondo, solo en el inicio y con los controles sobre blanco.
 
 ## Paleta
 
@@ -122,6 +122,13 @@ de marcas).
 - Sin foto: fondo `papel` con el ícono del tipo en `tinta-suave` (nunca una foto genérica).
 - La pantalla de ingreso mantiene su composición de referencia: acceso a la izquierda, foto
   de Bolívar a la derecha (`PRODUCT.md`).
+- **El inicio lleva una foto real de Bolívar de fondo** (decisión de Manuel, 2026-10-08: sin
+  foto "se ve mucho más vacío"). Es la única pantalla con foto detrás de los controles, y
+  los controles van en una tarjeta **blanca y lisa** encima. El título sobre la foto lleva un
+  velo de `tinta` en degradé y tiene que medir ≥ 4,5 de contraste. Crédito de la foto visible.
+- **Fotos de prueba**: libres (Wikimedia Commons, Unsplash), con autor y licencia anotados en
+  `public/images/CREDITOS.md`. Las de licencia CC BY / BY-SA llevan crédito visible donde se
+  muestran en producción.
 
 ## Movimiento
 

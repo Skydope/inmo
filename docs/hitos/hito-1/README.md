@@ -192,6 +192,8 @@ revés.
 | D9 | **Solo modo claro** en el hito 1 | Mitad de verificación; tokens listos para sumar oscuro | Mantener el modo oscuro actual |
 | D10 | **Contacto por WhatsApp con mensaje armado** + llamar, fijos abajo en la ficha | Es como se consulta en Bolívar; el mensaje dice qué propiedad es | Formulario de contacto (nadie lo contesta rápido) |
 | D11 | **Precio en la moneda publicada**, sin convertir; "Consultar precio" cuando no hay | Honesto; el tipo de cambio es opinión | Conversión ARS ⇄ USD |
+| D13 | **Foto real de Bolívar de fondo en el inicio**, buscador en tarjeta blanca encima (Manuel, 2026-10-08) | Sin foto "se ve mucho más vacío" | Inicio sin foto; franja de foto arriba |
+| D14 | **Fotos de prueba libres** (Wikimedia Commons, Unsplash) con créditos en `public/images/CREDITOS.md` (Manuel, 2026-10-08) | Faltan fotos de seis tipos; se ven reales | Generarlas; repetir las 10 que hay |
 | D12 | **Rangos de precio sugeridos calculados de los datos** + mínimo/máximo | En pesos, rangos fijos envejecen en meses por la inflación | Slider de dos manijas; rangos fijos en el código |
 
 ## 9. Preguntas abiertas para Manuel

@@ -232,10 +232,11 @@ Con casos borde a propósito: 2 con "Consultar precio", 1 venta en pesos, 2 con
 coordenadas se reparten cerca de cada zona (aproximadas: es data de prueba). Las inmobiliarias
 de prueba pasan a tener `id`, `whatsapp` y `license`.
 
-🙋 **Fotos**: hay 10 en `public/images/properties/` (casas, departamentos, terrenos). Faltan
-para quinta, campo, local, oficina, galpón y cochera. Opciones: fotos libres de Unsplash o
-Pexels (licencia libre), o generadas. Sin fotos, esas propiedades usan el estado "sin foto"
-de la tarjeta (que igual hay que diseñar).
+**Fotos** (decidido por Manuel el 2026-10-08): hay 10 en `public/images/properties/` (casas,
+departamentos, terrenos). Para quinta, campo, local, oficina, galpón y cochera se buscan
+**fotos libres** (Wikimedia Commons, Unsplash) y se anotan autor, licencia y origen en
+`public/images/CREDITOS.md`. Se optimizan a WebP de 1200 px. Una propiedad queda **sin foto** a
+propósito, para el estado "sin foto" de la tarjeta.
 
 ## Alcance
 

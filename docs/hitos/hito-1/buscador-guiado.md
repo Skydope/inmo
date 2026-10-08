@@ -44,29 +44,30 @@ con JavaScript apagado y el botón atrás vuelve un paso.
 
 ### Paso 1 · Inicio (`/`)
 
+> **Decisión de Manuel (2026-10-08): foto de fondo.** Viendo el inicio sin foto, dijo que "se
+> ve mucho más vacío" y eligió la foto de fondo con el buscador en una tarjeta encima (como
+> tandilprop, pero mejor resuelto). Es la **única pantalla con foto detrás de los controles**,
+> y los controles van sobre blanco liso, nunca sobre la foto.
+
 ```
 ┌────────────────────────────────────┐
-│ ▣ bolívar inmo                 ☰  │ header (56)
+│ ▣ bolívar inmo                 ☰  │ header blanco (56)
 ├────────────────────────────────────┤
-│                                    │
-│ ¿Qué estás buscando?               │ h1, 32 px semi condensada
-│ Propiedades de las inmobiliarias   │ 16 px, tinta-suave
-│ de Bolívar.                        │
-│                                    │
-│ ┌────────────────────────────────┐ │
-│ │ ⚿                              │ │ opción grande (≥ 104 px)
-│ │ Comprar                        │ │ 24 px semi condensada
-│ │ Casas, terrenos, campos…   48 ›│ │ ayuda + conteo
-│ └────────────────────────────────┘ │
-│ ┌────────────────────────────────┐ │
-│ │ ⌂                              │ │
-│ │ Alquilar                       │ │
-│ │ Para vivir o para tu negocio 21›│ │
-│ └────────────────────────────────┘ │
-│                                    │
-│  Alquiler temporario          3 › │ fila de 44 px
-│  Ver todas en el mapa           › │ fila de 44 px
-│                                    │
+│░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│ foto real de Bolívar a todo el ancho y alto
+│░ ¿Qué estás buscando?  ░░░░░░░░░░░░│ h1 blanco, 32 px, sobre un velo tinta
+│░ Propiedades de las inmobiliarias ░│ 16 px blanco 90 %
+│░ de Bolívar.       ░░░░░░░░░░░░░░░░│
+│░┌────────────────────────────────┐░│ tarjeta blanca (radio 16, sombra suave)
+│░│ ⚿  Comprar                     │░│ opción grande (≥ 88 px)
+│░│    Casas, terrenos, campos… 48›│░│ ayuda + conteo
+│░├────────────────────────────────┤░│ divisor linea
+│░│ ⌂  Alquilar                    │░│
+│░│    Para vivir o tu negocio  21›│░│
+│░├────────────────────────────────┤░│
+│░│ Alquiler temporario         3 ›│░│ fila de 48 px
+│░└────────────────────────────────┘░│
+│░  Ver todas en el mapa  ›  ░░░░░░░░│ link blanco sobre el velo (44)
+│░░░░░░░░░░░░░ Foto: Autor · CC BY ░│ crédito de la foto, 12 px
 ├ ─ ─ ─ ─ ─ (pliegue a 640) ─ ─ ─ ─ ┤
 │  Recién publicadas            →    │ (llega con `resultados`, bloque 6)
 │  Inmobiliarias de Bolívar      ›   │
@@ -74,15 +75,22 @@ con JavaScript apagado y el botón atrás vuelve un paso.
 └────────────────────────────────────┘
 ```
 
+- **La foto**: una foto **real de San Carlos de Bolívar** con licencia libre (Wikimedia
+  Commons), con el **crédito visible** abajo a la derecha (lo exige la licencia). Ocupa el
+  primer pliegue entero (`min-h-[calc(100svh-56px)]`), `object-cover`, servida con
+  `next/image` (`priority`, WebP/AVIF, ≤ 200 KB a 1080 px de ancho).
+- **El velo**: un degradé de `tinta` de arriba (70 %) hacia el medio (20 %) detrás del título,
+  para que el texto blanco pase **≥ 4,5 de contraste en cualquier foto** (se mide con
+  capturas, no a ojo). Sin desenfoque, sin animación.
+- **La tarjeta**: blanca y lisa (nada de vidrio), radio 16, sombra neutra suave. Adentro, las
+  opciones van una debajo de la otra separadas por `linea`, no como tarjetas sueltas.
 - **Comprar**, **Alquilar** y **Alquiler temporario** son links (`<a>`) a
   `/buscar/tipo?operacion=…`. Un toque y se pasa al paso 2: no hay "Continuar" en el paso 1.
 - El número es la cantidad de propiedades de esa operación (de los datos, no inventado). Una
   operación con 0 propiedades se muestra igual, con "Sin propiedades por ahora" y sin link.
 - **Ver todas en el mapa** → `/propiedades?vista=mapa` (sin operación: todas).
-- A 360 × 640 **se ven sin scroll** la pregunta, las dos opciones grandes y "Alquiler
-  temporario".
-- Fondo `papel`; las opciones son tarjetas blancas con borde `linea`; al tocar, borde y fondo
-  `plano` (estado `:active`), sin animación.
+- A 360 × 640 **se ven sin scroll** la pregunta, Comprar, Alquilar y "Alquiler temporario".
+- Al tocar una opción: fondo `plano-50` (estado `:active`), sin animación.
 
 ### Pasos 2 a 4 · la barra de paso y el pie fijo
 
@@ -220,6 +228,8 @@ guardar búsquedas o alertas (sin cuentas para quien busca).
 
 - [ ] A **360 × 640**, en `/` se ven sin scroll: la pregunta, Comprar, Alquilar y "Alquiler
       temporario".
+- [ ] El texto sobre la foto mide ≥ 4,5 de contraste contra el píxel más claro detrás (captura
+      + script), y el crédito de la foto se ve.
 - [ ] Inicio → Comprar → (Casa + Quinta) → Continuar → (Centro) → Continuar → (2+ dorm) →
       "Ver N propiedades" termina en
       `/propiedades?operacion=venta&tipo=casa,quinta&zona=centro&dorm=2` (o su forma con
