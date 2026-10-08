@@ -65,9 +65,11 @@ Fuente: [CARTO Basemaps Terms](https://carto.com/legal/basemap-terms/) (actualiz
 - **`allowedDevOrigins` tiene que incluir `127.0.0.1`**: con el dev server levantado con
   `--hostname 0.0.0.0`, entrar por `127.0.0.1` sirve el HTML pero **no hidrata** (sin error
   visible). Los e2e corren contra `localhost`.
-- **`loading.tsx` + `redirect()`/`notFound()`**: con el streaming que habilita `loading.tsx`, la
-  respuesta ya salió y el código queda en 200. Donde importa el código (guardas, 404), sin
-  `loading.tsx`; los parámetros válidos, con `dynamicParams = false`.
+- **No usar `loading.tsx`** (regla, 2026-10-08): (1) con el streaming que habilita, la respuesta
+  ya salió cuando corren `redirect()`/`notFound()` y el código queda en 200; (2) **sin
+  JavaScript la página queda en el esqueleto para siempre**: el contenido llega en streaming y lo
+  que lo pone en lugar del esqueleto es un script. Rompe "lo que puede andar sin JS, anda sin
+  JS". Los parámetros válidos de una ruta, con `dynamicParams = false`.
 - **`next/form` no pasa la `ref` al `<form>`**: se escucha desde un elemento de adentro con
   `closest("form")`.
 - **Next 16 exige `images.qualities`**: una calidad que no esté en la lista se redondea a la más
