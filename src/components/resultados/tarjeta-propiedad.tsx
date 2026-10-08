@@ -127,7 +127,7 @@ export function TarjetaPropiedad({
           fotos={t.fotos}
           alt={queEsYDonde(t)}
           tipo={t.type}
-          sizes="(min-width: 1024px) 420px, 90vw"
+          sizes="(min-width: 1280px) 360px, (min-width: 1024px) 420px, (min-width: 640px) 50vw, 90vw"
           prioridad={prioridad}
           className="aspect-[4/3] w-full"
         />

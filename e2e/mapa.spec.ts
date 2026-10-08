@@ -5,7 +5,7 @@ const VENTA = "/propiedades?operacion=venta"
 // Los tiles no se piden (el e2e no depende de la red para dibujar calles); el índice de la
 // fuente sí, porque de ahí sale el texto de la atribución. Los pines son HTML: se tocan igual.
 test.beforeEach(async ({ page }, info) => {
-  test.skip(info.project.name === "escritorio", "en escritorio mapa y lista van juntos (bloque 5)")
+  test.skip(info.project.name === "escritorio", "en escritorio mapa y lista van juntos (ver resultados.spec.ts)")
   await page.route(/tiles\.openfreemap\.org\/(planet|natural_earth)\/.+/, (ruta) => ruta.abort())
 })
 

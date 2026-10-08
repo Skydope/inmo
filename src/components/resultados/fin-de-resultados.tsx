@@ -36,7 +36,8 @@ export function FinDeResultados({
           </ul>
         </div>
       ) : null}
-      <Link href={hrefMapa} className="inline-flex min-h-11 w-fit items-center gap-2 font-semibold text-plano-700">
+      {/* En escritorio el mapa ya está al lado. */}
+      <Link href={hrefMapa} className="inline-flex min-h-11 w-fit items-center gap-2 font-semibold text-plano-700 lg:hidden">
         <MapIcono className="size-5" aria-hidden="true" /> Verlas en el mapa
         <ChevronRight className="size-4" aria-hidden="true" />
       </Link>

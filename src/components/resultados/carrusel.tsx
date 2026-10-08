@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useEffect, useRef } from "react"
+import { esEscritorio } from "@/hooks/use-es-escritorio"
 import { useSlideActivo } from "@/hooks/use-slide-activo"
 import type { Tarjeta } from "@/lib/properties/tarjeta"
 import { cn } from "@/lib/utils"
@@ -9,13 +10,16 @@ import { TarjetaPropiedad } from "./tarjeta-propiedad"
 
 /**
  * Las propiedades de a una tarjeta grande, deslizando (scroll-snap nativo, sin librería).
- * Las flechas de abajo hacen lo mismo: teclado, escritorio, accesibilidad. Al final, una
- * tarjeta para ampliar la búsqueda.
+ * Las flechas de abajo hacen lo mismo: teclado, accesibilidad. Al final, una tarjeta para
+ * ampliar la búsqueda. En tablet se ven dos por pantalla; en escritorio, la misma lista es
+ * una grilla que se baja (solo clases `lg:`) al lado del mapa.
  */
 export function Carrusel({
   tarjetas,
   inicial,
   onActivo,
+  seleccionada,
+  onResaltar,
   final,
   className,
 }: {
@@ -23,6 +27,10 @@ export function Carrusel({
   /** El índice donde arrancar (la propiedad elegida al volver de la ficha). */
   inicial: number
   onActivo: (indice: number) => void
+  /** Escritorio: la elegida en el mapa, que se marca y se trae a la vista. */
+  seleccionada?: string
+  /** Escritorio: el mouse sobre una tarjeta resalta su pin. */
+  onResaltar?: (id: string | undefined) => void
   final: React.ReactNode
   className?: string
 }) {
@@ -36,6 +44,18 @@ export function Carrusel({
   }, [activo, tarjetas.length, onActivo])
 
   const enFinal = activo >= tarjetas.length
+
+  // Escritorio: tocar un pin (o deslizar la tarjeta del mapa) trae su tarjeta a la vista.
+  const primeraVez = useRef(true)
+  useEffect(() => {
+    const deUna = primeraVez.current
+    primeraVez.current = false
+    if (!seleccionada || !esEscritorio()) return
+    const sinMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    contenedor.current
+      ?.querySelector(`[data-id="${seleccionada}"]`)
+      ?.scrollIntoView({ block: "nearest", behavior: deUna || sinMovimiento ? "instant" : "smooth" })
+  }, [seleccionada])
 
   // Dos toques rápidos en la flecha: el segundo avanza desde el destino en curso, no desde la
   // activa (que no cambia hasta que termina la animación).
@@ -57,7 +77,7 @@ export function Carrusel({
     <section aria-roledescription="carrusel" aria-label="Propiedades" className={cn("flex flex-col gap-1", className)}>
       <ul
         ref={contenedor}
-        className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-4 px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-4 px-4 pb-1 [scrollbar-width:none] lg:grid lg:snap-none lg:gap-4 lg:overflow-visible xl:grid-cols-2 [&::-webkit-scrollbar]:hidden"
       >
         {tarjetas.map((t, i) => (
           <li
@@ -67,18 +87,36 @@ export function Carrusel({
             aria-roledescription="propiedad"
             aria-label={`${i + 1} de ${tarjetas.length}`}
             data-activo={i === activo}
-            // Las flechas de foto, solo en la tarjeta que se está mirando (no en la que asoma).
-            className="flex w-[calc(100%-3rem)] max-w-md shrink-0 snap-center snap-always data-[activo=false]:[&_[data-flecha-foto]]:invisible"
+            data-elegida={t.id === seleccionada}
+            onPointerEnter={(e) => {
+              if (e.pointerType === "mouse") onResaltar?.(t.id)
+            }}
+            onPointerLeave={(e) => {
+              if (e.pointerType === "mouse") onResaltar?.(undefined)
+            }}
+            className={cn(
+              "flex w-[calc(100%-3rem)] max-w-md shrink-0 snap-center snap-always",
+              "sm:w-[calc(50%-1.5rem)] sm:max-w-none sm:snap-start lg:w-auto lg:scroll-mt-20 lg:scroll-mb-6",
+              // En el celu, las flechas de foto solo en la tarjeta que se está mirando (no en la que asoma).
+              "max-sm:data-[activo=false]:[&_[data-flecha-foto]]:invisible"
+            )}
           >
-            <TarjetaPropiedad t={t} prioridad={i === 0} className="w-full" />
+            <TarjetaPropiedad
+              t={t}
+              prioridad={i === 0}
+              className="w-full lg:transition-shadow lg:in-data-[elegida=true]:ring-2 lg:in-data-[elegida=true]:ring-plano-700"
+            />
           </li>
         ))}
-        <li data-slide={tarjetas.length} className="flex w-[calc(100%-3rem)] max-w-md shrink-0 snap-center snap-always">
+        <li
+          data-slide={tarjetas.length}
+          className="flex w-[calc(100%-3rem)] max-w-md shrink-0 snap-center snap-always sm:w-[calc(50%-1.5rem)] sm:max-w-none sm:snap-start lg:w-auto xl:col-span-2"
+        >
           {final}
         </li>
       </ul>
 
-      <div className="flex items-center justify-center gap-2">
+      <div className="flex items-center justify-center gap-2 lg:hidden">
         <button
           type="button"
           onClick={() => mover(-1)}

@@ -52,12 +52,15 @@ const etiquetaDePin = (t: Tarjeta) =>
 export function PropertyMap({
   tarjetas,
   sel,
+  resaltada,
   margenInferior,
   onSeleccionar,
   onDeseleccionar,
 }: {
   tarjetas: Tarjeta[]
   sel: string | undefined
+  /** Escritorio: el pin de la tarjeta que tiene el mouse encima se destaca. */
+  resaltada?: string
   /** Lo que tapa la tarjeta flotante abajo: el mapa centra los pines por encima. */
   margenInferior: number
   onSeleccionar: (id: string) => void
@@ -177,6 +180,18 @@ export function PropertyMap({
       actuales.set(t.id, { marker, el, elegido })
     }
   }, [tarjetas, sel])
+
+  // Escritorio: el pin de la tarjeta que tiene el mouse encima, destacado y por encima del resto.
+  useEffect(() => {
+    const pin = resaltada ? pines.current.get(resaltada) : undefined
+    if (!pin) return
+    pin.el.classList.add("is-resaltado")
+    pin.el.style.zIndex = "20"
+    return () => {
+      pin.el.classList.remove("is-resaltado")
+      pin.el.style.zIndex = pin.elegido ? "10" : "1"
+    }
+  }, [resaltada])
 
   // Al elegir una propiedad (desde un pin o deslizando la tarjeta), el mapa la lleva arriba de
   // la tarjeta flotante.

@@ -353,10 +353,10 @@ Ninguno nuevo. Al cliente viajan solo las tarjetas (no la descripción ni todas 
 - [x] Gates + `pnpm e2e`.
 
 **Bloque 5 — Vacío y escritorio** · commit "Resultados: estado vacío con sugerencias y vista de escritorio"
-- [ ] `sin-resultados.tsx` (lista y mapa).
-- [ ] Escritorio: dos columnas, grilla, mapa fijo, hover ↔ pin. 600–1023 px: dos tarjetas visibles.
-- [ ] E2E: vacío; escritorio.
-- [ ] Gates + `pnpm e2e`.
+- [x] `sin-resultados.tsx` (lista y mapa: sin resultados no hay selector Lista / Mapa).
+- [x] Escritorio: dos columnas, grilla, mapa fijo, hover ↔ pin. 600–1023 px: dos tarjetas visibles.
+- [x] E2E: vacío; escritorio (y la hoja de filtros corre también en escritorio).
+- [x] Gates + `pnpm e2e`.
 
 **Bloque 6 — Recién publicadas en el inicio** · ➜ **pasó a [`inicio-y-pie.md`](inicio-y-pie.md)** (pedido de Manuel: el inicio entero con más contenido)
 - [ ] Variante `chica` de la tarjeta; `recien-publicadas.tsx` debajo del pliegue de `/`.
@@ -374,4 +374,15 @@ Ninguno nuevo. Al cliente viajan solo las tarjetas (no la descripción ni todas 
 
 ## Lo que se encontró al implementar
 
-_(se completa al ejecutar)_
+- **Mapa**: Carto → OpenFreeMap con estilo propio (`scripts/estilo-mapa.mjs`). Rotar e
+  inclinar con dos dedos quedan habilitados (Manuel los pidió); arranca plano.
+- **Volver de la ficha**: Next reconstruye la página con las props de la primera visita;
+  `vista` y `sel` se leen de `window.location`, pero solo si la URL es de la misma búsqueda
+  (tras `router.push` a otra búsqueda, el cliente nuevo renderiza antes de que cambie la URL).
+  `ResultadosCliente` se keyea por la búsqueda canónica.
+- **Escritorio**: la columna izquierda es `minmax(26rem, 40%)` con una tarjeta por fila hasta
+  1279 px y `minmax(40rem, 48%)` con dos desde 1280 px (con 480 px fijos y dos columnas las
+  tarjetas grandes quedaban de ~220 px). La elegida en el mapa se marca con un anillo y se trae
+  a la vista; el mouse sobre una tarjeta resalta su pin (`.is-resaltado`).
+- **Slide activo**: con dos por pantalla (tablet), el activo es el primero de los que se ven
+  al 60 % (`useSlideActivo` lleva un conjunto, no el último que avisó).

@@ -3,28 +3,35 @@
 import Link from "next/link"
 import { PropertyMapDynamic } from "@/components/map/property-map-dynamic"
 import type { Tarjeta } from "@/lib/properties/tarjeta"
+import { cn } from "@/lib/utils"
 import { ALTO_DE_LA_TIRA, TiraFlotante } from "./tira-flotante"
 
 /** El mapa con los resultados y, si hay una elegida, su tarjeta flotante abajo. */
 export function VistaMapa({
   tarjetas,
   sel,
+  resaltada,
   hrefLista,
   onSeleccionar,
   onDeseleccionar,
+  className,
 }: {
   tarjetas: Tarjeta[]
   sel: string | undefined
+  /** Escritorio: la tarjeta con el mouse encima. */
+  resaltada?: string
   hrefLista: string
   onSeleccionar: (id: string) => void
   onDeseleccionar: () => void
+  className?: string
 }) {
   const elegida = tarjetas.some((t) => t.id === sel) ? sel : undefined
   return (
-    <div className="relative isolate min-h-[62svh] flex-1 overflow-hidden bg-papel">
+    <div className={cn("relative isolate overflow-hidden bg-papel", className)}>
       <PropertyMapDynamic
         tarjetas={tarjetas}
         sel={elegida}
+        resaltada={resaltada}
         margenInferior={elegida ? ALTO_DE_LA_TIRA : 0}
         onSeleccionar={onSeleccionar}
         onDeseleccionar={onDeseleccionar}

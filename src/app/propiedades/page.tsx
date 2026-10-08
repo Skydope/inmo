@@ -47,14 +47,17 @@ export default async function PropiedadesPage({ searchParams }: Props) {
     .sort((a, b) => b.conteo - a.conteo)
     .slice(0, 4)
 
+  const titulo = tituloDeBusqueda(busqueda)
+
   return (
     <div className="flex min-h-dvh flex-col bg-papel">
       <Header />
       <main className="flex flex-1 flex-col">
-        <Encabezado titulo={tituloDeBusqueda(busqueda)} total={propiedades.length} />
         {/* Otra búsqueda (los filtros navegan acá mismo) arranca de cero: carrusel, selección. */}
         <ResultadosCliente
           key={canonica(busqueda)}
+          encabezado={<Encabezado titulo={titulo} total={propiedades.length} />}
+          titulo={titulo}
           tarjetas={propiedades.map(aTarjeta)}
           busqueda={busqueda}
           ampliar={ampliar}

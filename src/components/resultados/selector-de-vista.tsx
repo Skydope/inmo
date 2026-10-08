@@ -5,7 +5,8 @@ import { cn } from "@/lib/utils"
 
 /**
  * Lista / Mapa y el botón de filtros. Son links: sin JavaScript navegan; con JavaScript se
- * interceptan y cambian la vista sin pedir nada al servidor.
+ * interceptan y cambian la vista sin pedir nada al servidor. En escritorio no hay Lista / Mapa
+ * (están lado a lado): queda Filtros.
  */
 export function SelectorDeVista({
   vista,
@@ -15,6 +16,7 @@ export function SelectorDeVista({
   hrefFiltros,
   onFiltros,
   filtros,
+  conVistas = true,
 }: {
   vista: Vista
   hrefLista: string
@@ -23,6 +25,8 @@ export function SelectorDeVista({
   hrefFiltros: string
   onFiltros?: () => void
   filtros: number
+  /** Sin resultados no hay nada que ver en el mapa: queda solo Filtros. */
+  conVistas?: boolean
 }) {
   const opcion = (v: Vista, href: string, Icono: typeof List, texto: string) => (
     <Link
@@ -45,11 +49,13 @@ export function SelectorDeVista({
   )
 
   return (
-    <div className="mx-auto flex w-full max-w-xl items-center gap-2 px-4 pt-3 lg:hidden">
-      <nav aria-label="Cómo ver los resultados" className="flex flex-1 gap-1 rounded-control bg-linea/70 p-1">
-        {opcion("lista", hrefLista, List, "Lista")}
-        {opcion("mapa", hrefMapa, MapIcono, "Mapa")}
-      </nav>
+    <div className="mx-auto flex w-full max-w-xl items-center gap-2 px-4 pt-3 sm:max-w-none">
+      {conVistas ? (
+        <nav aria-label="Cómo ver los resultados" className="flex flex-1 gap-1 rounded-control bg-linea/70 p-1 sm:max-w-sm lg:hidden">
+          {opcion("lista", hrefLista, List, "Lista")}
+          {opcion("mapa", hrefMapa, MapIcono, "Mapa")}
+        </nav>
+      ) : null}
       <Link
         href={hrefFiltros}
         onClick={(e) => {
@@ -57,7 +63,7 @@ export function SelectorDeVista({
           e.preventDefault()
           onFiltros()
         }}
-        className="relative inline-flex min-h-[3.25rem] items-center gap-2 rounded-control border border-linea bg-blanco px-3.5 font-semibold"
+        className="relative inline-flex min-h-[3.25rem] items-center gap-2 rounded-control border border-linea bg-blanco px-3.5 font-semibold hover:border-tinta-suave lg:min-h-11"
       >
         <SlidersHorizontal className="size-5" aria-hidden="true" />
         Filtros

@@ -178,6 +178,11 @@
   color: var(--color-blanco);
   transform: scale(1.08);
 }
+.map-pin.is-resaltado:not(.is-selected) .map-pin-precio {
+  border-color: var(--color-plano-700);
+  box-shadow: 0 0 0 2px var(--color-plano-700), 0 2px 6px rgb(0 0 0 / 0.2);
+  transform: scale(1.08);
+}
 .map-pin:focus-visible {
   outline: none;
 }
@@ -187,7 +192,7 @@
 }
 
 /* Con el mapa alejado, los pines no elegidos son puntos: los precios no entran. */
-.is-lejos .map-pin:not(.is-selected) .map-pin-precio {
+.is-lejos .map-pin:not(.is-selected, .is-resaltado) .map-pin-precio {
   width: 0.75rem;
   height: 0.75rem;
   padding: 0;

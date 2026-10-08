@@ -2,10 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import {
+  BUSQUEDA_VACIA,
   escribirBusqueda,
   filtrosActivos,
   hrefDeBusqueda,
   leerBusqueda,
+  operacionEnFrase,
   rutaDePaso,
   type Busqueda,
   type Filtrable,
@@ -14,10 +16,12 @@ import {
 } from "@/lib/busqueda"
 import type { Tarjeta } from "@/lib/properties/tarjeta"
 import { precargarMapa } from "@/components/map/property-map-dynamic"
+import { esEscritorio, useEsEscritorio } from "@/hooks/use-es-escritorio"
 import { Carrusel } from "./carrusel"
 import { FinDeResultados } from "./fin-de-resultados"
 import { HojaDeFiltros } from "./hoja-de-filtros"
 import { SelectorDeVista } from "./selector-de-vista"
+import { SinResultados } from "./sin-resultados"
 import { VistaMapa } from "./vista-mapa"
 
 const ESPERA_PARA_LA_URL = 300
@@ -39,20 +43,28 @@ function desdeLaUrl(busqueda: Busqueda): Busqueda {
 /**
  * Resultados en el cliente: la vista (lista o mapa) y la propiedad que se está mirando, que
  * es la misma en las dos vistas. Las dos viven en la URL (replaceState, sin sumar entradas al
- * historial): se comparten y sobreviven a ir a la ficha y volver.
+ * historial): se comparten y sobreviven a ir a la ficha y volver. En escritorio, lista y mapa
+ * van lado a lado y no hay selector.
  */
 export function ResultadosCliente({
+  encabezado,
   tarjetas,
   busqueda,
+  titulo,
   ampliar,
   indice,
 }: {
+  /** El título y el conteo (del servidor): arriba de la lista, a la izquierda en escritorio. */
+  encabezado: React.ReactNode
   tarjetas: Tarjeta[]
   busqueda: Busqueda
+  titulo: string
+  /** Qué filtro sacar para ver más (al final de la lista, o cuando no hay nada). */
   ampliar: Sugerencia[]
   /** Todas las propiedades, compactas: la hoja de filtros cuenta en vivo con esto. */
   indice: Filtrable[]
 }) {
+  const escritorio = useEsEscritorio()
   const indiceDe = useCallback(
     (id: string | undefined) => Math.max(0, tarjetas.findIndex((t) => t.id === id)),
     [tarjetas]
@@ -62,9 +74,11 @@ export function ResultadosCliente({
     const id = desdeLaUrl(busqueda).sel
     return tarjetas.some((t) => t.id === id) ? id : undefined
   })
-  const [filtrosAbiertos, setFiltrosAbiertos] = useState(false)
   const [inicial, setInicial] = useState(() => indiceDe(sel))
   const urlTieneSel = useRef(Boolean(sel))
+  const [filtrosAbiertos, setFiltrosAbiertos] = useState(false)
+  // Escritorio: la tarjeta que tiene el mouse encima, para resaltar su pin.
+  const [resaltada, setResaltada] = useState<string>()
 
   const cambiarVista = (v: Vista) => {
     if (v === "lista") setInicial(indiceDe(sel))
@@ -96,7 +110,14 @@ export function ResultadosCliente({
   // el historial se queda con la propiedad anterior y "atrás" vuelve a esa.
   const escribirYa = () => pendiente.current?.()
 
-  const onActivo = useCallback((i: number) => setSel(tarjetas[i]?.id), [tarjetas])
+  // En escritorio la lista es una grilla que se baja: la elegida la marcan los pines, no el
+  // scroll. (Se consulta en el momento: al hidratar, `escritorio` todavía es false.)
+  const onActivo = useCallback(
+    (i: number) => {
+      if (!esEscritorio()) setSel(tarjetas[i]?.id)
+    },
+    [tarjetas]
+  )
   const deseleccionar = useCallback(() => setSel(undefined), [])
 
   // Con la lista ya a la vista, pedir el código del mapa en un momento libre: así "Mapa"
@@ -114,50 +135,90 @@ export function ResultadosCliente({
     return () => window.clearTimeout(id)
   }, [vista])
 
-  return (
-    <div onClickCapture={escribirYa} className="flex flex-1 flex-col">
-      <SelectorDeVista
-        vista={vista}
-        hrefLista={hrefDeBusqueda("/propiedades", { ...busqueda, vista: "lista", sel })}
-        hrefMapa={hrefDeBusqueda("/propiedades", { ...busqueda, vista: "mapa", sel })}
-        onCambiar={cambiarVista}
-        hrefFiltros={rutaDePaso("tipo", busqueda)}
-        onFiltros={() => setFiltrosAbiertos(true)}
-        filtros={filtrosActivos(busqueda)}
+  const hrefLista = hrefDeBusqueda("/propiedades", { ...busqueda, vista: "lista", sel })
+  const mapa = (className?: string) => (
+    <VistaMapa
+      tarjetas={tarjetas}
+      sel={sel}
+      resaltada={resaltada}
+      hrefLista={hrefLista}
+      onSeleccionar={setSel}
+      onDeseleccionar={deseleccionar}
+      className={className}
+    />
+  )
+
+  let contenido: React.ReactNode
+  if (tarjetas.length === 0) {
+    contenido = (
+      <SinResultados
+        titulo={titulo}
+        sugerencias={ampliar}
+        hrefDe={(s) => hrefDeBusqueda("/propiedades", { ...s.sin, vista, sel: undefined })}
+        todas={
+          filtrosActivos(busqueda) > 0
+            ? {
+                href: hrefDeBusqueda("/propiedades", { ...BUSQUEDA_VACIA, operacion: busqueda.operacion, vista }),
+                texto: `Ver todas las propiedades${busqueda.operacion ? ` ${operacionEnFrase(busqueda.operacion)}` : ""}`,
+              }
+            : undefined
+        }
       />
-      <HojaDeFiltros
-        abierta={filtrosAbiertos}
-        onAbiertaChange={setFiltrosAbiertos}
-        busqueda={busqueda}
-        indice={indice}
-        vista={vista}
-      />
-      {vista === "lista" ? (
-        <Carrusel
-          key={inicial}
-          tarjetas={tarjetas}
-          inicial={inicial}
-          onActivo={onActivo}
-          className="pt-3"
-          final={
-            <FinDeResultados
-              total={tarjetas.length}
-              ampliar={ampliar}
-              hrefMapa={hrefDeBusqueda("/propiedades", { ...busqueda, vista: "mapa", sel: undefined })}
-            />
-          }
-        />
-      ) : (
-        <div className="mt-3 flex flex-1 flex-col">
-          <VistaMapa
-            tarjetas={tarjetas}
-            sel={sel}
-            hrefLista={hrefDeBusqueda("/propiedades", { ...busqueda, vista: "lista", sel })}
-            onSeleccionar={setSel}
-            onDeseleccionar={deseleccionar}
+    )
+  } else if (vista === "lista" || escritorio) {
+    contenido = (
+      <Carrusel
+        key={inicial}
+        tarjetas={tarjetas}
+        inicial={inicial}
+        onActivo={onActivo}
+        seleccionada={escritorio ? sel : undefined}
+        onResaltar={setResaltada}
+        className="pt-3 lg:pt-4"
+        final={
+          <FinDeResultados
+            total={tarjetas.length}
+            ampliar={ampliar}
+            hrefMapa={hrefDeBusqueda("/propiedades", { ...busqueda, vista: "mapa", sel: undefined })}
           />
-        </div>
-      )}
+        }
+      />
+    )
+  } else {
+    contenido = <div className="mt-3 flex flex-1 flex-col">{mapa("min-h-[62svh] flex-1")}</div>
+  }
+
+  return (
+    <div
+      onClickCapture={escribirYa}
+      className="flex flex-1 flex-col lg:grid lg:grid-cols-[minmax(26rem,40%)_1fr] lg:items-start xl:grid-cols-[minmax(40rem,48%)_1fr]"
+    >
+      <div className="flex flex-1 flex-col lg:px-2 lg:pb-10">
+        {encabezado}
+        <SelectorDeVista
+          vista={vista}
+          hrefLista={hrefLista}
+          hrefMapa={hrefDeBusqueda("/propiedades", { ...busqueda, vista: "mapa", sel })}
+          onCambiar={cambiarVista}
+          hrefFiltros={rutaDePaso("tipo", busqueda)}
+          onFiltros={() => setFiltrosAbiertos(true)}
+          filtros={filtrosActivos(busqueda)}
+          conVistas={tarjetas.length > 0}
+        />
+        <HojaDeFiltros
+          abierta={filtrosAbiertos}
+          onAbiertaChange={setFiltrosAbiertos}
+          lado={escritorio ? "derecha" : "abajo"}
+          busqueda={busqueda}
+          indice={indice}
+          vista={vista}
+        />
+        {contenido}
+      </div>
+      {/* Escritorio: el mapa fijo a la derecha mientras la lista se baja. */}
+      <div className="hidden border-l border-linea lg:sticky lg:top-14 lg:block lg:h-[calc(100dvh-3.5rem)]">
+        {escritorio ? mapa("h-full") : null}
+      </div>
     </div>
   )
 }

@@ -29,6 +29,9 @@ import {
   type Vista,
 } from "@/lib/busqueda"
 
+const DESDE_ABAJO = { "--drawer-content-height": "92dvh", "--drawer-content-max-height": "92dvh" } as React.CSSProperties
+const DESDE_LA_DERECHA = { "--drawer-content-width": "28rem" } as React.CSSProperties
+
 const ORDENES: { valor: Orden; etiqueta: string }[] = [
   { valor: "recientes", etiqueta: "Más recientes" },
   { valor: "precio-asc", etiqueta: "Menor precio" },
@@ -43,22 +46,30 @@ const ORDENES: { valor: Orden; etiqueta: string }[] = [
 export function HojaDeFiltros({
   abierta,
   onAbiertaChange,
+  lado,
   busqueda,
   indice,
   vista,
 }: {
   abierta: boolean
   onAbiertaChange: (abierta: boolean) => void
+  /** Abajo en el celu (hasta el 92 % del alto); a la derecha en escritorio. */
+  lado: "abajo" | "derecha"
   busqueda: Busqueda
   indice: Filtrable[]
   vista: Vista
 }) {
   const router = useRouter()
   return (
-    <Drawer open={abierta} onOpenChange={onAbiertaChange} showSwipeHandle>
+    <Drawer
+      open={abierta}
+      onOpenChange={onAbiertaChange}
+      swipeDirection={lado === "abajo" ? "down" : "right"}
+      showSwipeHandle={lado === "abajo"}
+    >
       <DrawerContent
         className="bg-blanco"
-        style={{ "--drawer-content-height": "92dvh", "--drawer-content-max-height": "92dvh" } as React.CSSProperties}
+        style={lado === "abajo" ? DESDE_ABAJO : DESDE_LA_DERECHA}
       >
         {/* El contenido se monta al abrir: cada vez arranca de la URL. */}
         <Contenido
@@ -124,7 +135,7 @@ function Formulario({
       }}
     >
       <div ref={ancla} hidden />
-      <div className="flex items-center gap-2 border-b border-linea px-4 pt-1 pb-3">
+      <div className="flex items-center gap-2 border-b border-linea px-4 pt-1 pb-3 group-data-[swipe-axis=x]/drawer-popup:pt-3">
         <DrawerTitle className="flex-1 text-xl font-titulo">Filtros</DrawerTitle>
         <button
           type="button"
