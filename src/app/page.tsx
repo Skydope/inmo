@@ -33,59 +33,62 @@ export default async function HomePage() {
             fill
             priority
             sizes="(orientation: portrait) 150vh, 100vw"
-            className="-z-20 object-cover object-[62%_center]"
+            className="-z-20 object-cover object-[62%_25%]"
           />
-          {/* Velo para que el título blanco se lea sobre cualquier foto (≥ 4,5). */}
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 -z-10 bg-linear-to-b from-tinta/80 via-tinta/45 to-tinta/15"
-          />
+          {/* El bloque va abajo, sobre un velo parejo de tinta al 85 % con un fundido corto
+              arriba: el texto blanco pasa 4,5 contra cualquier foto (aun contra un píxel
+              blanco puro) y la parte de arriba de la foto queda limpia. */}
+          <div className="relative mt-auto w-full bg-tinta/85">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 bottom-full h-28 bg-linear-to-t from-tinta/85 to-tinta/0"
+            />
+            <div className="mx-auto flex w-full max-w-xl flex-col gap-5 px-4 pt-4 pb-8 md:pb-14">
+              <div className="text-blanco">
+                <h1 className="text-[2rem] leading-[1.1] font-titulo md:text-5xl">¿Qué estás buscando?</h1>
+                <p className="mt-2 text-base text-blanco/90">Propiedades de las inmobiliarias de Bolívar.</p>
+              </div>
 
-          <div className="mx-auto flex w-full max-w-xl flex-1 flex-col gap-5 px-4 pt-8 pb-10 md:pt-16">
-            <div className="text-blanco">
-              <h1 className="text-[2rem] leading-[1.1] font-titulo md:text-5xl">¿Qué estás buscando?</h1>
-              <p className="mt-2 text-base text-blanco/90">Propiedades de las inmobiliarias de Bolívar.</p>
+              <nav
+                aria-label="Qué querés hacer"
+                className="overflow-hidden rounded-tarjeta bg-blanco shadow-[0_2px_6px_rgb(0_0_0/0.08),0_16px_40px_rgb(0_0_0/0.18)]"
+              >
+                <OpcionGrande
+                  href={ruta("venta")}
+                  titulo="Comprar"
+                  ayuda="Casas, terrenos, campos…"
+                  icono={<KeyRound />}
+                  conteo={conteo.venta}
+                />
+                <div className="mx-4 border-t border-linea" />
+                <OpcionGrande
+                  href={ruta("alquiler")}
+                  titulo="Alquilar"
+                  ayuda="Para vivir o para tu negocio"
+                  icono={<House />}
+                  conteo={conteo.alquiler}
+                />
+                <div className="border-t border-linea" />
+                <OpcionGrande
+                  href={ruta("temporario")}
+                  titulo="Alquiler temporario"
+                  conteo={conteo.temporario}
+                  chica
+                />
+              </nav>
+
+              <Link
+                href="/propiedades?vista=mapa"
+                className="inline-flex min-h-11 w-fit items-center gap-2 self-center rounded-full bg-blanco/95 px-4 font-semibold text-tinta shadow-[0_2px_8px_rgb(0_0_0/0.15)] transition-colors hover:bg-blanco"
+              >
+                <MapIcono className="size-5" aria-hidden="true" />
+                Ver todas en el mapa
+                <ChevronRight className="size-4" aria-hidden="true" />
+              </Link>
             </div>
-
-            <nav
-              aria-label="Qué querés hacer"
-              className="overflow-hidden rounded-tarjeta bg-blanco shadow-[0_2px_6px_rgb(0_0_0/0.08),0_16px_40px_rgb(0_0_0/0.18)]"
-            >
-              <OpcionGrande
-                href={ruta("venta")}
-                titulo="Comprar"
-                ayuda="Casas, terrenos, campos…"
-                icono={<KeyRound />}
-                conteo={conteo.venta}
-              />
-              <div className="mx-4 border-t border-linea" />
-              <OpcionGrande
-                href={ruta("alquiler")}
-                titulo="Alquilar"
-                ayuda="Para vivir o para tu negocio"
-                icono={<House />}
-                conteo={conteo.alquiler}
-              />
-              <div className="border-t border-linea" />
-              <OpcionGrande
-                href={ruta("temporario")}
-                titulo="Alquiler temporario"
-                conteo={conteo.temporario}
-                chica
-              />
-            </nav>
-
-            <Link
-              href="/propiedades?vista=mapa"
-              className="inline-flex min-h-11 w-fit items-center gap-2 rounded-full bg-blanco/95 px-4 font-semibold text-tinta shadow-[0_2px_8px_rgb(0_0_0/0.15)] transition-colors hover:bg-blanco"
-            >
-              <MapIcono className="size-5" aria-hidden="true" />
-              Ver todas en el mapa
-              <ChevronRight className="size-4" aria-hidden="true" />
-            </Link>
           </div>
 
-          <p className="absolute right-2 bottom-2 rounded bg-tinta/85 px-1.5 py-0.5 text-xs text-blanco">
+          <p className="absolute top-2 right-2 rounded bg-tinta/85 px-1.5 py-0.5 text-xs text-blanco">
             {CREDITO_DE_LA_FOTO}
           </p>
         </section>
