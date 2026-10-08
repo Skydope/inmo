@@ -223,7 +223,8 @@ carruseles son lo único cliente (por las flechas). El pie nuevo reemplaza a
 - [x] Gates + `pnpm e2e`.
 
 **Bloque 4 — Mirar**
-- [ ] Capturas a 360, 390 y 1280; detector de Impeccable; Lighthouse mobile del inicio ≥ 90.
+- [x] Capturas a 360, 390 y 1280; detector de Impeccable (0 en el inicio, después de ajustar
+      el ancho de "Buscá por tipo"); Lighthouse mobile del inicio 94–97.
 - [ ] 👀 Manuel en el celu.
 
 **Cierre**
@@ -233,6 +234,8 @@ carruseles son lo único cliente (por las flechas). El pie nuevo reemplaza a
 
 - La tarjeta `chica` pasa a `next/image` (`sizes="240px"`) y lleva el cartel de la operación:
   en "Recién publicadas" se mezclan venta y alquiler.
+- Detector: a 390 px la segunda tarjeta de "Buscá por tipo" quedaba cortada por 22 px
+  (`edge-flush-cards`): parecía un error. Ahora miden 45 %: entran dos y asoma la tercera.
 - El pie repite "Comprar" / "Alquilar": los e2e del inicio buscan esos links dentro de la
   tarjeta del buscador (`navigation` "Qué querés hacer").
 - Destacadas no tiene "Ver todas": no hay filtro de destacadas en la URL.

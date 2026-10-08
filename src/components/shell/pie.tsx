@@ -73,7 +73,7 @@ export function Pie() {
                 <li key={enlace.href}>
                   <Link
                     href={enlace.href}
-                    className="inline-flex min-h-11 items-center text-[0.9375rem] text-niebla transition-colors hover:text-blanco"
+                    className="inline-flex min-h-11 items-center text-niebla transition-colors hover:text-blanco"
                   >
                     {enlace.texto}
                   </Link>
@@ -84,7 +84,7 @@ export function Pie() {
         ))}
       </div>
       <div className="border-t border-blanco/15">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] text-[0.8125rem] text-niebla md:flex-row md:justify-between md:gap-8">
+        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] text-sm text-niebla md:flex-row md:justify-between md:gap-8">
           <p>© 2026 {brandName} · San Carlos de Bolívar, Buenos Aires</p>
           <p className="max-w-md md:text-right">
             Las propiedades las publican las inmobiliarias: precios y datos son responsabilidad de

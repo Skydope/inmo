@@ -70,11 +70,14 @@ export function TarjetaPropiedad({
   t,
   variante = "grande",
   prioridad = false,
+  diferirFotos = false,
   className,
 }: {
   t: Tarjeta
   variante?: "grande" | "flotante" | "chica"
   prioridad?: boolean
+  /** `grande` en el carrusel: lejos de la que se mira, las fotos se piden después. */
+  diferirFotos?: boolean
   className?: string
 }) {
   if (variante === "flotante") {
@@ -137,8 +140,9 @@ export function TarjetaPropiedad({
           fotos={t.fotos}
           alt={queEsYDonde(t)}
           tipo={t.type}
-          sizes="(min-width: 1280px) 360px, (min-width: 1024px) 420px, (min-width: 640px) 50vw, 90vw"
+          sizes="(min-width: 1280px) 360px, (min-width: 1024px) 420px, (min-width: 640px) 50vw, min(calc(100vw - 3rem), 448px)"
           prioridad={prioridad}
+          diferida={diferirFotos}
           className="aspect-[4/3] w-full"
         />
         <div className="pointer-events-none absolute top-3 left-3 z-10 flex gap-1.5">

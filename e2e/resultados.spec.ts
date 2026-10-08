@@ -52,6 +52,16 @@ test.describe("resultados: lista deslizable", () => {
     await expect(page.getByRole("link", { name: /Verlas en el mapa/ })).toBeVisible()
   })
 
+  test("las fotos de las tarjetas lejanas se piden al acercarse", async ({ page }) => {
+    await page.goto(URL_VENTA)
+    const foto = (i: number) => page.locator(`ul:has([data-slide]) [data-slide='${i}'] img`)
+    await expect(foto(0)).toHaveCount(1)
+    await expect(foto(6)).toHaveCount(0)
+    await page.locator("ul:has([data-slide])").evaluate(deslizarA, 5)
+    await expect(page.getByText(/^6 de 22$/)).toBeVisible()
+    await expect(foto(6)).toHaveCount(1)
+  })
+
   test("ninguna página de resultados tiene scroll horizontal", async ({ page }) => {
     await page.goto(URL_VENTA)
     const { documento, ventana } = await page.evaluate(() => ({

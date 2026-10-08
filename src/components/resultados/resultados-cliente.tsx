@@ -25,6 +25,8 @@ import { SinResultados } from "./sin-resultados"
 import { VistaMapa } from "./vista-mapa"
 
 const ESPERA_PARA_LA_URL = 300
+/** Cuánto esperar, con la lista ya a la vista, para pedir el código del mapa. */
+const ESPERA_PARA_EL_MAPA = 3000
 
 const sinVista = (b: Busqueda) => escribirBusqueda({ ...b, vista: "lista", sel: undefined })
 
@@ -120,19 +122,24 @@ export function ResultadosCliente({
   )
   const deseleccionar = useCallback(() => setSel(undefined), [])
 
-  // Con la lista ya a la vista, pedir el código del mapa en un momento libre: así "Mapa"
-  // abre rápido, sin que MapLibre entre en la carga inicial.
+  // Con la lista ya a la vista (unos segundos después de cargar), pedir el código del mapa en
+  // un momento libre: así "Mapa" abre rápido, sin que MapLibre compita con la carga inicial
+  // (en un celular lento, pedirlo en el primer momento libre le quitaba ancho de banda a la
+  // foto de la primera tarjeta).
   useEffect(() => {
     if (vista !== "lista") return
     const pedir = () => void precargarMapa()
     // Safari no tiene requestIdleCallback.
     const enReposo = window.requestIdleCallback as typeof window.requestIdleCallback | undefined
-    if (enReposo) {
-      const id = enReposo(pedir, { timeout: 4000 })
-      return () => window.cancelIdleCallback(id)
+    let reposo: number | undefined
+    const espera = window.setTimeout(() => {
+      if (enReposo) reposo = enReposo(pedir, { timeout: 4000 })
+      else pedir()
+    }, ESPERA_PARA_EL_MAPA)
+    return () => {
+      window.clearTimeout(espera)
+      if (reposo !== undefined) window.cancelIdleCallback(reposo)
     }
-    const id = window.setTimeout(pedir, 2500)
-    return () => window.clearTimeout(id)
   }, [vista])
 
   const hrefLista = hrefDeBusqueda("/propiedades", { ...busqueda, vista: "lista", sel })

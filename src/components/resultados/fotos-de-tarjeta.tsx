@@ -17,6 +17,7 @@ export function FotosDeTarjeta({
   tipo,
   sizes,
   prioridad = false,
+  diferida = false,
   className,
 }: {
   fotos: string[]
@@ -24,6 +25,8 @@ export function FotosDeTarjeta({
   tipo: TipoPropiedad
   sizes: string
   prioridad?: boolean
+  /** Lejos de la que se mira: todavía no se pide la foto (sin JS, se ve igual). */
+  diferida?: boolean
   className?: string
 }) {
   const [i, setI] = useState(0)
@@ -38,6 +41,16 @@ export function FotosDeTarjeta({
     )
   }
 
+  if (diferida) {
+    return (
+      <div className={cn("relative overflow-hidden bg-papel", className)}>
+        <noscript>
+          <Image src={fotos[0]} alt={alt} fill sizes={sizes} className="object-cover" />
+        </noscript>
+      </div>
+    )
+  }
+
   const ir = (paso: number) => {
     setToco(true)
     setI((actual) => (actual + paso + n) % n)
@@ -46,7 +59,17 @@ export function FotosDeTarjeta({
 
   return (
     <div className={cn("relative overflow-hidden bg-papel", className)}>
-      <Image src={fotos[i]} alt={alt} fill sizes={sizes} priority={prioridad && i === 0} className="object-cover" />
+      {/* La primera foto de la primera tarjeta es el LCP de resultados: pedida ya y con prioridad
+          alta (en Next 16 `priority` está deprecado). */}
+      <Image
+        src={fotos[i]}
+        alt={alt}
+        fill
+        sizes={sizes}
+        loading={prioridad && i === 0 ? "eager" : undefined}
+        fetchPriority={prioridad && i === 0 ? "high" : undefined}
+        className="object-cover"
+      />
       {toco && n > 1 ? (
         <Image src={siguiente} alt="" fill sizes={sizes} loading="eager" className="invisible" aria-hidden="true" />
       ) : null}

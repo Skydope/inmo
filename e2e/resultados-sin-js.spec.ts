@@ -6,3 +6,8 @@ test("sin JavaScript, Filtros lleva al buscador con la búsqueda actual", async 
   await expect(page).toHaveURL(/\/buscar\/tipo\?operacion=venta&tipo=casa&zona=centro$/)
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("¿Qué tipo de propiedad?")
 })
+
+test("sin JavaScript, todas las tarjetas tienen su foto", async ({ page }) => {
+  await page.goto("/propiedades?operacion=venta")
+  await expect(page.locator("[data-slide='10'] img")).toHaveCount(1)
+})

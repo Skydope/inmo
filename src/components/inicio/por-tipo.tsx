@@ -10,9 +10,11 @@ export function PorTipo({ categorias }: { categorias: Categoria[] }) {
   if (categorias.length === 0) return null
   return (
     <Seccion id="por-tipo" titulo="Buscá por tipo">
+      {/* En el celu entran dos y asoma la tercera (a 390 px, con w-48 la segunda quedaba cortada
+          por 22 px: parecía un error, no "deslizá"). */}
       <CarruselHorizontal etiqueta="Tipos de propiedad">
         {categorias.map((c) => (
-          <ItemDeCarrusel key={`${c.operacion}-${c.tipo}`} className="w-48 md:w-56">
+          <ItemDeCarrusel key={`${c.operacion}-${c.tipo}`} className="w-[45%] md:w-56">
             <Link
               href={c.href}
               className="group flex w-full flex-col overflow-hidden rounded-tarjeta border border-linea bg-blanco transition-colors hover:border-tinta-suave"

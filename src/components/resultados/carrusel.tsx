@@ -1,8 +1,8 @@
 "use client"
 
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { useEffect, useRef } from "react"
-import { esEscritorio } from "@/hooks/use-es-escritorio"
+import { useEffect, useRef, useState } from "react"
+import { esEscritorio, useEsEscritorio } from "@/hooks/use-es-escritorio"
 import { useSlideActivo } from "@/hooks/use-slide-activo"
 import type { Tarjeta } from "@/lib/properties/tarjeta"
 import { cn } from "@/lib/utils"
@@ -44,6 +44,16 @@ export function Carrusel({
   }, [activo, tarjetas.length, onActivo])
 
   const enFinal = activo >= tarjetas.length
+
+  // Fotos: las de las tarjetas cerca de la que se mira y las que ya pasaron. Las demás se
+  // piden al acercarse (si no, el navegador baja cinco o seis fotos que nadie ve todavía y le
+  // quitan ancho de banda a la primera). En escritorio la grilla se ve entera.
+  const escritorio = useEsEscritorio()
+  const [conFotos, setConFotos] = useState({ desde: inicial - 1, hasta: inicial + 2 })
+  if (activo - 1 < conFotos.desde || activo + 2 > conFotos.hasta) {
+    setConFotos({ desde: Math.min(conFotos.desde, activo - 1), hasta: Math.max(conFotos.hasta, activo + 2) })
+  }
+  const diferir = (i: number) => !escritorio && (i < conFotos.desde || i > conFotos.hasta)
 
   // Escritorio: tocar un pin (o deslizar la tarjeta del mapa) trae su tarjeta a la vista.
   const primeraVez = useRef(true)
@@ -103,7 +113,8 @@ export function Carrusel({
           >
             <TarjetaPropiedad
               t={t}
-              prioridad={i === 0}
+              prioridad={i === inicial}
+              diferirFotos={diferir(i)}
               className="w-full lg:transition-shadow lg:in-data-[elegida=true]:ring-2 lg:in-data-[elegida=true]:ring-plano-700"
             />
           </li>

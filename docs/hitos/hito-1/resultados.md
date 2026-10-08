@@ -363,9 +363,10 @@ Ninguno nuevo. Al cliente viajan solo las tarjetas (no la descripción ni todas 
 - [ ] Gates + `pnpm e2e` (el pliegue del inicio sigue igual).
 
 **Bloque 7 — Mirar** · sin commit si no hay cambios
-- [ ] Capturas a 360 × 640, 390 × 844 y 1280 × 800 de lista, mapa con tarjeta, hoja y vacío.
-- [ ] Detector de Impeccable sobre `/propiedades` (lista y mapa).
-- [ ] Lighthouse mobile sobre `/propiedades` (≥ 90) y verificar que MapLibre no está en la carga inicial.
+- [x] Capturas a 360 × 640, 390 × 844 y 1280 × 800 de lista, mapa con tarjeta, hoja y vacío.
+- [x] Detector de Impeccable sobre `/propiedades` (lista y mapa): quedan dos reglas, explicadas
+      abajo (falso positivo y excepción de la spec).
+- [x] Lighthouse mobile sobre `/propiedades` (≥ 90) y verificar que MapLibre no está en la carga inicial.
 - [ ] 👀 Manuel recorre lista, mapa y filtros en su celular.
 
 **Cierre**
@@ -386,3 +387,15 @@ Ninguno nuevo. Al cliente viajan solo las tarjetas (no la descripción ni todas 
   a la vista; el mouse sobre una tarjeta resalta su pin (`.is-resaltado`).
 - **Slide activo**: con dos por pantalla (tablet), el activo es el primero de los que se ven
   al 60 % (`useSlideActivo` lleva un conjunto, no el último que avisó).
+- **Lighthouse** (build de producción, mobile): daba 87. Tres causas, tres arreglos: la
+  precarga del mapa (274 KB) salía en el primer momento libre y competía con la carga → ahora
+  espera 3 s; la foto LCP no tenía prioridad alta (`priority` está deprecado en Next 16) →
+  `loading="eager"` + `fetchPriority="high"`; el navegador bajaba 5 fotos de tarjetas que no se
+  ven → las lejanas se piden al acercarse (sin JS, `<noscript>`), y `sizes` decía 90vw cuando
+  la tarjeta mide 100vw − 3rem. Queda **91** estable (4/4), 484 KB, TBT 30 ms, sin MapLibre;
+  accesibilidad, buenas prácticas y SEO 100.
+- **Detector de Impeccable**: `text-occlusion` sobre los carteles VENTA / Destacada es un
+  falso positivo (llevan `pointer-events-none` encima del link estirado, así que
+  `elementFromPoint` devuelve el link; se ven bien en las capturas). `first-viewport-column-
+  overflow` en escritorio es la grilla que se baja con el mapa fijo, tal como pide la spec. No
+  se agregaron ignores.
