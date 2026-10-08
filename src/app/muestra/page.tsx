@@ -1,0 +1,268 @@
+import type { Metadata } from "next"
+import Image from "next/image"
+import { notFound } from "next/navigation"
+import {
+  Bath,
+  BedDouble,
+  Building2,
+  ChevronRight,
+  House,
+  KeyRound,
+  LandPlot,
+  Ruler,
+  Trees,
+} from "lucide-react"
+import { Header } from "@/components/shell/header"
+import { Pie } from "@/components/shell/pie"
+import { Button } from "@/components/ui/button"
+import { EtiquetaOperacion } from "@/components/ui/etiqueta-operacion"
+import { Opcion } from "@/components/ui/opcion"
+
+/*
+ * Muestra de identidad para que Manuel elija paleta en su celular (hito 1,
+ * identidad-y-base, bloque 4). Solo existe en desarrollo y se borra al cerrar el
+ * hito. Las dos paletas usan los mismos componentes: la B redefine las variables
+ * del verde en su contenedor.
+ */
+
+export const metadata: Metadata = {
+  title: "Muestra de identidad",
+  robots: { index: false, follow: false },
+}
+
+const PALETA_B = {
+  "--color-palmera-50": "var(--color-plano-50)",
+  "--color-palmera-700": "var(--color-plano-700)",
+  "--color-palmera-800": "var(--color-plano-800)",
+  "--color-primary": "var(--color-plano-700)",
+  "--color-secondary": "var(--color-plano-50)",
+  "--color-secondary-foreground": "var(--color-plano-800)",
+  "--color-ring": "var(--color-plano-700)",
+} as React.CSSProperties
+
+const COLORES = [
+  { token: "papel", hex: "#f7f8f6", nota: "fondo" },
+  { token: "blanco", hex: "#ffffff", nota: "superficies" },
+  { token: "tinta", hex: "#17211c", nota: "texto · 15,5" },
+  { token: "tinta-suave", hex: "#56635c", nota: "texto secundario · 5,9" },
+  { token: "linea", hex: "#dfe4e0", nota: "bordes" },
+  { token: "trigo", hex: "#e3b04b", nota: "destacada" },
+]
+
+function Celular({
+  titulo,
+  bajada,
+  estilo,
+  acento,
+}: {
+  titulo: string
+  bajada: string
+  estilo?: React.CSSProperties
+  acento: { hex: string; nombre: string; contraste: string }
+}) {
+  return (
+    <section style={estilo} className="flex w-full max-w-[360px] flex-col gap-3">
+      <div>
+        <h2 className="font-encode text-xl font-bold [font-stretch:87.5%]">{titulo}</h2>
+        <p className="text-sm text-tinta-suave">{bajada}</p>
+        <p className="mt-1 flex items-center gap-2 text-sm">
+          <span
+            className="inline-block size-4 rounded-[4px]"
+            style={{ background: acento.hex }}
+            aria-hidden="true"
+          />
+          {acento.nombre} <span className="text-tinta-suave">{acento.hex} · blanco encima {acento.contraste}</span>
+        </p>
+      </div>
+
+      <div className="overflow-hidden rounded-[1.75rem] border border-linea bg-papel shadow-[0_1px_2px_rgb(0_0_0/0.04),0_8px_24px_rgb(0_0_0/0.06)]">
+        <div className="flex flex-col gap-5 px-4 pt-6 pb-5">
+          <div>
+            <p className="font-encode text-[2rem] leading-[1.1] font-bold tracking-[-0.015em] [font-stretch:87.5%]">
+              ¿Qué estás buscando?
+            </p>
+            <p className="mt-2 text-tinta-suave">Propiedades de las inmobiliarias de Bolívar.</p>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            {[
+              { icono: KeyRound, titulo: "Comprar", ayuda: "Casas, terrenos, campos…", n: 48 },
+              { icono: House, titulo: "Alquilar", ayuda: "Para vivir o para tu negocio", n: 21 },
+            ].map(({ icono: Icono, titulo: t, ayuda, n }) => (
+              <a
+                key={t}
+                href="#"
+                className="group flex min-h-26 flex-col justify-between gap-3 rounded-control border border-linea bg-blanco p-4 transition-colors hover:border-palmera-700 active:border-palmera-700 active:bg-palmera-50"
+              >
+                <Icono className="size-7 stroke-[1.75] text-palmera-700" aria-hidden="true" />
+                <span className="flex items-end justify-between gap-3">
+                  <span className="flex flex-col">
+                    <span className="font-encode text-2xl leading-none font-bold [font-stretch:87.5%]">{t}</span>
+                    <span className="mt-1 text-sm text-tinta-suave">{ayuda}</span>
+                  </span>
+                  <span className="flex items-center gap-1 text-sm text-tinta-suave tabular-nums">
+                    {n} <ChevronRight className="size-4" aria-hidden="true" />
+                  </span>
+                </span>
+              </a>
+            ))}
+            <a
+              href="#"
+              className="flex min-h-11 items-center justify-between rounded-control px-1 font-semibold"
+            >
+              Alquiler temporario
+              <span className="flex items-center gap-1 text-sm font-normal text-tinta-suave">
+                3 <ChevronRight className="size-4" aria-hidden="true" />
+              </span>
+            </a>
+          </div>
+        </div>
+
+        <div className="border-t border-linea bg-blanco px-4 pt-5 pb-5">
+          <p className="font-encode text-[1.375rem] leading-tight font-bold [font-stretch:87.5%]">
+            ¿Qué tipo de propiedad?
+          </p>
+          <p className="mt-1 text-sm text-tinta-suave">Podés elegir más de uno.</p>
+          <div className="mt-4 grid grid-cols-2 gap-2.5">
+            <Opcion name={`tipo-${titulo}`} value="casa" etiqueta="Casa" icono={<House />} conteo={12} defaultChecked />
+            <Opcion name={`tipo-${titulo}`} value="departamento" etiqueta="Departamento" icono={<Building2 />} conteo={8} />
+            <Opcion name={`tipo-${titulo}`} value="quinta" etiqueta="Casa quinta" icono={<Trees />} conteo={4} defaultChecked />
+            <Opcion name={`tipo-${titulo}`} value="terreno" etiqueta="Terreno" icono={<LandPlot />} ayuda="Sin avisos ahora" disabled />
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Opcion variante="chip" name={`zona-${titulo}`} value="centro" etiqueta="Centro" conteo={7} defaultChecked />
+            <Opcion variante="chip" name={`zona-${titulo}`} value="casariego" etiqueta="Casariego" conteo={4} />
+            <Opcion variante="chip" name={`zona-${titulo}`} value="melitona" etiqueta="Villa Melitona" conteo={3} />
+          </div>
+        </div>
+
+        <div className="border-t border-linea bg-blanco px-4 pt-3 pb-4 shadow-[0_-6px_16px_rgb(0_0_0/0.05)]">
+          <a href="#" className="flex min-h-11 items-center justify-center text-sm font-semibold text-palmera-700">
+            Ver las 12 propiedades ahora
+          </a>
+          <Button size="lg" className="w-full">
+            Continuar
+          </Button>
+        </div>
+      </div>
+
+      <article className="overflow-hidden rounded-tarjeta border border-linea bg-blanco">
+        <div className="relative aspect-[4/3] bg-papel">
+          <Image
+            src="/images/properties/house-2.jpg"
+            alt="Casa de ejemplo"
+            fill
+            sizes="360px"
+            className="object-cover"
+          />
+          <EtiquetaOperacion className="absolute top-3 left-3">Venta</EtiquetaOperacion>
+          <span className="absolute right-3 bottom-3 rounded-full bg-tinta/75 px-2 py-0.5 text-xs font-semibold text-blanco tabular-nums">
+            1/8
+          </span>
+        </div>
+        <div className="flex flex-col gap-1.5 p-4">
+          <p className="font-encode text-2xl leading-none font-bold tabular-nums [font-stretch:87.5%]">
+            US$ 120.000
+          </p>
+          <p className="font-semibold">Casa en Centro</p>
+          <p className="text-sm text-tinta-suave">Belgrano 450</p>
+          <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-tinta">
+            <span className="inline-flex items-center gap-1"><Ruler className="size-4 text-tinta-suave" aria-hidden="true" />180 m²</span>
+            <span className="inline-flex items-center gap-1"><BedDouble className="size-4 text-tinta-suave" aria-hidden="true" />3 dorm.</span>
+            <span className="inline-flex items-center gap-1"><Bath className="size-4 text-tinta-suave" aria-hidden="true" />2 baños</span>
+          </p>
+          <div className="mt-2 flex items-center justify-between gap-3 border-t border-linea pt-3">
+            <span className="truncate text-sm text-tinta-suave">Inmobiliaria Norte</span>
+            <a href="#" className="inline-flex min-h-11 items-center gap-1 font-semibold text-palmera-700">
+              Ver detalles <ChevronRight className="size-4" aria-hidden="true" />
+            </a>
+          </div>
+        </div>
+      </article>
+    </section>
+  )
+}
+
+export default function MuestraPage() {
+  if (process.env.NODE_ENV === "production") notFound()
+
+  return (
+    <div className="flex min-h-dvh flex-col bg-papel font-encode text-tinta">
+      <Header />
+      <main className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-8">
+        <div className="max-w-xl">
+          <p className="text-sm font-semibold text-tinta-suave">Muestra de identidad · solo desarrollo</p>
+          <h1 className="mt-1 font-encode text-[2rem] leading-[1.1] font-bold [font-stretch:87.5%]">
+            El cartel y el plano
+          </h1>
+          <p className="mt-3 text-tinta-suave">
+            Las mismas pantallas con las dos paletas. Tocá las opciones: se marcan de verdad.
+            Elegí A o B; la otra se borra.
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-12 md:flex-row md:items-start md:justify-center">
+          <Celular
+            titulo="A · Verde palmera"
+            bajada="Recomendada: Bolívar, la ciudad de las palmeras."
+            acento={{ hex: "#1e5b45", nombre: "palmera-700", contraste: "7,96" }}
+          />
+          <Celular
+            titulo="B · Azul plano"
+            bajada="Más institucional, menos propia de Bolívar."
+            estilo={PALETA_B}
+            acento={{ hex: "#1f4e79", nombre: "plano-700", contraste: "8,66" }}
+          />
+        </div>
+
+        <section className="flex flex-col gap-4">
+          <h2 className="font-encode text-xl font-bold [font-stretch:87.5%]">Colores comunes a las dos</h2>
+          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+            {COLORES.map((c) => (
+              <li key={c.token} className="flex flex-col gap-2">
+                <span className="h-14 rounded-control border border-linea" style={{ background: c.hex }} />
+                <span className="text-sm font-semibold">{c.token}</span>
+                <span className="text-xs text-tinta-suave">{c.hex} · {c.nota}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="flex flex-col gap-4">
+          <h2 className="font-encode text-xl font-bold [font-stretch:87.5%]">Tipografía: Encode Sans</h2>
+          <div className="flex flex-col gap-4 rounded-tarjeta border border-linea bg-blanco p-5">
+            <p className="font-encode text-[2rem] leading-[1.1] font-bold [font-stretch:87.5%]">¿Qué estás buscando? · 32</p>
+            <p className="font-encode text-[1.875rem] leading-none font-bold tabular-nums [font-stretch:87.5%]">US$ 120.000 · precio ficha 30</p>
+            <p className="font-encode text-xl font-semibold [font-stretch:87.5%]">Título de sección · 20</p>
+            <p>Texto de lectura a 16 px. Casa de tres dormitorios con patio, a dos cuadras de la plaza.</p>
+            <p className="text-sm text-tinta-suave">Texto secundario a 14 px · Belgrano 450, Centro</p>
+            <div className="flex items-center gap-3">
+              <EtiquetaOperacion>Venta</EtiquetaOperacion>
+              <EtiquetaOperacion>Alquiler</EtiquetaOperacion>
+              <EtiquetaOperacion>Temporario</EtiquetaOperacion>
+            </div>
+            <div className="flex flex-col font-encode text-2xl font-bold tabular-nums [font-stretch:87.5%]">
+              <span className="text-sm font-normal text-tinta-suave [font-stretch:100%]">Cifras tabulares: los precios no saltan</span>
+              <span data-testid="cifras-unos" className="w-fit">US$ 111.111</span>
+              <span data-testid="cifras-ceros" className="w-fit">US$ 100.000</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="flex flex-col gap-4">
+          <h2 className="font-encode text-xl font-bold [font-stretch:87.5%]">Botones</h2>
+          <div className="flex flex-wrap items-center gap-3 rounded-tarjeta border border-linea bg-blanco p-5">
+            <Button size="lg">Ver 12 propiedades</Button>
+            <Button>Continuar</Button>
+            <Button variant="secondary">Secundario</Button>
+            <Button variant="outline">Con borde</Button>
+            <Button variant="ghost">Fantasma</Button>
+            <Button variant="link">Enlace</Button>
+            <Button disabled>Deshabilitado</Button>
+          </div>
+        </section>
+      </main>
+      <Pie />
+    </div>
+  )
+}
