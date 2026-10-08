@@ -49,7 +49,7 @@ export default async function PropiedadesPage({ searchParams }: Props) {
   return (
     <div className="flex min-h-dvh flex-col bg-papel">
       <Header />
-      <main className="flex flex-1 flex-col pb-4">
+      <main className="flex flex-1 flex-col">
         <Encabezado titulo={tituloDeBusqueda(busqueda)} total={propiedades.length} />
         <ResultadosCliente tarjetas={propiedades.map(aTarjeta)} busqueda={busqueda} ampliar={ampliar} />
       </main>

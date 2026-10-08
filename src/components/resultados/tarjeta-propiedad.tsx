@@ -23,13 +23,15 @@ function Precio({ t, className }: { t: Tarjeta; className?: string }) {
   )
 }
 
-function Datos({ t }: { t: Tarjeta }) {
+function Datos({ t, maximo = 4 }: { t: Tarjeta; maximo?: number }) {
   const datos = [
     t.superficie ? { Icono: Ruler, texto: t.superficie, nombre: "Superficie" } : null,
     t.beds ? { Icono: BedDouble, texto: `${t.beds} dorm.`, nombre: "Dormitorios" } : null,
     t.baths ? { Icono: Bath, texto: `${t.baths} ${t.baths === 1 ? "baño" : "baños"}`, nombre: "Baños" } : null,
     t.garages ? { Icono: CarFront, texto: `${t.garages} coch.`, nombre: "Cocheras" } : null,
-  ].filter((d) => d !== null)
+  ]
+    .filter((d) => d !== null)
+    .slice(0, maximo)
   if (datos.length === 0) return null
   return (
     <ul className="flex items-center gap-x-3 overflow-hidden text-sm whitespace-nowrap">
@@ -76,21 +78,30 @@ export function TarjetaPropiedad({
 }) {
   if (variante === "flotante") {
     return (
-      <article className={cn("relative flex flex-col gap-3 rounded-tarjeta border border-linea bg-blanco p-3", className)}>
-        <div className="flex gap-3">
-          <FotoPropiedad src={t.fotos[0]} tipo={t.type} alt="" className="size-24 shrink-0 rounded-control" />
-          <div className="flex min-w-0 flex-col gap-1">
-            <Precio t={t} className="text-xl" />
-            <p className="truncate font-semibold">{queEsYDonde(t)}</p>
-            <Datos t={t} />
-          </div>
+      <article
+        className={cn(
+          "relative flex min-h-40 overflow-hidden rounded-tarjeta border border-linea bg-blanco",
+          className
+        )}
+      >
+        <div className="relative w-[40%] shrink-0 bg-papel">
+          <FotoPropiedad src={t.fotos[0]} tipo={t.type} alt="" className="absolute inset-0 size-full" />
+          <EtiquetaOperacion className="pointer-events-none absolute top-2 left-2">
+            {etiquetaOperacion(t.operation)}
+          </EtiquetaOperacion>
         </div>
-        <VerDetalles
-          t={t}
-          className="inline-flex min-h-11 items-center justify-center gap-1 rounded-control bg-plano-700 font-semibold text-blanco"
-        >
-          Ver detalles
-        </VerDetalles>
+        <div className="flex min-w-0 flex-1 flex-col gap-1 p-3">
+          <Precio t={t} className="text-xl" />
+          <p className="truncate font-semibold">{queEsYDonde(t)}</p>
+          {t.direccion ? <p className="truncate text-sm text-tinta-suave">{t.direccion}</p> : null}
+          <Datos t={t} maximo={2} />
+          <VerDetalles
+            t={t}
+            className="mt-auto inline-flex min-h-11 items-center justify-center gap-1 rounded-control bg-plano-700 px-3 text-sm font-semibold text-blanco"
+          >
+            Ver detalles <ChevronRight className="size-4" aria-hidden="true" />
+          </VerDetalles>
+        </div>
       </article>
     )
   }

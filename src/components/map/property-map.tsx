@@ -1,403 +1,216 @@
 "use client"
 
-import { useEffect, useLayoutEffect, useRef } from "react"
+import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import * as maplibregl from "maplibre-gl"
 
-// ponytail: Next bundles maplibre and the worker URL (import.meta.url) 404s.
-// These two files are copied from maplibre-gl/dist. Recopy them when bumping maplibre.
+// Next empaqueta maplibre y la URL del worker (import.meta.url) da 404. Estos dos archivos se
+// copian de maplibre-gl/dist a public/maplibre: recopiarlos al actualizar maplibre.
 maplibregl.setWorkerUrl("/maplibre/maplibre-gl-worker.mjs")
-import type { GeoJSONSource, Map as MapLibreMap, Marker } from "maplibre-gl"
+import type { Map as MapLibreMap, Marker } from "maplibre-gl"
 import { BOLIVAR_CENTER } from "@/lib/brand"
+import { etiquetaTipo, nombreZona } from "@/lib/busqueda"
 import { formatPrice, formatPriceCompact } from "@/lib/format"
-import type { TipoPropiedad } from "@/lib/busqueda/taxonomia"
-import { formatArea } from "@/lib/format"
-import type { Property } from "@/lib/properties/types"
+import { encuadreInicial } from "@/lib/encuadre"
 import { markerElementClass } from "@/lib/markers"
-import { getStreetMidpoint, type StreetLines } from "@/lib/streets"
+import type { Tarjeta } from "@/lib/properties/tarjeta"
 
-// Solo modo claro en el hito 1. El estilo pasa a OpenFreeMap en `resultados` (Carto exige
-// API key desde el 29/09/2026: ver docs/roadmap/riesgos.md).
-const MAP_STYLE = "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
-const MAP_PITCH = 48
-const MAP_BEARING = -18
-// Carto only draws suburb/neighbourhood labels from zoom 12. Floor there so they never drop out.
-const MIN_ZOOM = 12
-const CITY_ZOOM = 13.7
-const STREET_COLOR = "#17211c"
-const EMPTY_STREET: StreetLines = { type: "FeatureCollection", features: [] }
+/*
+ * El mapa de resultados (MapLibre GL, BSD-3). Tiles de OpenFreeMap con un estilo propio
+ * (scripts/estilo-mapa.mjs → public/mapa/estilo.json). Arranca plano y al norte; con dos dedos
+ * se rota y se inclina (pedido de Manuel, 2026-10-08), y la brújula lo vuelve al norte.
+ * Spec: docs/hitos/hito-1/resultados.md § Vista mapa.
+ */
+const ESTILO = "/mapa/estilo.json"
+const ZOOM_CIUDAD = 13.5
+// Más lejos que esto (por ejemplo, con propiedades en las localidades), los pines no elegidos
+// pasan a puntos: los precios no entran.
+const ZOOM_PUNTOS = 13.5
+const ZOOM_AL_ELEGIR = 15
 
-function drawStreet(map: MapLibreMap, data: StreetLines, color: string) {
-  if (!map.isStyleLoaded()) return
-  const src = map.getSource("street") as GeoJSONSource | undefined
-  if (!src) {
-    map.addSource("street", { type: "geojson", data })
-    map.addLayer({
-      id: "street-line",
-      type: "line",
-      source: "street",
-      layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": color, "line-width": 6, "line-opacity": 0.95 },
-    })
-    return
-  }
-  src.setData(data)
-  if (map.getLayer("street-line")) map.setPaintProperty("street-line", "line-color", color)
-}
+type Pin = { marker: Marker; el: HTMLDivElement; elegido: boolean }
 
-function fitStreet(map: MapLibreMap, data: StreetLines) {
-  const bounds = new maplibregl.LngLatBounds()
-  for (const feature of data.features) {
-    for (const coord of feature.geometry.coordinates) bounds.extend(coord)
-  }
-  if (bounds.isEmpty()) return
-  const h = map.getContainer().clientHeight || 640
-  const pad = {
-    top: 60,
-    bottom: Math.min(160, Math.round(h * 0.22)),
-    left: 40,
-    right: 40,
-  }
-  const cam = map.cameraForBounds(bounds, {
-    padding: pad,
-    bearing: MAP_BEARING,
-    maxZoom: 16.2,
+function encuadrar(m: MapLibreMap, tarjetas: readonly Tarjeta[], animar: boolean) {
+  if (tarjetas.length === 0) return
+  const limites = new maplibregl.LngLatBounds()
+  for (const t of tarjetas) limites.extend([t.lng, t.lat])
+  m.fitBounds(limites, {
+    padding: { top: 120, bottom: 48, left: 40, right: 40 },
+    maxZoom: ZOOM_AL_ELEGIR,
+    animate: animar,
   })
-  if (cam && typeof cam.zoom === "number") {
-    map.easeTo({
-      center: cam.center,
-      zoom: Math.max(14.8, Math.min(16.2, cam.zoom)),
-      pitch: 24,
-      bearing: MAP_BEARING,
-      duration: 700,
-    })
-  } else {
-    const mid = getStreetMidpoint(data)
-    if (mid) {
-      map.easeTo({
-        center: [mid.lng, mid.lat],
-        zoom: 15.5,
-        pitch: 24,
-        bearing: MAP_BEARING,
-        duration: 700,
-      })
-    }
-  }
 }
 
-function updateStreetMarker(
-  map: MapLibreMap,
-  data: StreetLines | null,
-  markerRef: React.MutableRefObject<Marker | null>,
-) {
-  if (markerRef.current) {
-    markerRef.current.remove()
-    markerRef.current = null
-  }
-  if (!data?.features.length) return
-
-  const mid = getStreetMidpoint(data)
-  const streetName = data.name || data.features[0]?.properties?.name
-  if (!mid || !streetName) return
-
-  const el = document.createElement("div")
-  el.className = "map-street-marker"
-  el.innerHTML = `<div class="map-street-pill"><svg viewBox="0 0 256 256" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M224,120H136V40h40a8,8,0,0,0,0-16H80a8,8,0,0,0,0,16h40v80H32a8,8,0,0,0-5.66,13.66l24,24a8,8,0,0,0,11.32,0L78.34,136H120v80H104a8,8,0,0,0,0,16h48a8,8,0,0,0,0-16H136V136h72l16.68,16.68a8,8,0,0,0,11.32,0l24-24A8,8,0,0,0,224,120Z"/></svg><span>${esc(streetName)}</span></div>`
-
-  markerRef.current = new maplibregl.Marker({ element: el, anchor: "bottom" })
-    .setLngLat([mid.lng, mid.lat])
-    .addTo(map)
-}
-
-/** Small filled glyphs: house / buildings / polygon. */
-const ICON_HOUSE = `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 3.1 2.8 11h2.2v9h5.2v-5.6h3.6V20h5.2v-9h2.2L12 3.1z"/></svg>`
-const ICON_APARTMENT = `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M3 21V8.2L9.5 5l6.5 3.2V21H3zm2.2-2h2.2v-2.4H5.2V19zm4.2 0h2.2v-2.4H9.4V19zM5.2 14h2.2v-2.4H5.2V14zm4.2 0h2.2v-2.4H9.4V14zM5.2 9.4h2.2V7H5.2v2.4zm4.2 0h2.2V7H9.4v2.4zM17.2 21V10.4h3.6V21h-3.6zm.9-7.2h1.8V12h-1.8v1.8zm0 3.2h1.8v-1.8h-1.8V17z"/></svg>`
-const ICON_LOT = `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M3.5 8.2 12 4l8.5 4.2V16L12 20.2 3.5 16V8.2zm8.5 1.15L6.2 12v3.05L12 17.3l5.8-2.25V12L12 9.35z"/></svg>`
-
-const TYPE_ICON: Record<TipoPropiedad, string> = {
-  casa: ICON_HOUSE,
-  departamento: ICON_APARTMENT,
-  ph: ICON_APARTMENT,
-  quinta: ICON_HOUSE,
-  terreno: ICON_LOT,
-  campo: ICON_LOT,
-  local: ICON_APARTMENT,
-  oficina: ICON_APARTMENT,
-  galpon: ICON_APARTMENT,
-  cochera: ICON_APARTMENT,
-}
-
-function esc(value: string) {
-  return value.replace(/[&<>"']/g, (c) =>
-    c === "&" ? "&amp;" : c === "<" ? "&lt;" : c === ">" ? "&gt;" : c === '"' ? "&quot;" : "&#39;",
+function esc(valor: string) {
+  return valor.replace(/[&<>"']/g, (c) =>
+    c === "&" ? "&amp;" : c === "<" ? "&lt;" : c === ">" ? "&gt;" : c === '"' ? "&quot;" : "&#39;"
   )
 }
 
-function previewHtml(property: Property) {
-  const meta = [
-    property.beds ? `${property.beds} dorm` : "",
-    property.baths ? `${property.baths} baños` : "",
-    formatArea(property) ?? "",
-  ]
-    .filter(Boolean)
-    .join(" · ")
-  return `<div class="map-pin-preview">
-    ${property.photos[0] ? `<img src="${esc(property.photos[0])}" alt="" />` : ""}
-    <div class="map-pin-preview-body">
-      <p class="map-pin-preview-title">${esc(property.title)}</p>
-      <p class="map-pin-preview-address">${esc(property.address)}</p>
-      <p class="map-pin-preview-price">${esc(formatPrice(property.price, property.currency))}</p>
-      <p class="map-pin-preview-meta">${esc(meta)}</p>
-      <a class="map-pin-detail" href="/propiedades/${esc(property.id)}">Ver detalle</a>
-    </div>
-  </div>`
-}
-
-function lockBarrios(map: MapLibreMap) {
-  for (const id of ["place_suburbs", "place_hamlet"]) {
-    if (map.getLayer(id)) map.setLayerZoomRange(id, MIN_ZOOM, 24)
-  }
-}
-
-/** ponytail: bottom pad is a fraction of the map so the filmstrip doesn't cover the houses; if the strip grows past ~45% of the viewport, raise the cap. */
-function chromePadding(map: MapLibreMap) {
-  const h = map.getContainer().clientHeight || 640
-  return {
-    top: Math.min(88, Math.round(h * 0.14)),
-    bottom: Math.min(360, Math.round(h * 0.46)),
-    left: 40,
-    right: 40,
-  }
-}
-
-type MarkerEntry = {
-  marker: Marker
-  el: HTMLDivElement
-  isExpanded: boolean
-  isSelected: boolean
-}
+const etiquetaDePin = (t: Tarjeta) =>
+  `${etiquetaTipo(t.type)} en ${nombreZona(t.zone)}, ${formatPrice(t.price, t.currency)}`
 
 export function PropertyMap({
-  properties,
-  selectedId,
-  expandedId,
-  street,
-  onExpand,
-  onCollapse,
-  onDeselect,
-  onSelect,
+  tarjetas,
+  sel,
+  margenInferior,
+  onSeleccionar,
+  onDeseleccionar,
 }: {
-  properties: Property[]
-  selectedId: string | null
-  expandedId: string | null
-  street?: StreetLines | null
-  onExpand: (id: string) => void
-  onCollapse: () => void
-  onDeselect: () => void
-  onSelect: (id: string) => void
+  tarjetas: Tarjeta[]
+  sel: string | undefined
+  /** Lo que tapa la tarjeta flotante abajo: el mapa centra los pines por encima. */
+  margenInferior: number
+  onSeleccionar: (id: string) => void
+  onDeseleccionar: () => void
 }) {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const mapRef = useRef<MapLibreMap | null>(null)
-  const markersRef = useRef<Map<string, MarkerEntry>>(new Map())
-  const streetMarkerRef = useRef<Marker | null>(null)
-  const frameRef = useRef<() => void>(() => {})
-  const handlersRef = useRef({ onExpand, onCollapse, onDeselect, onSelect })
-  const streetRef = useRef<StreetLines | null>(street ?? null)
+  const contenedor = useRef<HTMLDivElement>(null)
+  const mapa = useRef<MapLibreMap | null>(null)
+  const pines = useRef<Map<string, Pin>>(new Map())
+  const handlers = useRef({ onSeleccionar, onDeseleccionar })
+  const margen = useRef(margenInferior)
+  const inicio = useRef({ tarjetas, sel })
+  const [afuera, setAfuera] = useState(0)
   // Las refs se actualizan después del render, no durante (regla de React 19).
   useLayoutEffect(() => {
-    handlersRef.current = { onExpand, onCollapse, onDeselect, onSelect }
-    streetRef.current = street ?? null
+    handlers.current = { onSeleccionar, onDeseleccionar }
+    margen.current = margenInferior
   })
-  useEffect(() => {
-    if (!containerRef.current || mapRef.current) return
 
-    const map = new maplibregl.Map({
-      container: containerRef.current,
-      style: MAP_STYLE,
-      center: [BOLIVAR_CENTER.lng, BOLIVAR_CENTER.lat],
-      zoom: CITY_ZOOM,
-      minZoom: MIN_ZOOM,
-      pitch: MAP_PITCH,
-      bearing: MAP_BEARING,
+  // Crear el mapa una sola vez, encuadrando los resultados (o la propiedad elegida). Los
+  // cambios de resultados y de elegido los manejan los efectos de abajo.
+  useEffect(() => {
+    if (!contenedor.current || mapa.current) return
+    const { tarjetas: iniciales, sel: selInicial } = inicio.current
+    const elegido = iniciales.find((t) => t.id === selInicial)
+    const m = new maplibregl.Map({
+      container: contenedor.current,
+      style: ESTILO,
+      center: elegido ? [elegido.lng, elegido.lat] : [BOLIVAR_CENTER.lng, BOLIVAR_CENTER.lat],
+      zoom: elegido ? ZOOM_AL_ELEGIR : ZOOM_CIUDAD,
+      pitch: 0,
+      bearing: 0,
+      minZoom: 8,
+      maxZoom: 18,
+      maxPitch: 60,
       attributionControl: false,
     })
+    // La atribución (OpenFreeMap © OpenMapTiles · OpenStreetMap) la trae el TileJSON de la fuente.
+    m.addControl(new maplibregl.AttributionControl({ compact: true }), "top-left")
+    m.addControl(new maplibregl.NavigationControl({ showCompass: true, visualizePitch: true }), "top-right")
 
-    map.on("style.load", () => {
-      lockBarrios(map)
-      drawStreet(map, streetRef.current ?? EMPTY_STREET, STREET_COLOR)
+    if (!elegido && iniciales.length > 0) {
+      // Si la mayoría está en la ciudad, se abre sobre la ciudad y se ofrece "Ver todo".
+      const { ids, afuera: deAfuera } = encuadreInicial(iniciales)
+      encuadrar(m, iniciales.filter((t) => ids.includes(t.id)), false)
+      setAfuera(deAfuera)
+    }
+
+    const marcarLejos = () => {
+      m.getContainer().classList.toggle("is-lejos", m.getZoom() < ZOOM_PUNTOS)
+    }
+    m.on("zoom", marcarLejos)
+    marcarLejos()
+
+    m.on("click", (e) => {
+      const destino = e.originalEvent.target
+      if (destino instanceof Element && destino.closest(".map-pin, .maplibregl-ctrl")) return
+      handlers.current.onDeseleccionar()
     })
 
-    map.addControl(
-      new maplibregl.AttributionControl({
-        compact: true,
-        customAttribution: "© OpenStreetMap",
-      }),
-      "top-left",
-    )
-    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-left")
-    // MapLibre adds compact-show on init, so the credit starts expanded.
-    const attrib = map.getContainer().querySelector(".maplibregl-ctrl-attrib")
-    attrib?.classList.remove("maplibregl-compact-show")
-    attrib?.removeAttribute("open")
-    map.on("click", (e) => {
-      const target = e.originalEvent.target
-      if (target instanceof Element && target.closest(".map-pin, .maplibregl-ctrl")) return
-      handlersRef.current.onDeselect()
-    })
-    mapRef.current = map
-
-    const ro = new ResizeObserver(() => {
-      map.resize()
-      frameRef.current()
-    })
-    ro.observe(map.getContainer())
-
+    mapa.current = m
+    const pinesActuales = pines.current
+    const observador = new ResizeObserver(() => m.resize())
+    observador.observe(m.getContainer())
     return () => {
-      ro.disconnect()
-      markersRef.current.forEach((m) => m.marker.remove())
-      markersRef.current.clear()
-      if (streetMarkerRef.current) {
-        streetMarkerRef.current.remove()
-        streetMarkerRef.current = null
-      }
-      map.remove()
-      mapRef.current = null
+      observador.disconnect()
+      pinesActuales.forEach((p) => p.marker.remove())
+      pinesActuales.clear()
+      m.remove()
+      mapa.current = null
     }
   }, [])
 
+  // Pines: uno por propiedad, con el precio compacto ("US$120k"); sin precio, "Consultar".
   useEffect(() => {
-    const map = mapRef.current
-    if (!map) return
-
-    const frame = () => {
-      const h = map.getContainer().clientHeight
-      if (h < 200) return
-      if (streetRef.current?.features.length) return
-      map.easeTo({
-        center: [BOLIVAR_CENTER.lng, BOLIVAR_CENTER.lat],
-        zoom: CITY_ZOOM,
-        pitch: MAP_PITCH,
-        bearing: MAP_BEARING,
-        padding: chromePadding(map),
-        duration: 600,
-      })
-    }
-
-    frameRef.current = frame
-    if (map.loaded()) frame()
-    else map.once("load", () => frameRef.current())
-  }, [])
-
-  useEffect(() => {
-    const map = mapRef.current
-    if (!map) return
-
-    const data = street ?? EMPTY_STREET
-    const run = () => {
-      drawStreet(map, data, STREET_COLOR)
-      if (data.features.length) {
-        fitStreet(map, data)
-      }
-      updateStreetMarker(map, street ?? null, streetMarkerRef)
-    }
-    if (map.isStyleLoaded()) run()
-    else map.once("style.load", run)
-  }, [street])
-
-  useEffect(() => {
-    const map = mapRef.current
-    if (!map) return
-
-    const existing = markersRef.current
-    const nextIds = new Set(properties.map((p) => p.id))
-
-    for (const [id, entry] of existing) {
-      if (!nextIds.has(id)) {
-        entry.marker.remove()
-        existing.delete(id)
+    const m = mapa.current
+    if (!m) return
+    const actuales = pines.current
+    const ids = new Set(tarjetas.map((t) => t.id))
+    for (const [id, pin] of actuales) {
+      if (!ids.has(id)) {
+        pin.marker.remove()
+        actuales.delete(id)
       }
     }
-
-    for (const property of properties) {
-      const isExpanded = expandedId === property.id
-      const isSelected = selectedId === property.id
-      const prev = existing.get(property.id)
-
-      if (prev) {
-        if (prev.isExpanded === isExpanded && prev.isSelected === isSelected) {
-          continue
+    for (const t of tarjetas) {
+      const elegido = t.id === sel
+      const previo = actuales.get(t.id)
+      if (previo) {
+        if (previo.elegido !== elegido) {
+          previo.el.className = markerElementClass(previo.el.className, t.type, elegido)
+          previo.el.setAttribute("aria-pressed", String(elegido))
+          previo.el.style.zIndex = elegido ? "10" : "1"
+          previo.elegido = elegido
         }
-
-        const el = prev.el
-        el.className = markerElementClass(el.className, property.type, isSelected, isExpanded)
-        el.style.zIndex = isExpanded || isSelected ? "10" : "1"
-        el.setAttribute("aria-expanded", String(isExpanded))
-
-        if (prev.isExpanded !== isExpanded) {
-          el.innerHTML = `${
-            isExpanded
-              ? previewHtml(property)
-              : `<div class="map-pin-price">${esc(formatPriceCompact(property.price, property.currency))}</div>`
-          }<div class="map-pin-badge">${TYPE_ICON[property.type]}</div>`
-        }
-
-        prev.isExpanded = isExpanded
-        prev.isSelected = isSelected
         continue
       }
-
       const el = document.createElement("div")
+      el.className = markerElementClass("", t.type, elegido)
+      el.dataset.id = t.id
       el.setAttribute("role", "button")
       el.setAttribute("tabindex", "0")
-      el.setAttribute("aria-label", `${property.title}, ${formatPrice(property.price, property.currency)}`)
-      el.setAttribute("aria-expanded", String(isExpanded))
-      el.className = markerElementClass(el.className, property.type, isSelected, isExpanded)
-      el.innerHTML = `${
-        isExpanded
-          ? previewHtml(property)
-          : `<div class="map-pin-price">${esc(formatPriceCompact(property.price, property.currency))}</div>`
-      }<div class="map-pin-badge">${TYPE_ICON[property.type]}</div>`
-      el.style.zIndex = isExpanded || isSelected ? "10" : "1"
-
+      el.setAttribute("aria-label", etiquetaDePin(t))
+      el.setAttribute("aria-pressed", String(elegido))
+      el.style.zIndex = elegido ? "10" : "1"
+      el.innerHTML = `<span class="map-pin-precio">${esc(formatPriceCompact(t.price, t.currency))}</span>`
       el.addEventListener("click", (e) => {
         e.stopPropagation()
-        const target = e.target as HTMLElement
-        if (target.closest(".map-pin-detail")) return
-        if (el.classList.contains("is-open") && target.closest(".map-pin-badge")) {
-          handlersRef.current.onCollapse()
-        } else if (!el.classList.contains("is-open")) {
-          handlersRef.current.onExpand(property.id)
-        }
+        handlers.current.onSeleccionar(t.id)
       })
-
       el.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault()
-          if (el.classList.contains("is-open")) {
-            handlersRef.current.onCollapse()
-          } else {
-            handlersRef.current.onExpand(property.id)
-          }
+          handlers.current.onSeleccionar(t.id)
         }
       })
-
-      const marker = new maplibregl.Marker({ element: el, anchor: "bottom" })
-        .setLngLat([property.lng, property.lat])
-        .addTo(map)
-
-      existing.set(property.id, {
-        marker,
-        el,
-        isExpanded,
-        isSelected,
-      })
+      const marker = new maplibregl.Marker({ element: el, anchor: "bottom" }).setLngLat([t.lng, t.lat]).addTo(m)
+      actuales.set(t.id, { marker, el, elegido })
     }
-  }, [properties, selectedId, expandedId])
+  }, [tarjetas, sel])
 
+  // Al elegir una propiedad (desde un pin o deslizando la tarjeta), el mapa la lleva arriba de
+  // la tarjeta flotante.
+  useEffect(() => {
+    const m = mapa.current
+    const t = tarjetas.find((x) => x.id === sel)
+    if (!m || !t) return
+    m.easeTo({
+      center: [t.lng, t.lat],
+      zoom: Math.max(m.getZoom(), ZOOM_PUNTOS),
+      padding: { top: 56, bottom: margen.current + 24, left: 24, right: 24 },
+      duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 400,
+    })
+  }, [sel, tarjetas])
+
+  const verTodo = () => {
+    if (mapa.current) encuadrar(mapa.current, tarjetas, true)
+    setAfuera(0)
+  }
+
+  // El CSS de MapLibre le pone `position: relative` al contenedor y le gana a las utilidades de
+  // Tailwind (van en una capa): el envoltorio es el absoluto y el mapa ocupa el 100 % adentro.
   return (
-    <div
-      className="map-stage relative h-full min-h-0 w-full bg-papel"
-    >
-      <div ref={containerRef} className="absolute inset-0" />
+    <div className="absolute inset-0">
+      <div ref={contenedor} className="h-full w-full" />
+      {afuera > 0 ? (
+        <button
+          type="button"
+          onClick={verTodo}
+          className="absolute top-16 left-1/2 z-10 inline-flex min-h-11 -translate-x-1/2 items-center rounded-full bg-blanco px-4 text-sm font-semibold whitespace-nowrap text-tinta shadow-[0_2px_8px_rgb(0_0_0/0.15)]"
+        >
+          {afuera} fuera de la ciudad · Ver todo
+        </button>
+      ) : null}
     </div>
   )
 }

@@ -128,208 +128,71 @@
   }
 }
 
-/* El mapa (MapLibre). Se re-viste entero en `resultados`; acá solo pasó a los tokens
-   nuevos. */
-/* MapLibre attribution stays visible (legal). */
+/* El mapa de resultados (MapLibre + OpenFreeMap). Spec: resultados.md § Vista mapa. */
+
+/* La atribución se ve siempre (la exigen OpenStreetMap y OpenMapTiles). */
 .maplibregl-ctrl-attrib {
-  background: rgba(26, 26, 26, 0.82) !important;
-  color: #f3efe6 !important;
-  font-size: 10px !important;
-  border-radius: 999px !important;
+  font-size: 0.6875rem;
+  background: color-mix(in oklab, var(--color-blanco) 92%, transparent) !important;
 }
 .maplibregl-ctrl-attrib a {
-  color: #c4a574 !important;
+  color: var(--color-tinta-suave) !important;
 }
-/* Collapsed: a circle the same size as the zoom buttons, lined up in the corner. */
-.map-stage .maplibregl-ctrl-attrib.maplibregl-compact:not(.maplibregl-compact-show) {
-  width: 29px;
-  height: 29px;
-  min-height: 0;
-  padding: 0 !important;
-  margin: 10px 0 0 10px !important;
-  border-radius: 999px !important;
-  overflow: hidden;
+.maplibregl-ctrl-group {
+  border-radius: var(--radius-control) !important;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.12) !important;
 }
-.map-stage .maplibregl-ctrl-attrib.maplibregl-compact:not(.maplibregl-compact-show) .maplibregl-ctrl-attrib-button {
-  top: 0;
-  left: 0;
-  right: auto;
-  width: 29px;
-  height: 29px;
-  border-radius: 999px;
-  background-color: transparent !important;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-.map-stage .maplibregl-ctrl-attrib.maplibregl-compact:not(.maplibregl-compact-show)::after {
-  display: none;
+.maplibregl-ctrl-group button {
+  width: 2.75rem !important;
+  height: 2.75rem !important;
 }
 
-.map-stage .maplibregl-map {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.map-stage .maplibregl-ctrl-top-left {
-  top: 3.25rem;
-  left: 0.35rem;
-}
-
+/* El pin: una píldora blanca con el precio compacto. Elegido: azul plano, encima. */
 .map-pin {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
   cursor: pointer;
-  font-family: inherit;
-}
-.map-pin-badge {
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
-  color: #1a1a1a;
-  background: var(--color-trigo);
-  border: 2px solid rgba(26, 26, 26, 0.4);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  min-width: 2.75rem;
+  min-height: 2.75rem;
 }
-.map-pin.is-casa .map-pin-badge {
-  background: var(--color-trigo);
-}
-.map-pin.is-departamento .map-pin-badge {
-  background: #6ea8d8;
-}
-.map-pin.is-terreno .map-pin-badge {
-  background: #6fbf7a;
-}
-.map-pin.is-selected .map-pin-badge {
-  border-color: #f3efe6;
-  box-shadow:
-    0 0 0 2px #1a1a1a,
-    0 0 0 5px #f3efe6;
-  transform: scale(1.1);
-}
-.map-pin-price {
-  width: max-content;
-  position: relative;
-  background: #1a1a1a;
-  color: #f3efe6;
-  border-radius: 999px;
-  padding: 0.32rem 0.6rem;
-  font-size: 0.75rem;
-  font-weight: 650;
-  line-height: 1;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
-}
-.map-pin-price::after,
-.map-pin-preview::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: -6px;
-  transform: translateX(-50%);
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 6px solid #1a1a1a;
-}
-.map-street-marker {
-  pointer-events: none;
-  z-index: 10;
-}
-
-.map-street-pill {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0.35rem 0.85rem;
-  background: var(--color-blanco);
-  color: var(--color-tinta);
-  border: 1px solid var(--color-linea);
-  border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 650;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.32);
-  pointer-events: none;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  margin-bottom: 8px;
-}
-
-.map-street-pill svg {
-  color: var(--color-plano-700);
-  flex-shrink: 0;
-}
-
-.map-street-pill::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: -5px;
-  transform: translateX(-50%);
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 5px solid var(--color-blanco);
-}
-
-.map-pin-preview {
-  position: relative;
-  width: 220px;
-  overflow: hidden;
-  border-radius: var(--radius-tarjeta);
-  background: var(--color-blanco);
-  color: var(--color-tinta);
-  border: 1px solid var(--color-linea);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
-}
-.map-pin-preview::after {
-  border-top-color: var(--color-blanco);
-}
-.map-pin-preview img {
+.map-pin-precio {
   display: block;
-  width: 100%;
-  max-width: 100%;
-  height: 112px;
-  object-fit: cover;
+  padding: 0.3rem 0.55rem;
+  border: 1px solid var(--color-linea);
+  border-radius: 9999px;
   background: var(--color-blanco);
-}
-.map-pin-preview-body {
-  padding: 0.7rem 0.8rem 0.75rem;
-}
-.map-pin-preview-title {
-  font-size: 0.95rem;
-  font-weight: 650;
-  line-height: 1.2;
-}
-.map-pin-preview-address,
-.map-pin-preview-meta {
-  margin-top: 0.2rem;
-  font-size: 0.72rem;
-  color: var(--color-tinta-suave);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.map-pin-preview-price {
-  margin-top: 0.35rem;
+  color: var(--color-tinta);
   font-family: var(--font-encode);
-  font-size: 1rem;
-  letter-spacing: -0.02em;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-stretch: 87.5%;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.18);
+  transition: transform 150ms ease-out;
 }
-.map-pin-detail {
-  display: inline-flex;
-  margin-top: 0.55rem;
-  border-radius: 999px;
+.map-pin.is-selected .map-pin-precio {
+  border-color: var(--color-plano-800);
+  background: var(--color-plano-700);
+  color: var(--color-blanco);
+  transform: scale(1.08);
+}
+.map-pin:focus-visible {
+  outline: none;
+}
+.map-pin:focus-visible .map-pin-precio {
+  outline: 2px solid var(--color-plano-700);
+  outline-offset: 2px;
+}
+
+/* Con el mapa alejado, los pines no elegidos son puntos: los precios no entran. */
+.is-lejos .map-pin:not(.is-selected) .map-pin-precio {
+  width: 0.75rem;
+  height: 0.75rem;
+  padding: 0;
+  overflow: hidden;
+  border: 2px solid var(--color-blanco);
   background: var(--color-tinta);
-  color: var(--color-papel);
-  padding: 0.28rem 0.7rem;
-  font-size: 0.72rem;
-  font-weight: 600;
+  color: transparent;
 }

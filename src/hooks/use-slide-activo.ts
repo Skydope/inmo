@@ -39,8 +39,9 @@ export function useSlideActivo(contenedor: RefObject<HTMLElement | null>, cantid
     return () => observador.disconnect()
   }, [contenedor, cantidad])
 
-  /** Lleva el carrusel al slide `i`. */
-  const irA = (i: number) => llevarA(contenedor.current, i, true)
+  /** Lleva el carrusel al slide `i`. `suave: false` para saltos hechos por código (sin pasar
+   *  por los slides del medio, que se marcarían como activos). */
+  const irA = (i: number, suave = true) => llevarA(contenedor.current, i, suave)
 
   return { activo, irA }
 }

@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
   contarResultados,
+  escribirBusqueda,
   hrefDeBusqueda,
   leerBusqueda,
   rutaDePaso,
@@ -71,6 +72,8 @@ export function FormularioDePaso({
   // `next/form` no pasa la ref al <form>: se escucha desde un contenedor propio.
   const contenedor = useRef<HTMLDivElement>(null)
   const [actual, setActual] = useState(busqueda)
+  // La búsqueda con la que se armó este paso (el componente se re-crea con cada URL de paso).
+  const busquedaInicial = useRef(busqueda)
   const conteo = contarResultados(indice, actual)
 
   // Escuchas nativas (no onChange de React): así también cuentan los cambios hechos por
@@ -80,9 +83,10 @@ export function FormularioDePaso({
     if (!form) return
     const recalcular = () => setActual(leerBusqueda(datosDe(form)))
     // Al volver con "atrás", Next reconstruye el paso desde su caché (armado antes de marcar
-    // nada) aunque la URL ya tenga lo elegido: la URL manda, así que las opciones se ponen como
-    // dice la URL.
-    sincronizarConUrl(form, new URLSearchParams(window.location.search))
+    // nada) aunque la URL ya tenga lo elegido: la URL manda. Solo cuando no coinciden: si no,
+    // un toque hecho antes de hidratar (celular lento) se perdería.
+    const url = new URLSearchParams(window.location.search)
+    if (escribirBusqueda(leerBusqueda(url)) !== escribirBusqueda(busquedaInicial.current)) sincronizarConUrl(form, url)
     recalcular()
     form.addEventListener("input", recalcular)
     form.addEventListener("change", recalcular)

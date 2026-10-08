@@ -37,6 +37,22 @@ export function Carrusel({
 
   const enFinal = activo >= tarjetas.length
 
+  // Dos toques rápidos en la flecha: el segundo avanza desde el destino en curso, no desde la
+  // activa (que no cambia hasta que termina la animación).
+  const destino = useRef<number | null>(null)
+  useEffect(() => {
+    if (destino.current === activo) destino.current = null
+  }, [activo])
+  const mover = (paso: number) => {
+    const base = destino.current ?? activo
+    const i = Math.min(total - 1, Math.max(0, base + paso))
+    destino.current = i
+    irA(i)
+    window.setTimeout(() => {
+      if (destino.current === i) destino.current = null
+    }, 900)
+  }
+
   return (
     <section aria-roledescription="carrusel" aria-label="Propiedades" className={cn("flex flex-col gap-1", className)}>
       <ul
@@ -65,7 +81,7 @@ export function Carrusel({
       <div className="flex items-center justify-center gap-2">
         <button
           type="button"
-          onClick={() => irA(Math.max(0, activo - 1))}
+          onClick={() => mover(-1)}
           disabled={activo === 0}
           aria-label="Propiedad anterior"
           className="grid size-11 place-items-center rounded-full text-tinta hover:bg-blanco disabled:opacity-30"
@@ -77,7 +93,7 @@ export function Carrusel({
         </p>
         <button
           type="button"
-          onClick={() => irA(Math.min(total - 1, activo + 1))}
+          onClick={() => mover(1)}
           disabled={enFinal}
           aria-label="Propiedad siguiente"
           className="grid size-11 place-items-center rounded-full text-tinta hover:bg-blanco disabled:opacity-30"
