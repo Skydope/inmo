@@ -97,6 +97,16 @@
   letter-spacing: -0.01em;
 }
 
+/* La voz del inicio: Instrument Serif derecha. Solo la frase de la hoja y la línea del pie;
+   nunca menos de 24 px ni en itálica (spec vivi-bolivar). */
+@utility font-voz {
+  font-family: var(--font-instrument), Georgia, serif;
+  font-weight: 400;
+  font-style: normal;
+  font-synthesis: none;
+  letter-spacing: -0.01em;
+}
+
 /* VIVÍ BOLÍVAR: Encode Sans en su ancho máximo y su peso máximo. Solo el hero del inicio y el
    cierre del pie (spec vivi-bolivar). */
 @utility font-display {
@@ -370,6 +380,17 @@
     );
   }
 
+  /* La frase de la hoja: se enciende palabra por palabra al pasar (abajo, en @supports). */
+  .frase {
+    text-wrap: pretty;
+  }
+
+  /* La barra del inicio: el header de siempre, fijo arriba, que aparece cuando la hoja tapa
+     las pestañas. Sin animaciones de scroll no aparece (los links están en el pie). */
+  .barra-del-inicio {
+    display: none;
+  }
+
   /* La hoja: el resto del inicio sube por encima de la foto al scrollear. */
   .hoja {
     position: relative;
@@ -377,5 +398,95 @@
     background: var(--color-papel);
     border-radius: var(--radius-hoja) var(--radius-hoja) 0 0;
     box-shadow: 0 -28px 70px rgb(23 33 28 / 0.16);
+  }
+}
+
+/*
+ * Lo que se mueve con el scroll en el inicio (excepción acordada, spec vivi-bolivar): solo con
+ * soporte de animation-timeline y sin pedido de movimiento reducido. Siempre propiedades
+ * sueltas: el atajo `animation` borra `animation-timeline`.
+ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* La frase pasa de tinta-suave a tinta palabra por palabra: nunca baja de 4,5. */
+    .frase {
+      view-timeline-name: --frase;
+      view-timeline-axis: block;
+    }
+    .frase > span {
+      animation-name: frase-encender;
+      animation-duration: auto;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: --frase;
+      animation-range-start: cover calc(8% + var(--i) / var(--n) * 34%);
+      animation-range-end: cover calc(14% + var(--i) / var(--n) * 34%);
+    }
+  }
+
+  /* La barra aparece mientras la hoja llega a las pestañas, y las pestañas tapadas dejan de
+     ser enfocables. Con movimiento reducido, la barra aparece sin deslizarse. */
+  @media (min-height: 37rem) {
+    .barra-del-inicio {
+      display: block;
+      position: fixed;
+      inset: 0 0 auto;
+      animation-name: barra-entra;
+      animation-duration: auto;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root block);
+      animation-range-start: calc(100svh - 7rem);
+      animation-range-end: calc(100svh - 3.5rem);
+    }
+    .pestanas {
+      animation-name: pestanas-tapadas;
+      animation-duration: auto;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root block);
+      animation-range-start: calc(100svh - 3.5rem);
+      animation-range-end: calc(100svh - 3.4rem);
+    }
+  }
+  @media (min-height: 37rem) and (prefers-reduced-motion: reduce) {
+    .barra-del-inicio {
+      animation-name: barra-aparece;
+    }
+  }
+}
+
+@keyframes frase-encender {
+  from {
+    color: var(--color-tinta-suave);
+  }
+  to {
+    color: var(--color-tinta);
+  }
+}
+@keyframes barra-entra {
+  from {
+    visibility: hidden;
+    translate: 0 -100%;
+  }
+  to {
+    visibility: visible;
+    translate: 0 0;
+  }
+}
+@keyframes barra-aparece {
+  from {
+    visibility: hidden;
+  }
+  to {
+    visibility: visible;
+  }
+}
+@keyframes pestanas-tapadas {
+  from {
+    visibility: visible;
+  }
+  to {
+    visibility: hidden;
   }
 }

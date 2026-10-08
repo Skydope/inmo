@@ -4,6 +4,7 @@ import type { Property } from "@/lib/properties/types"
 import {
   categoriasDelInicio,
   destacadas,
+  fraseDelPortal,
   inmobiliariasDelInicio,
   numerosDelPortal,
   recientes,
@@ -113,5 +114,25 @@ describe("numerosDelPortal", () => {
 
   it("con menos de 10 propiedades, nada (la franja no va)", () => {
     expect(numerosDelPortal(SEED_PROPERTIES.slice(0, 9))).toBeNull()
+  })
+})
+
+describe("fraseDelPortal", () => {
+  const FIJA = "En Bolívar, todas las propiedades en un solo lugar. Las publican las inmobiliarias de la ciudad."
+
+  it("cuenta qué es esto y suma los números del portal", () => {
+    expect(fraseDelPortal(numerosDelPortal(SEED_PROPERTIES))).toBe(
+      `${FIJA} Hoy hay 36, de 4 inmobiliarias, en 14 zonas.`
+    )
+  })
+
+  it("en singular cuando hay una sola inmobiliaria o una sola zona", () => {
+    expect(fraseDelPortal({ propiedades: 12, inmobiliarias: 1, zonas: 1 })).toBe(
+      `${FIJA} Hoy hay 12, de 1 inmobiliaria, en 1 zona.`
+    )
+  })
+
+  it("sin números (pocas propiedades), solo lo que no cambia", () => {
+    expect(fraseDelPortal(null)).toBe(FIJA)
   })
 })

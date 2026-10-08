@@ -1,16 +1,18 @@
 import { Destacadas } from "@/components/inicio/destacadas"
+import { Frase } from "@/components/inicio/frase"
 import { Hero } from "@/components/inicio/hero"
 import { Inmobiliarias } from "@/components/inicio/inmobiliarias"
-import { Numeros } from "@/components/inicio/numeros"
 import { PorTipo } from "@/components/inicio/por-tipo"
 import { PorZona } from "@/components/inicio/por-zona"
 import { RecienPublicadas } from "@/components/inicio/recien-publicadas"
 import { SosInmobiliaria } from "@/components/inicio/sos-inmobiliaria"
+import { Header } from "@/components/shell/header"
 import { Pie } from "@/components/shell/pie"
 import { BUSQUEDA_VACIA, contarPorOpcion } from "@/lib/busqueda"
 import {
   categoriasDelInicio,
   destacadas,
+  fraseDelPortal,
   inmobiliariasDelInicio,
   numerosDelPortal,
   recientes,
@@ -30,15 +32,15 @@ import { aTarjeta } from "@/lib/properties/tarjeta"
 export default async function HomePage() {
   const propiedades = await getProperties()
   const conteo = contarPorOpcion(propiedades, BUSQUEDA_VACIA, "operacion")
-  const numeros = numerosDelPortal(propiedades)
 
   return (
     <>
+      <Header fija />
       {/* Bloque, no flex: tiene que contener al hero quieto (sticky) y a la hoja que sube. */}
       <main className="flex-1">
         <Hero conteo={conteo} />
         <div className="hoja">
-          {numeros ? <Numeros numeros={numeros} /> : null}
+          <Frase texto={fraseDelPortal(numerosDelPortal(propiedades))} />
           <RecienPublicadas tarjetas={recientes(propiedades, 8).map(aTarjeta)} />
           <PorTipo categorias={categoriasDelInicio(propiedades)} />
           <Destacadas tarjetas={destacadas(propiedades).map(aTarjeta)} />

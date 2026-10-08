@@ -105,3 +105,14 @@ export function numerosDelPortal(props: readonly Property[]): NumerosDelPortal |
     zonas: new Set(props.map((p) => p.zone)).size,
   }
 }
+
+/**
+ * La frase de arriba de la hoja: qué es esto, en una línea de historia, y los números del
+ * portal metidos en una oración (no en una franja de cifras). Sin números, solo lo fijo.
+ */
+export function fraseDelPortal(numeros: NumerosDelPortal | null): string {
+  const fija = "En Bolívar, todas las propiedades en un solo lugar. Las publican las inmobiliarias de la ciudad."
+  if (!numeros) return fija
+  const { propiedades, inmobiliarias, zonas } = numeros
+  return `${fija} Hoy hay ${propiedades}, de ${inmobiliarias} ${inmobiliarias === 1 ? "inmobiliaria" : "inmobiliarias"}, en ${zonas} ${zonas === 1 ? "zona" : "zonas"}.`
+}

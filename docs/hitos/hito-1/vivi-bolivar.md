@@ -263,9 +263,9 @@ letra es la misma en todos los anchos. El scroll se resuelve con `sticky` y `ani
 - [x] Gates + `pnpm e2e`.
 
 **Bloque 2 — La hoja y la frase** · commit "Inicio: la hoja sube y la frase cuenta qué es esto"
-- [ ] `fraseDelPortal` (test primero), Instrument Serif, `frase.tsx`, barra fija.
-- [ ] E2E de la frase y de la tipografía.
-- [ ] Gates + `pnpm e2e`.
+- [x] `fraseDelPortal` (test primero), Instrument Serif, `frase.tsx`, barra fija.
+- [x] E2E de la frase y de la tipografía.
+- [x] Gates + `pnpm e2e`.
 
 **Bloque 3 — El pie con el plano** · commit "Pie: el plano de Bolívar y VIVÍ BOLÍVAR"
 - [ ] Script y datos del plano; `PlanoDeBolivar`; `Pie({ inicio })`.
@@ -294,5 +294,9 @@ letra es la misma en todos los anchos. El scroll se resuelve con `sticky` y `ani
   misma línea ("C…"); el número pasó abajo del nombre ("22 en venta") y la flecha quedó solo
   en Alquiler temporario. En escritorio, la tercera columna es un 30 % más ancha para que
   entre "Alquiler temporario".
+- **La hoja y la barra** (360 × 640): la frase se enciende entre los 100 y los 550 px de
+  scroll; la barra aparece entre 528 y 584 px (cuando la hoja llega a las pestañas) y desde ahí
+  las pestañas dejan de ser enfocables. El build mantiene `animation-timeline` (Lightning CSS no
+  junta las propiedades en el atajo).
 - **Sin entrada animada**: el borrador la tenía, pero el invariante acordado no suma entradas
   animadas; el hero aparece quieto.

@@ -115,10 +115,10 @@ test.describe("inicio: lo que hay debajo de la foto", () => {
     await page.goto("/")
   })
 
-  test("las secciones van en orden, después de los números", async ({ page }) => {
-    const numeros = page.getByRole("region", { name: "Bolívar Inmo en números" })
-    await expect(numeros.getByText("propiedades", { exact: true })).toBeVisible()
-    await expect(numeros.locator("dd").first()).toHaveText("36")
+  test("la hoja empieza con la frase, con los números de los datos, y sigue en orden", async ({ page }) => {
+    await expect(page.locator(".frase")).toHaveText(
+      "En Bolívar, todas las propiedades en un solo lugar. Las publican las inmobiliarias de la ciudad. Hoy hay 36, de 4 inmobiliarias, en 14 zonas."
+    )
     const titulos = await page.locator("main h2").allTextContents()
     expect(titulos).toEqual([
       "¿Qué estás buscando?",
@@ -177,4 +177,35 @@ test.describe("inicio: lo que hay debajo de la foto", () => {
     await expect.poll(() => lista.evaluate((ul) => ul.scrollLeft)).toBeGreaterThan(100)
     await expect(page.getByRole("button", { name: "Recién publicadas: anteriores" })).toBeVisible()
   })
+})
+
+test("la frase se enciende al bajar sin que ninguna palabra baje de 4,5 de contraste", async ({ page }) => {
+  await page.goto("/")
+  const peor = async () =>
+    page.locator(".frase > span").evaluateAll((spans) => {
+      const lum = (rgb: string) => {
+        const [r, g, b] = (rgb.match(/\d+/g) ?? []).slice(0, 3).map(Number).map((v) => v / 255)
+        const c = [r, g, b].map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4))
+        return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]
+      }
+      const papel = lum("rgb(247, 248, 246)")
+      return Math.min(...spans.map((s) => (papel + 0.05) / (lum(getComputedStyle(s).color) + 0.05)))
+    })
+  for (const y of [0, 200, 400, 800]) {
+    await page.evaluate((y) => window.scrollTo(0, y), y)
+    await page.waitForTimeout(100)
+    expect(await peor()).toBeGreaterThanOrEqual(4.5)
+  }
+})
+
+test("la barra fija aparece cuando la hoja tapa las pestañas", async ({ page }, info) => {
+  test.skip(info.project.name !== "android-chico", "se mide en el Android chico")
+  await page.goto("/")
+  const soporta = await page.evaluate(() => CSS.supports("animation-timeline: scroll()"))
+  test.skip(!soporta, "sin animaciones de scroll no hay barra fija (los links están en el pie)")
+  const barra = page.locator("header.barra-del-inicio")
+  await expect(barra).toBeHidden()
+  await page.evaluate(() => window.scrollTo(0, window.innerHeight))
+  await expect(barra).toBeVisible()
+  await expect(barra.getByRole("link", { name: "Bolívar Inmo, ir al inicio" })).toBeInViewport()
 })

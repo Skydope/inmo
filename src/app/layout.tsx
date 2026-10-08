@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next"
-import { Encode_Sans } from "next/font/google"
+import { Encode_Sans, Instrument_Serif } from "next/font/google"
 import { brandName } from "@/lib/brand"
 import { siteUrl } from "@/lib/site"
 import "./globals.css"
@@ -13,6 +13,20 @@ const encode = Encode_Sans({
   variable: "--font-encode-sans",
   subsets: ["latin"],
   axes: ["wdth"],
+})
+
+/*
+ * La voz del inicio: Instrument Serif derecha, solo para la frase de la hoja y la línea del pie
+ * (spec vivi-bolivar). Sin precarga: el navegador la baja recién cuando algo la usa, abajo del
+ * pliegue, y no compite con la foto del hero.
+ */
+const voz = Instrument_Serif({
+  variable: "--font-instrument",
+  weight: "400",
+  style: "normal",
+  subsets: ["latin"],
+  display: "swap",
+  preload: false,
 })
 
 export const metadata: Metadata = {
@@ -54,7 +68,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es-AR" className={`${encode.variable} h-full antialiased`}>
+    <html lang="es-AR" className={`${encode.variable} ${voz.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">{children}</body>
     </html>
   )
