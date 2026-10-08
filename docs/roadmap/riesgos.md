@@ -55,6 +55,12 @@ Fuente: [CARTO Basemaps Terms](https://carto.com/legal/basemap-terms/) (actualiz
   deslizando hacia abajo, y el mapa usa todos los gestos. Dentro de un Drawer, lo que desliza
   en horizontal lleva `data-base-ui-swipe-ignore`. La tarjeta flotante del mapa **no** es un
   Drawer (ver `resultados.md`).
+- **Next 16 no levanta dos dev servers en el mismo proyecto**: si `pnpm dev` está corriendo
+  (por ejemplo, para que Manuel mire en el celu), `pnpm e2e` falla al arrancar el suyo. Se
+  corre contra el que ya está: `E2E_BASE_URL=http://127.0.0.1:43123 pnpm e2e`.
+- **WebKit del e2e** (proyecto `iphone`) necesita `libavif16` en el sistema
+  (`sudo apt-get install libavif16`, instalado el 2026-10-08). En `next dev`, WebKit a veces no
+  abre el websocket de recarga en caliente (`/_next/hmr`): el e2e de humo lo ignora.
 - **Alto de pantalla en el celu**: usar `svh`/`dvh`, no `vh`. El navegador de Instagram deja
   menos alto que Safari: probar con 360 × 640.
 - **Scroll-snap en iOS**: `scroll-snap-stop: always` evita que un deslizamiento rápido salte

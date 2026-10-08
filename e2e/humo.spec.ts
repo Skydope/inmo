@@ -7,7 +7,11 @@ for (const ruta of RUTAS) {
     const errores: string[] = []
     page.on("pageerror", (error) => errores.push(error.message))
     page.on("console", (mensaje) => {
-      if (mensaje.type() === "error") errores.push(mensaje.text())
+      // El websocket de recarga en caliente solo existe en `next dev` y WebKit
+      // a veces no lo puede abrir: no es un error de la página.
+      if (mensaje.type() === "error" && !mensaje.text().includes("/_next/hmr")) {
+        errores.push(mensaje.text())
+      }
     })
 
     const respuesta = await page.goto(ruta)
