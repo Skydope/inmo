@@ -1,3 +1,4 @@
+import Image from "next/image"
 import Link from "next/link"
 import { Bath, BedDouble, CarFront, ChevronRight, Ruler } from "lucide-react"
 import { FotoPropiedad } from "@/components/busqueda/foto-propiedad"
@@ -109,7 +110,16 @@ export function TarjetaPropiedad({
   if (variante === "chica") {
     return (
       <article className={cn("relative flex w-60 shrink-0 flex-col overflow-hidden rounded-tarjeta border border-linea bg-blanco", className)}>
-        <FotoPropiedad src={t.fotos[0]} tipo={t.type} alt="" className="aspect-[4/3] w-full" />
+        <div className="relative aspect-[4/3] w-full bg-papel">
+          {t.fotos[0] ? (
+            <Image src={t.fotos[0]} alt="" fill sizes="240px" className="object-cover" />
+          ) : (
+            <FotoPropiedad src={undefined} tipo={t.type} alt="" className="size-full" />
+          )}
+          <EtiquetaOperacion className="pointer-events-none absolute top-2 left-2">
+            {etiquetaOperacion(t.operation)}
+          </EtiquetaOperacion>
+        </div>
         <div className="flex flex-col gap-1 p-3">
           <Precio t={t} className="text-lg" />
           <VerDetalles t={t} className="truncate text-sm font-semibold">

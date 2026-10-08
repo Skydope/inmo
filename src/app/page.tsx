@@ -2,15 +2,34 @@ import Image from "next/image"
 import Link from "next/link"
 import { ChevronRight, House, KeyRound, Map as MapIcono } from "lucide-react"
 import { OpcionGrande } from "@/components/busqueda/opcion-grande"
+import { Destacadas } from "@/components/inicio/destacadas"
+import { Inmobiliarias } from "@/components/inicio/inmobiliarias"
+import { Numeros } from "@/components/inicio/numeros"
+import { PorTipo } from "@/components/inicio/por-tipo"
+import { PorZona } from "@/components/inicio/por-zona"
+import { RecienPublicadas } from "@/components/inicio/recien-publicadas"
+import { SosInmobiliaria } from "@/components/inicio/sos-inmobiliaria"
 import { Header } from "@/components/shell/header"
 import { Pie } from "@/components/shell/pie"
 import { BUSQUEDA_VACIA, contarPorOpcion, rutaDePaso } from "@/lib/busqueda"
+import {
+  categoriasDelInicio,
+  destacadas,
+  inmobiliariasDelInicio,
+  numerosDelPortal,
+  recientes,
+  zonasConPropiedades,
+} from "@/lib/inicio"
 import { getProperties } from "@/lib/properties/adapter"
+import { aTarjeta } from "@/lib/properties/tarjeta"
 
 /**
  * Paso 1 del buscador guiado: "¿Qué estás buscando?". Foto real de Bolívar de fondo
  * (decisión de Manuel, 2026-10-08) y las opciones en una tarjeta blanca encima.
  * Spec: docs/hitos/hito-1/buscador-guiado.md § Paso 1.
+ *
+ * Debajo, el contenido del portal (todo contado de los datos) y el pie.
+ * Spec: docs/hitos/hito-1/inicio-y-pie.md.
  */
 
 // Provisoria hasta la foto aérea de Manuel: reemplazar este archivo alcanza.
@@ -18,7 +37,9 @@ const FOTO_DE_FONDO = "/images/inicio/fondo.webp"
 const CREDITO_DE_LA_FOTO = "Foto: Gobierno de Bolívar · dominio público"
 
 export default async function HomePage() {
-  const conteo = contarPorOpcion(await getProperties(), BUSQUEDA_VACIA, "operacion")
+  const propiedades = await getProperties()
+  const conteo = contarPorOpcion(propiedades, BUSQUEDA_VACIA, "operacion")
+  const numeros = numerosDelPortal(propiedades)
   const ruta = (operacion: "venta" | "alquiler" | "temporario") =>
     rutaDePaso("tipo", { ...BUSQUEDA_VACIA, operacion })
 
@@ -94,19 +115,13 @@ export default async function HomePage() {
           </p>
         </section>
 
-        <section className="mx-auto flex w-full max-w-xl flex-col gap-3 px-4 py-10">
-          <h2 className="text-xl font-titulo">Las inmobiliarias de Bolívar</h2>
-          <p className="text-tinta-suave">
-            Todas las propiedades de este sitio las publican inmobiliarias de la ciudad. Consultás
-            directo con ellas.
-          </p>
-          <Link
-            href="/inmobiliarias"
-            className="inline-flex min-h-11 w-fit items-center gap-1 font-semibold text-plano-700"
-          >
-            Ver inmobiliarias <ChevronRight className="size-4" aria-hidden="true" />
-          </Link>
-        </section>
+        {numeros ? <Numeros numeros={numeros} /> : null}
+        <RecienPublicadas tarjetas={recientes(propiedades, 8).map(aTarjeta)} />
+        <PorTipo categorias={categoriasDelInicio(propiedades)} />
+        <Destacadas tarjetas={destacadas(propiedades).map(aTarjeta)} />
+        <PorZona zonas={zonasConPropiedades(propiedades)} />
+        <Inmobiliarias inmobiliarias={inmobiliariasDelInicio(propiedades)} />
+        <SosInmobiliaria />
       </main>
       <Pie />
     </>

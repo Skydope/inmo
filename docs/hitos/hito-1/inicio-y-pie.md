@@ -211,10 +211,10 @@ carruseles son lo único cliente (por las flechas). El pie nuevo reemplaza a
 - [x] Gates en verde.
 
 **Bloque 2 — Secciones** · commit "Inicio: secciones deslizables debajo del buscador"
-- [ ] `carrusel-horizontal.tsx`, `seccion.tsx` y las siete secciones.
-- [ ] `src/app/page.tsx` con las secciones.
-- [ ] E2E de secciones y links.
-- [ ] Gates + `pnpm e2e`.
+- [x] `carrusel-horizontal.tsx`, `seccion.tsx` y las siete secciones.
+- [x] `src/app/page.tsx` con las secciones.
+- [x] E2E de secciones y links.
+- [x] Gates + `pnpm e2e`.
 
 **Bloque 3 — Pie** · commit "Pie completo de Bolívar Inmo"
 - [ ] `pie.tsx` nuevo; contraste del gris claro sobre `tinta` medido con `scripts/contraste.mjs`.
@@ -230,6 +230,9 @@ carruseles son lo único cliente (por las flechas). El pie nuevo reemplaza a
 
 ## Lo que se encontró al implementar
 
+- La tarjeta `chica` pasa a `next/image` (`sizes="240px"`) y lleva el cartel de la operación:
+  en "Recién publicadas" se mezclan venta y alquiler.
+- Destacadas no tiene "Ver todas": no hay filtro de destacadas en la URL.
 - `inmobiliariasDelInicio` toma las inmobiliarias de las propiedades mismas (las que publican),
   no del seed: el inicio no muestra una inmobiliaria sin avisos.
 - ⚠️ **Fuera de esta spec**: en `/inmobiliarias`, "Ver catálogo" arma
