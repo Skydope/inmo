@@ -51,3 +51,10 @@ next-env.d.ts
 
 # capturas y logs del MCP de Playwright
 /.playwright-mcp/
+
+# resultados de Playwright
+/playwright-report/
+/test-results/
+
+# el binario de la skill impeccable pesa 18 MB y se baja solo al primer uso
+.claude/skills/impeccable/scripts/bin/

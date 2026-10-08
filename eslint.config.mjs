@@ -12,6 +12,13 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Copias del worker de MapLibre (vendor, minificado): no se lintean.
+    "public/maplibre/**",
+    "docs/**",
+    ".playwright-mcp/**",
+    ".claude/**",
+    "playwright-report/**",
+    "test-results/**",
   ]),
 ]);
 
