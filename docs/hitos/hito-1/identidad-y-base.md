@@ -1,8 +1,9 @@
 ---
 slug: identidad-y-base
 hito: 1
-estado: approved
+estado: done
 aprobada: 2026-10-08
+cerrada: 2026-10-08
 creada: 2026-10-08
 ---
 
@@ -187,25 +188,25 @@ borrar el front viejo y dejar andamios donde haga falta para que el sitio compil
 
 ## Criterios de aceptación
 
-- [ ] 👀 Manuel vio `/muestra` y el header en su celular y eligió A o B (o pidió cambios).
-- [ ] Los tokens están en `@theme` de `globals.css` con un comentario por token: de dónde
+- [x] 👀 Manuel vio `/muestra` y el header en su celular y eligió A o B (o pidió cambios).
+- [x] Los tokens están en `@theme` de `globals.css` con un comentario por token: de dónde
       sale y su contraste medido. Ningún texto queda por debajo de 4,5 (o 3 si es ≥ 24 px).
-- [ ] Una sola familia tipográfica cargada con `next/font`; ni Manrope, ni Archivo Black, ni
+- [x] Una sola familia tipográfica cargada con `next/font`; ni Manrope, ni Archivo Black, ni
       Instrument Serif.
-- [ ] `lucide-react` es la única librería de íconos (`@phosphor-icons/react` desinstalado).
-- [ ] `components.json` con estilo `base-nova` e íconos lucide; `src/components/ui/` tiene
+- [x] `lucide-react` es la única librería de íconos (`@phosphor-icons/react` desinstalado).
+- [x] `components.json` con estilo `base-nova` e íconos lucide; `src/components/ui/` tiene
       button, toggle, toggle-group, drawer, dialog, input, label, badge, separator, skeleton.
-- [ ] Botón principal: 56 px de alto; todo lo que se toca ≥ 44 px (lo mide un e2e en `/muestra`).
-- [ ] `pnpm e2e` corre en tres proyectos (360 × 640, iPhone 390 × 844, escritorio) y pasa un
+- [x] Botón principal: 56 px de alto; todo lo que se toca ≥ 44 px (lo mide un e2e en `/muestra`).
+- [x] `pnpm e2e` corre en tres proyectos (360 × 640, iPhone 390 × 844, escritorio) y pasa un
       humo: `/` carga, sin scroll horizontal, sin errores de consola.
-- [ ] `grep -rni "inmu" src PRODUCT.md DESIGN.md` sin resultados.
-- [ ] No existen: `hero-interactive`, `count-up`, `reveal`, `scroll-reveal-line`,
+- [x] `grep -rni "inmu" src PRODUCT.md DESIGN.md` sin resultados.
+- [x] No existen: `hero-interactive`, `count-up`, `reveal`, `scroll-reveal-line`,
       `landing-nav`, `hero-search`, `landing-property-card`, `theme-provider`, `theme-toggle`,
       `explore-client`, `property-card`, `site-footer`, ni las clases `.glass`, `.nav-tab`,
       `.sheet-over`, `.hero-search`, `.page-atmosphere`.
-- [ ] `/`, `/propiedades`, `/propiedades/[id]`, `/inmobiliarias`, `/ingresar`, `/cuenta` y
+- [x] `/`, `/propiedades`, `/propiedades/[id]`, `/inmobiliarias`, `/ingresar`, `/cuenta` y
       `/publicar` responden 200 (o redirigen como antes) con el shell nuevo.
-- [ ] Los cuatro gates en verde.
+- [x] Los cuatro gates en verde.
 
 ## Riesgos
 
@@ -325,7 +326,7 @@ muestra a Manuel **antes** de la limpieza, para que elija paleta con algo andand
 - [x] `docs/FICHA.md`: grafía de la marca confirmada.
 
 **Cierre**
-- [ ] `/cerrar identidad-y-base`.
+- [x] `/cerrar identidad-y-base`.
 
 ## Lo que se encontró al implementar
 
@@ -367,3 +368,25 @@ muestra a Manuel **antes** de la limpieza, para que elija paleta con algo andand
     `PRODUCT.md`); por eso `public/images/hero/hero-day.jpg` se queda.
 14. Los tests de Vitest bajaron de 37 a 32: se fueron los de `count-up` y `landing-nav` junto
     con sus componentes.
+
+## Cierre (2026-10-08)
+
+**Desvíos del plan:**
+
+- Ganó la **paleta B (azul plano)**, no la A recomendada: los tokens se llaman `plano-*`.
+- `CoverImage` se conservó (la usa el directorio de inmobiliarias) y `/ingresar` mantiene su
+  foto (compromiso de `PRODUCT.md`).
+- El lint ya fallaba en `main`: la regla del paso fue "sin errores nuevos" hasta el bloque 5,
+  que lo dejó en 0 errores.
+- Se agregó la utilidad `font-titulo` (no estaba en la spec) para no repetir peso, ancho y
+  tracking en cada título.
+- El mapa todavía usa Carto: el cambio a OpenFreeMap es de `resultados` (sigue anotado en
+  `riesgos.md`).
+
+**Evidencia:** `pnpm test` (32 tests), `pnpm typecheck`, `pnpm lint` (0 errores) y
+`pnpm build` en verde con código de salida real; `pnpm e2e` con 30 tests en verde en
+`android-chico`, `iphone` (WebKit) y `escritorio` (humo de las siete rutas + muestra:
+≥ 44 px, cifras tabulares, sin scroll horizontal); `node scripts/contraste.mjs` con todos
+los pares en ✓; capturas a 360 × 640, 390 × 844 y escritorio de `/muestra` y de los
+andamios en `docs/references/capturas/` (carpeta local); Manuel vio `/muestra` en su
+celular y eligió la B. Commits en la rama `rediseno-mobile`, de `0161cb0` a `631ffdc`.

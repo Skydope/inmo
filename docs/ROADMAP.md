@@ -9,7 +9,7 @@
 | Hito | Qué cierra | Estado | Entrar |
 |---|---|---|---|
 | **0 — Fundaciones SDD** | Comandos, documentación, roadmap, decisión de rediseño | ✅ 2026-10-08 | [`hito-0/`](hitos/hito-0/) |
-| **1 — Rediseño mobile: buscar, ver, contactar** | Marca Bolívar Inmo, buscador guiado, resultados en lista deslizable y mapa, ficha con contacto | 🔄 specs aprobadas (2026-10-08); en la rama `rediseno-mobile` | [`hito-1/`](hitos/hito-1/README.md) · [pendientes](hitos/hito-1/pendientes.md) |
+| **1 — Rediseño mobile: buscar, ver, contactar** | Marca Bolívar Inmo, buscador guiado, resultados en lista deslizable y mapa, ficha con contacto | 🔄 identidad y base cerradas (2026-10-08); sigue el modelo de búsqueda. Rama `rediseno-mobile` | [`hito-1/`](hitos/hito-1/README.md) · [pendientes](hitos/hito-1/pendientes.md) |
 | **2 — El resto del sitio y datos reales** | Inmobiliarias, ingreso y cuenta re-vestidos; avisos reales desde Supabase; carga de avisos | ⏳ | [`hito-2/`](hitos/hito-2/) · [pendientes](hitos/hito-2/pendientes.md) |
 | **3 — Lanzamiento** | Dominio, mapa propio (PMTiles), SEO por categoría, medición, abrir a Google | ⏳ | [`hito-3/`](hitos/hito-3/) · [pendientes](hitos/hito-3/pendientes.md) |
 
@@ -18,7 +18,7 @@
 | # | Paso | Spec | Antes necesita | Estado |
 |---|---|---|---|---|
 | 1 | 🙋 Aprobar la spec madre y las cinco specs del hito 1; contestar sus preguntas abiertas | [`hito-1/README.md`](hitos/hito-1/README.md) | — | ✅ 2026-10-08 |
-| 2 | Identidad y base técnica (marca, paleta, tipografía, shadcn + Base UI, Playwright, limpieza) | [`identidad-y-base.md`](hitos/hito-1/identidad-y-base.md) | paso 1 | ⏳ |
+| 2 | Identidad y base técnica (marca, paleta, tipografía, shadcn + Base UI, Playwright, limpieza) | [`identidad-y-base.md`](hitos/hito-1/identidad-y-base.md) | paso 1 | ✅ 2026-10-08 |
 | 3 | Modelo de búsqueda (taxonomía, contrato de URL, filtrado, datos de prueba ampliados) | [`modelo-de-busqueda.md`](hitos/hito-1/modelo-de-busqueda.md) | paso 2 (los andamios) | ⏳ |
 | 4 | Buscador guiado (inicio + pasos) | [`buscador-guiado.md`](hitos/hito-1/buscador-guiado.md) | pasos 2 y 3 | ⏳ |
 | 5 | Resultados: lista deslizable ⇄ mapa + hoja de filtros | [`resultados.md`](hitos/hito-1/resultados.md) | paso 4 | ⏳ |
@@ -42,8 +42,8 @@ paralelo al paso 2; el bloque 5 necesita los andamios.
 
 ## Lo próximo (top 3)
 
-1. 🔴 **[Identidad y base](hitos/hito-1/identidad-y-base.md)**: la muestra de identidad en el
-   celu es lo primero que Manuel ve del rediseño.
+1. 🔴 **[Modelo de búsqueda](hitos/hito-1/modelo-de-busqueda.md)**: la taxonomía, el contrato
+   de URL y los datos de prueba ampliados; todo lo que sigue se apoya en él.
 2. 🔴 **Sacar el mapa de Carto** (está fuera de sus términos desde el 29/09/2026): entra en
    [`resultados.md`](hitos/hito-1/resultados.md), pero si el sitio se publica antes, se hace
    suelto (es cambiar una URL).

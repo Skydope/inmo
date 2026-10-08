@@ -7,6 +7,7 @@
 |---|---|---|
 | Nombre público | **Bolívar Inmo** en textos; logotipo "bolívar inmo" en minúscula | ✅ confirmado por Manuel (2026-10-08) |
 | Dominio | `bolivarinmo.com.ar` | ⚠️ falta registrarlo en NIC.ar (🙋 Manuel) |
+| Identidad | "El cartel y el plano": acción en azul plano `#1f4e79`, Encode Sans. Skill `identidad-visual` | ✅ elegida por Manuel (2026-10-08) |
 | Ciudad | San Carlos de Bolívar, provincia de Buenos Aires (y las localidades del partido) | ✅ |
 | Centro del mapa | `-36.2308, -61.1143` (`BOLIVAR_CENTER` en `src/lib/brand.ts`) | ✅ |
 | Repo | `github.com/Bridge-Bolivar/inmobiliaria` (privado) | ✅ |

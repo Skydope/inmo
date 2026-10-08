@@ -11,7 +11,9 @@ quien busca, velocidad en el celular y costo cero de infraestructura**, no por e
 > **Estado (2026-10-08):** el front actual (marca "Inmu", landing con hero animado, mapa a
 > pantalla completa con filtros en popovers) **se reemplaza entero** por el rediseño mobile del
 > [Hito 1](docs/hitos/hito-1/README.md). Las specs del hito están **aprobadas (2026-10-08)** y
-> se implementan en la rama `rediseno-mobile`, un commit por bloque. Los datos siguen siendo de prueba (`src/lib/properties/seed.ts`);
+> se implementan en la rama `rediseno-mobile`, un commit por bloque. **Identidad y base: cerrada**
+> (marca, azul plano, shadcn sobre Base UI, Playwright; el front viejo se retiró y `/`,
+> `/propiedades` y `/propiedades/[id]` son andamios). Sigue `modelo-de-busqueda`. Los datos siguen siendo de prueba (`src/lib/properties/seed.ts`);
 > Supabase solo autentica. El orden de trabajo está en [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## Dónde está la verdad (leer antes de decidir; NO duplicar acá)

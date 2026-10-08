@@ -55,6 +55,13 @@ Fuente: [CARTO Basemaps Terms](https://carto.com/legal/basemap-terms/) (actualiz
   deslizando hacia abajo, y el mapa usa todos los gestos. Dentro de un Drawer, lo que desliza
   en horizontal lleva `data-base-ui-swipe-ignore`. La tarjeta flotante del mapa **no** es un
   Drawer (ver `resultados.md`).
+- **El CLI de shadcn (4.21) puede escribir `import { cn } from "cn"`** en vez del alias
+  `@/lib/utils` e instalar un paquete npm llamado `cn`. **Cada vez que se agregue un
+  componente con el CLI**: `grep -rn 'from "cn"' src` vacío y `cn` fuera de `package.json`.
+- **`dark:` en Tailwind 4 es `prefers-color-scheme` por defecto**: los componentes de shadcn
+  traen clases `dark:`. `globals.css` las ata a una clase `.dark` que nunca se pone; no sacar
+  ese `@custom-variant` mientras no haya modo oscuro.
+- **Inputs a 16 px como mínimo**: con menos, Safari de iPhone hace zoom al tocar el campo.
 - **Next 16 no levanta dos dev servers en el mismo proyecto**: si `pnpm dev` está corriendo
   (por ejemplo, para que Manuel mire en el celu), `pnpm e2e` falla al arrancar el suyo. Se
   corre contra el que ya está: `E2E_BASE_URL=http://127.0.0.1:43123 pnpm e2e`.
