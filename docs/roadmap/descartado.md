@@ -19,4 +19,5 @@
 | 2026-10-08 | **Buscar por calle** en el front del hito 1 | No está en el recorrido que pidió Manuel (operación → tipo → zona → detalles). La API y `streets.ts` quedan | Que las inmobiliarias o la gente lo pidan (pendiente ⚪ en el hito 2) |
 | 2026-10-08 | **Carto basemaps** | Desde el 29/09/2026 exigen API key; uso comercial gratis solo hasta 1 M de tiles/mes y pueden bloquear sin aviso | Nada: hay alternativas sin key (OpenFreeMap, PMTiles propio) |
 | 2026-10-08 | **Magic UI, UI/UX Pro Max** | Descartados por la familia (sus efectos se reconocen como "hechos por IA"; el segundo degrada diseños). Ver `~/dev/clubdelcoctel/docs/hitos/hito-2/metodo-landing.md` | — |
+| 2026-10-08 | **Paleta A, verde palmera** (`#1e5b45`, "la ciudad de las palmeras") | Manuel eligió la B, azul plano, viendo las dos en `/muestra` desde su celular | Que Manuel lo pida |
 | 2026-10-08 | **Cuenta para quien busca** (favoritos, alertas) en el hito 1 | Quien busca entra sin cuenta (`PRODUCT.md`). Favoritos sin cuenta (en el navegador) podría ir al hito 2 | Pedido de Manuel o de inmobiliarias |

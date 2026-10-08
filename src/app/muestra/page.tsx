@@ -19,26 +19,15 @@ import { EtiquetaOperacion } from "@/components/ui/etiqueta-operacion"
 import { Opcion } from "@/components/ui/opcion"
 
 /*
- * Muestra de identidad para que Manuel elija paleta en su celular (hito 1,
- * identidad-y-base, bloque 4). Solo existe en desarrollo y se borra al cerrar el
- * hito. Las dos paletas usan los mismos componentes: la B redefine las variables
- * del verde en su contenedor.
+ * Muestra de identidad (hito 1, identidad-y-base, bloque 4). Manuel eligió acá la
+ * paleta B, azul plano, sobre la A, verde palmera (2026-10-08). Solo existe en
+ * desarrollo y se borra al cerrar el hito.
  */
 
 export const metadata: Metadata = {
   title: "Muestra de identidad",
   robots: { index: false, follow: false },
 }
-
-const PALETA_B = {
-  "--color-palmera-50": "var(--color-plano-50)",
-  "--color-palmera-700": "var(--color-plano-700)",
-  "--color-palmera-800": "var(--color-plano-800)",
-  "--color-primary": "var(--color-plano-700)",
-  "--color-secondary": "var(--color-plano-50)",
-  "--color-secondary-foreground": "var(--color-plano-800)",
-  "--color-ring": "var(--color-plano-700)",
-} as React.CSSProperties
 
 const COLORES = [
   { token: "papel", hex: "#f7f8f6", nota: "fondo" },
@@ -52,16 +41,14 @@ const COLORES = [
 function Celular({
   titulo,
   bajada,
-  estilo,
   acento,
 }: {
   titulo: string
   bajada: string
-  estilo?: React.CSSProperties
   acento: { hex: string; nombre: string; contraste: string }
 }) {
   return (
-    <section style={estilo} className="flex w-full max-w-[360px] flex-col gap-3">
+    <section className="flex w-full max-w-[360px] flex-col gap-3">
       <div>
         <h2 className="font-encode text-xl font-bold [font-stretch:87.5%]">{titulo}</h2>
         <p className="text-sm text-tinta-suave">{bajada}</p>
@@ -92,9 +79,9 @@ function Celular({
               <a
                 key={t}
                 href="#"
-                className="group flex min-h-26 flex-col justify-between gap-3 rounded-control border border-linea bg-blanco p-4 transition-colors hover:border-palmera-700 active:border-palmera-700 active:bg-palmera-50"
+                className="group flex min-h-26 flex-col justify-between gap-3 rounded-control border border-linea bg-blanco p-4 transition-colors hover:border-plano-700 active:border-plano-700 active:bg-plano-50"
               >
-                <Icono className="size-7 stroke-[1.75] text-palmera-700" aria-hidden="true" />
+                <Icono className="size-7 stroke-[1.75] text-plano-700" aria-hidden="true" />
                 <span className="flex items-end justify-between gap-3">
                   <span className="flex flex-col">
                     <span className="font-encode text-2xl leading-none font-bold [font-stretch:87.5%]">{t}</span>
@@ -137,7 +124,7 @@ function Celular({
         </div>
 
         <div className="border-t border-linea bg-blanco px-4 pt-3 pb-4 shadow-[0_-6px_16px_rgb(0_0_0/0.05)]">
-          <a href="#" className="flex min-h-11 items-center justify-center text-sm font-semibold text-palmera-700">
+          <a href="#" className="flex min-h-11 items-center justify-center text-sm font-semibold text-plano-700">
             Ver las 12 propiedades ahora
           </a>
           <Button size="lg" className="w-full">
@@ -173,7 +160,7 @@ function Celular({
           </p>
           <div className="mt-2 flex items-center justify-between gap-3 border-t border-linea pt-3">
             <span className="truncate text-sm text-tinta-suave">Inmobiliaria Norte</span>
-            <a href="#" className="inline-flex min-h-11 items-center gap-1 font-semibold text-palmera-700">
+            <a href="#" className="inline-flex min-h-11 items-center gap-1 font-semibold text-plano-700">
               Ver detalles <ChevronRight className="size-4" aria-hidden="true" />
             </a>
           </div>
@@ -196,27 +183,21 @@ export default function MuestraPage() {
             El cartel y el plano
           </h1>
           <p className="mt-3 text-tinta-suave">
-            Las mismas pantallas con las dos paletas. Tocá las opciones: se marcan de verdad.
-            Elegí A o B; la otra se borra.
+            Las piezas del rediseño con la paleta elegida. Tocá las opciones: se marcan de
+            verdad.
           </p>
         </div>
 
         <div className="flex flex-col gap-12 md:flex-row md:items-start md:justify-center">
           <Celular
-            titulo="A · Verde palmera"
-            bajada="Recomendada: Bolívar, la ciudad de las palmeras."
-            acento={{ hex: "#1e5b45", nombre: "palmera-700", contraste: "7,96" }}
-          />
-          <Celular
-            titulo="B · Azul plano"
-            bajada="Más institucional, menos propia de Bolívar."
-            estilo={PALETA_B}
+            titulo="Azul plano"
+            bajada="El azul de las copias heliográficas de los planos. Elegido el 2026-10-08."
             acento={{ hex: "#1f4e79", nombre: "plano-700", contraste: "8,66" }}
           />
         </div>
 
         <section className="flex flex-col gap-4">
-          <h2 className="font-encode text-xl font-bold [font-stretch:87.5%]">Colores comunes a las dos</h2>
+          <h2 className="font-encode text-xl font-bold [font-stretch:87.5%]">Los demás colores</h2>
           <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
             {COLORES.map((c) => (
               <li key={c.token} className="flex flex-col gap-2">

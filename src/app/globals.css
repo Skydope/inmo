@@ -64,22 +64,22 @@
 /*
  * Identidad de Bolívar Inmo: "el cartel y el plano".
  * El cartel de VENDE (letra compacta y pesada, color liso) y el plano de la ciudad
- * (papel blanco, líneas finas). El color de acción es el verde de las palmeras:
- * Bolívar es "la ciudad de las palmeras". Es el único color liso de la interfaz y
+ * (papel blanco, líneas finas). El color de acción es el AZUL PLANO: el de las
+ * copias heliográficas, como se copiaban los planos. Lo eligió Manuel en la muestra
+ * (2026-10-08) sobre el verde palmera. Es el único color liso de la interfaz y
  * significa "avanzar". El porqué de cada decisión está en la skill `identidad-visual`
  * y en docs/hitos/hito-1/identidad-y-base.md.
  *
  * Contrastes MEDIDOS con `node scripts/contraste.mjs` (WCAG 2.x, 2026-10-08):
  *   tinta sobre papel / blanco ................ 15,51 / 16,53
  *   tinta-suave sobre papel / blanco .......... 5,91 / 6,30
- *   blanco sobre palmera-700 / palmera-800 .... 7,96 / 10,41
- *   palmera-700 como texto sobre papel / 50 ... 7,47 / 7,11
- *   tinta sobre palmera-50 / trigo ............ 14,76 / 8,32
+ *   blanco sobre plano-700 / plano-800 ........ 8,66 / 11,22
+ *   plano-700 como texto sobre papel / blanco . 8,13 / 8,66
+ *   plano-700 sobre plano-50 .................. 7,55
+ *   plano-800 sobre plano-50 .................. 9,77
+ *   tinta sobre plano-50 / trigo .............. 14,40 / 8,32
  *   blanco sobre alerta / tinta ............... 5,55 / 16,53
  *   linea sobre blanco ........................ 1,29 (borde: nunca texto)
- *   Propuesta B (azul plano), mientras dure la muestra:
- *   blanco sobre plano-700 / plano-800 ........ 8,66 / 11,22
- *   plano-700 sobre papel / plano-50 .......... 8,13 / 7,55
  */
 @theme {
   /* Fondo de la página: blanco apenas verdoso. Nunca crema. */
@@ -92,18 +92,15 @@
   --color-tinta-suave: #56635c;
   /* Bordes y divisores. Nunca texto. */
   --color-linea: #dfe4e0;
-  /* Acción: botón principal, opción elegida, pin activo, links. 800 = presionado. */
-  --color-palmera-50: #ecf4ef;
-  --color-palmera-700: #1e5b45;
-  --color-palmera-800: #174836;
+  /* Acción: botón principal, opción elegida, pin activo, links. 800 = presionado;
+     50 = fondo de lo elegido. */
+  --color-plano-50: #eaf0f6;
+  --color-plano-700: #1f4e79;
+  --color-plano-800: #183d5f;
   /* Acento escaso: "Destacada". Nunca botón. Texto tinta encima. */
   --color-trigo: #e3b04b;
   /* Errores. Texto blanco encima. */
   --color-alerta: #b4432f;
-  /* Propuesta B de la muestra: se borra la que Manuel no elija. */
-  --color-plano-50: #eaf0f6;
-  --color-plano-700: #1f4e79;
-  --color-plano-800: #183d5f;
 
   --radius-control: 0.75rem;
   --radius-tarjeta: 1rem;
@@ -125,14 +122,14 @@
   --color-popover-foreground: var(--color-tinta);
   --color-muted: var(--color-papel);
   --color-muted-foreground: var(--color-tinta-suave);
-  --color-primary: var(--color-palmera-700);
+  --color-primary: var(--color-plano-700);
   --color-primary-foreground: var(--color-blanco);
-  --color-secondary: var(--color-palmera-50);
-  --color-secondary-foreground: var(--color-palmera-800);
+  --color-secondary: var(--color-plano-50);
+  --color-secondary-foreground: var(--color-plano-800);
   --color-destructive: var(--color-alerta);
   --color-border: var(--color-linea);
   --color-input: var(--color-linea);
-  --color-ring: var(--color-palmera-700);
+  --color-ring: var(--color-plano-700);
 }
 
 * {

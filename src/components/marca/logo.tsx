@@ -2,7 +2,7 @@ import { brandName } from "@/lib/brand"
 import { cn } from "@/lib/utils"
 
 /**
- * Isotipo: un cartel visto de frente (cuadrado verde palmera) con una "b" dibujada
+ * Isotipo: un cartel visto de frente (cuadrado azul plano) con una "b" dibujada
  * con trazos, no con una fuente, para que se vea igual como favicon. Plano, dos
  * colores, legible a 16 px. Mide en `em`: crece con la letra de quien lo usa.
  */
@@ -13,7 +13,7 @@ export function Isotipo({ className }: { className?: string }) {
       aria-hidden="true"
       className={cn("size-[1.6em] shrink-0", className)}
     >
-      <rect width="32" height="32" rx="7" className="fill-palmera-700" />
+      <rect width="32" height="32" rx="7" className="fill-plano-700" />
       <path
         d="M11 7.5v17"
         fill="none"

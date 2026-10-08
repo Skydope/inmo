@@ -50,16 +50,18 @@ categoría "inmobiliaria premium":
 - **El plano de la ciudad**: la cuadrícula de Bolívar, líneas finas sobre papel blanco,
   precisión. → De ahí salen **la base clara, los bordes finos, la grilla de 4 px** y un mapa
   gris claro donde lo único con color son los precios.
-- **El color de acción es el verde de las palmeras**: Bolívar es "la ciudad de las palmeras"
-  (así se presenta el municipio). Un verde profundo, **el único color liso de la interfaz**:
-  significa "avanzar" (continuar, ver propiedades, consultar, lo elegido, el pin activo).
+- **El color de acción es el azul plano**: el de las copias heliográficas, como se copiaban
+  los planos. **Lo eligió Manuel en la muestra el 2026-10-08** (sobre la propuesta A, el verde
+  de las palmeras). Es **el único color liso de la interfaz**: significa "avanzar" (continuar,
+  ver propiedades, consultar, lo elegido, el pin activo).
 
 Lo que **no** es: ni crema, ni serif en itálica, ni vidrio, ni dorado, ni gradientes, ni fotos
 de fondo detrás de los controles, ni sombras de color.
 
-### Paleta (propuesta A, recomendada)
+### Paleta (elegida: B, azul plano, el 2026-10-08)
 
-Contrastes **medidos** con script (WCAG 2.x) el 2026-10-08.
+Contrastes **medidos** con `node scripts/contraste.mjs` (WCAG 2.x) el 2026-10-08. Los neutros
+son los que Manuel vio y aprobó en la muestra.
 
 | Token | Hex | Rol | Contraste medido |
 |---|---|---|---|
@@ -68,15 +70,14 @@ Contrastes **medidos** con script (WCAG 2.x) el 2026-10-08.
 | `tinta` | `#17211c` | Texto principal, íconos | 15,5 sobre `papel` · 16,5 sobre blanco |
 | `tinta-suave` | `#56635c` | Texto secundario (dirección, datos, ayudas) | 5,9 sobre `papel` · 6,3 sobre blanco |
 | `linea` | `#dfe4e0` | Bordes y divisores. **Nunca texto** | 1,3 sobre blanco |
-| `palmera-700` | `#1e5b45` | **Acción**: botón principal, opción elegida, pin activo, links | blanco encima 8,0 · como texto sobre `papel` 7,5 |
-| `palmera-800` | `#174836` | Hover / presionado del botón principal | blanco encima 10,4 |
-| `palmera-50` | `#ecf4ef` | Fondo de una opción elegida (con borde `palmera-700`) | `tinta` encima 14,8 · `palmera-700` encima 7,1 |
+| `plano-700` | `#1f4e79` | **Acción**: botón principal, opción elegida, pin activo, links | blanco encima 8,7 · como texto sobre `papel` 8,1 y sobre blanco 8,7 |
+| `plano-800` | `#183d5f` | Hover / presionado del botón principal | blanco encima 11,2 |
+| `plano-50` | `#eaf0f6` | Fondo de una opción elegida (con borde `plano-700`) | `tinta` encima 14,4 · `plano-700` encima 7,6 · `plano-800` encima 9,8 |
 | `trigo` | `#e3b04b` | Acento escaso: etiqueta "Destacada" / "Nueva". **Nunca botón** | `tinta` encima 8,3 |
 | `alerta` | `#b4432f` | Errores | blanco encima 5,6 |
 
-**Propuesta B** (si la A no convence en la muestra): mismo esquema con acción en **azul
-plano** `#1f4e79` (blanco encima 8,7; como texto sobre `papel` 8,1). Más institucional, menos
-propio de Bolívar.
+**La propuesta A** (verde palmera `#1e5b45`, blanco encima 8,0) quedó descartada en la muestra
+([descartado](../../roadmap/descartado.md)).
 
 Las etiquetas de operación ("VENTA", "ALQUILER", "TEMPORARIO") van como el cartel: **fondo
 `tinta`, letra blanca**, compactas, en mayúsculas. Es el único lugar con mayúsculas.
@@ -130,7 +131,7 @@ Vos, directo, sin signos de exclamación, sin promesas. Dice qué pasa al tocar.
 - **Nombre en textos**: Bolívar Inmo. **Logotipo**: "**bolívar** inmo" en minúscula, como el
   dominio (🙋 pregunta 1 de la spec madre).
 - **Isotipo** (versión 1, hecha en SVG en el código): un cuadrado de esquinas redondeadas en
-  `palmera-700` con una "b" blanca, como un cartel visto de frente. Plano, dos colores,
+  `plano-700` con una "b" blanca, como un cartel visto de frente. Plano, dos colores,
   legible a 16 px (favicon). Si Manuel quiere un logo trabajado, se pide después con la regla
   de la familia: *plano, pocos colores, legible a 32 px*.
 - `src/lib/brand.ts`: `brandName = "Bolívar Inmo"`, `brandDomain = "bolivarinmo.com.ar"`.
@@ -281,34 +282,34 @@ muestra a Manuel **antes** de la limpieza, para que elija paleta con algo andand
 ## Tareas
 
 **Bloque 1 — Base técnica** · commit "Base técnica: shadcn sobre Base UI, lucide, zod y Playwright"
-- [ ] `pnpm add @base-ui/react class-variance-authority lucide-react tw-animate-css zod` y `pnpm add -D @playwright/test`; `pnpm exec playwright install chromium webkit`.
-- [ ] `components.json` calcado; verificar con `context7` el comando de shadcn para Base UI.
-- [ ] `playwright.config.ts` con los cuatro proyectos; script `e2e`.
-- [ ] `e2e/humo.spec.ts` (contra el `/` actual) en verde.
-- [ ] Copiar la skill `impeccable` y los tres agentes; adaptar su "Contexto de ESTE repo".
-- [ ] Gates en verde + `pnpm e2e`.
+- [x] `pnpm add @base-ui/react class-variance-authority lucide-react tw-animate-css zod` y `pnpm add -D @playwright/test`; `pnpm exec playwright install chromium webkit`.
+- [x] `components.json` calcado; verificar con `context7` el comando de shadcn para Base UI.
+- [x] `playwright.config.ts` con los cuatro proyectos; script `e2e`.
+- [x] `e2e/humo.spec.ts` (contra el `/` actual) en verde.
+- [x] Copiar la skill `impeccable` y los tres agentes; adaptar su "Contexto de ESTE repo".
+- [x] Gates en verde + `pnpm e2e` (lint: sin errores nuevos; los 9 de `main` se van en el bloque 5).
 
 **Bloque 2 — Tokens y tipografía** · commit "Identidad de Bolívar Inmo: tokens con contraste medido y Encode Sans"
-- [ ] Verificar `wdth` y `tnum` de Encode Sans en `next/font` (si no, Barlow).
-- [ ] `scripts/contraste.mjs`; medir A y B.
-- [ ] `globals.css`: `@theme` nuevo **al lado** del viejo (los nombres nuevos no chocan), para no romper nada todavía.
-- [ ] `layout.tsx`: Encode Sans (las fuentes viejas siguen hasta el bloque 5).
-- [ ] Gates en verde.
+- [x] Verificar `wdth` y `tnum` de Encode Sans en `next/font` (si no, Barlow).
+- [x] `scripts/contraste.mjs`; medir A y B.
+- [x] `globals.css`: `@theme` nuevo **al lado** del viejo (los nombres nuevos no chocan), para no romper nada todavía.
+- [x] `layout.tsx`: Encode Sans (las fuentes viejas siguen hasta el bloque 5).
+- [x] Gates en verde.
 
 **Bloque 3 — Componentes, marca y shell** · commit "Componentes base, logo y shell de Bolívar Inmo"
-- [ ] Agregar con shadcn: button, toggle, toggle-group, drawer, dialog, input, label, badge, separator, skeleton. Ajustar variantes y tamaños a la spec.
-- [ ] `opcion.tsx`, `etiqueta-operacion.tsx`, `logo.tsx`, `icon.svg`, `apple-icon.png`.
-- [ ] `header.tsx`, `menu.tsx` (Drawer desde la derecha), `pie.tsx`.
-- [ ] `brand.ts` con la marca nueva.
-- [ ] Gates en verde.
+- [x] Agregar con shadcn: button, toggle, toggle-group, drawer, dialog, input, label, badge, separator, skeleton. Ajustar variantes y tamaños a la spec.
+- [x] `opcion.tsx`, `etiqueta-operacion.tsx`, `logo.tsx`, `icon.svg`, `apple-icon.png`.
+- [x] `header.tsx`, `menu.tsx` (Drawer desde la derecha), `pie.tsx`.
+- [x] `brand.ts` con la marca nueva.
+- [x] Gates en verde.
 
 **Bloque 4 — Muestra** · commit "Muestra de identidad para aprobar en el celular"
-- [ ] `/muestra` con paleta A y B lado a lado, tipografía, botones, opciones, chips, etiqueta, tarjeta de ejemplo, header.
-- [ ] `e2e/muestra.spec.ts` (≥ 44 px).
-- [ ] Capturas a 360 × 640 y 390 × 844; detector de Impeccable sobre `/muestra`.
-- [ ] 👀 🙋 **Manuel la ve en su celu** (`pnpm exec next dev --port 43123 --hostname 0.0.0.0`) y elige A o B. **No se sigue sin esto.**
-- [ ] Dejar en `@theme` solo la paleta elegida.
-- [ ] Gates en verde.
+- [x] `/muestra` con paleta A y B lado a lado, tipografía, botones, opciones, chips, etiqueta, tarjeta de ejemplo, header.
+- [x] `e2e/muestra.spec.ts` (≥ 44 px).
+- [x] Capturas a 360 × 640 y 390 × 844; detector de Impeccable sobre `/muestra`.
+- [x] 👀 🙋 **Manuel la ve en su celu** (`pnpm exec next dev --port 43123 --hostname 0.0.0.0`) y elige A o B. **No se sigue sin esto.**
+- [x] Dejar en `@theme` solo la paleta elegida.
+- [x] Gates en verde.
 
 **Bloque 5 — Limpieza y andamios** · commit "Se retira el front de Inmu: andamios con el shell nuevo"
 - [ ] Andamios de `/`, `/propiedades`, `/propiedades/[id]` con el shell nuevo.
@@ -328,4 +329,32 @@ muestra a Manuel **antes** de la limpieza, para que elija paleta con algo andand
 
 ## Lo que se encontró al implementar
 
-_(se completa al ejecutar)_
+1. **El lint ya fallaba en `main`** (2026-10-08): 9 errores en `count-up`,
+   `scroll-reveal-line`, `theme-provider`, `explore-client`, `property-card` y 3 en
+   `property-map.tsx` (refs asignadas durante el render). Las 1.128 advertencias eran de las
+   copias de MapLibre en `public/maplibre/`, que ahora se ignoran junto con `docs/`, `.claude/`
+   y los resultados de Playwright. Regla del paso: los bloques 1-4 no suman errores; el 5 deja
+   0.
+2. **`CoverImage` no se borra**: la usa `agency-directory.tsx`, que se conserva.
+3. **`property-map.tsx` usa `useTheme()`** del `ThemeProvider` que se borra: en el bloque 5 se le
+   saca el tema y se arreglan sus refs.
+4. **Encode Sans** trae el eje de ancho (`wdth` 75-125) en `next/font` y cifras tabulares: a
+   100 px los diez dígitos miden igual. En Chromium de Linux el hinting redondea el avance a
+   píxeles enteros y a 24 px puede haber 1 px por dígito; en iPhone (WebKit) el e2e da igual.
+5. **El CLI de shadcn 4.21 escribió los imports como `from "cn"`** en vez del alias
+   `@/lib/utils` e instaló un paquete npm llamado `cn`. Se corrigieron los imports y se
+   desinstaló el paquete (pnpm 10 no le dejó correr scripts). **Revisar los imports cada vez
+   que se agregue un componente con el CLI.**
+6. **Las variantes del botón quedan en inglés** (`default`, `secondary`, `outline`, `ghost`,
+   `link`): los demás componentes de shadcn las usan. En la identidad: primario, secundario,
+   con borde, fantasma y enlace.
+7. Los fondos de `drawer` y `dialog` venían con desenfoque (`backdrop-blur`): se sacó (nada
+   de vidrio) y el velo pasa a `tinta/40`.
+8. **Paleta B elegida por Manuel** (2026-10-08) en `/muestra`, desde su celular: los tokens
+   `palmera-*` pasaron a `plano-*` y el isotipo a azul.
+9. **WebKit** (proyecto `iphone`) necesitó `libavif16` en el sistema; y Next 16 no levanta dos
+   dev servers en el mismo proyecto (con `pnpm dev` arriba, el e2e va con `E2E_BASE_URL`).
+   Anotado en `riesgos.md`.
+10. **Detector de Impeccable sobre `/muestra`**: tarjetas anidadas (el marco de celular, a
+    propósito), fondo crema (el `body` viejo: se va en el bloque 5) y el botón deshabilitado
+    (exceptuado por WCAG).

@@ -82,14 +82,14 @@ con JavaScript apagado y el botón atrás vuelve un paso.
 - A 360 × 640 **se ven sin scroll** la pregunta, las dos opciones grandes y "Alquiler
   temporario".
 - Fondo `papel`; las opciones son tarjetas blancas con borde `linea`; al tocar, borde y fondo
-  `palmera` (estado `:active`), sin animación.
+  `plano` (estado `:active`), sin animación.
 
 ### Pasos 2 a 4 · la barra de paso y el pie fijo
 
 ```
 ┌────────────────────────────────────┐
 │ ‹  Comprar · Casa, Quinta     3/4  │ barra de paso (56): volver, lo elegido, progreso
-│ ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬░░░░░░░░░ │ barra de progreso (4 px, palmera-700)
+│ ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬░░░░░░░░░ │ barra de progreso (4 px, plano-700)
 │                                    │
 │  (contenido del paso)              │
 │                                    │
@@ -132,7 +132,7 @@ con JavaScript apagado y el botón atrás vuelve un paso.
 ```
 
 - Los tipos de la operación elegida, **en el orden de la taxonomía** (lo más buscado primero).
-- Selección múltiple. Elegida = borde `palmera-700` 2 px, fondo `palmera-50` y un ✓ en la
+- Selección múltiple. Elegida = borde `plano-700` 2 px, fondo `plano-50` y un ✓ en la
   esquina (no solo color: el ✓ lo hace visible para daltónicos).
 - Un tipo con 0 propiedades va **al final**, atenuado, con "Sin avisos ahora", y no se puede
   elegir.

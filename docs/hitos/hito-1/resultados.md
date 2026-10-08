@@ -96,7 +96,7 @@ vistas y sobrevive a ir a la ficha y volver.
 │ [ ▤ Lista │ ◎ Mapa ● ]   [⚙ 2]     │
 │┌──────────────────────────────────┐│
 ││         (US$ 95k)            [+] ││ mapa al resto del alto; zoom +/− arriba a la derecha
-││  (US$ 120k)●                 [−] ││ pin elegido: fondo palmera, letra blanca, encima
+││  (US$ 120k)●                 [−] ││ pin elegido: fondo plano-700, letra blanca, encima
 ││                (US$ 80k)         ││
 ││     (US$ 210k)      (⌂)          ││ "Consultar precio" → pin con el ícono del tipo
 ││┌────────────────────────────────┐││

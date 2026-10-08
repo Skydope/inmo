@@ -4,8 +4,8 @@ import { cn } from "@/lib/utils"
 
 /*
  * Los nombres de variante quedan en inglés porque los usan los demás componentes de
- * shadcn (`ghost`, `outline`). En la identidad: `default` es el primario (palmera,
- * lo único verde liso), `secondary` el secundario suave, `outline` el blanco con
+ * shadcn (`ghost`, `outline`). En la identidad: `default` es el primario (azul plano,
+ * lo único azul liso), `secondary` el secundario suave, `outline` el blanco con
  * borde, `ghost` el fantasma y `link` el enlace.
  * Tamaños: `default` 44 px (lo mínimo que se toca), `lg` 56 px (el botón principal
  * de cada pantalla), `sm` 36 px solo para escritorio.
@@ -16,9 +16,9 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground hover:bg-palmera-800 active:bg-palmera-800",
+          "bg-primary text-primary-foreground hover:bg-plano-800 active:bg-plano-800",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--color-secondary),var(--color-palmera-700)_8%)]",
+          "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--color-secondary),var(--color-plano-700)_8%)]",
         outline:
           "border-border bg-card text-foreground hover:border-tinta-suave aria-expanded:border-tinta-suave",
         ghost: "text-foreground hover:bg-muted aria-expanded:bg-muted",

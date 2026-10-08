@@ -22,7 +22,7 @@ type OpcionProps = {
 /**
  * La opción que se toca en los pasos del buscador y en la hoja de filtros. Es un
  * `<input>` nativo dentro de un `<label>`: anda sin JavaScript dentro de un
- * formulario GET. Elegida = borde y fondo palmera y un ✓ (no solo color).
+ * formulario GET. Elegida = borde y fondo azul plano y un ✓ (no solo color).
  */
 export function Opcion({
   tipo = "checkbox",
@@ -44,7 +44,7 @@ export function Opcion({
     <label
       className={cn(
         "group relative flex cursor-pointer border border-linea bg-blanco text-tinta transition-colors select-none",
-        "has-checked:border-palmera-700 has-checked:bg-palmera-50 has-checked:ring-1 has-checked:ring-palmera-700",
+        "has-checked:border-plano-700 has-checked:bg-plano-50 has-checked:ring-1 has-checked:ring-plano-700",
         "has-focus-visible:ring-3 has-focus-visible:ring-ring/40",
         "has-disabled:cursor-not-allowed has-disabled:opacity-45",
         tarjeta
@@ -80,7 +80,7 @@ export function Opcion({
       <span
         aria-hidden="true"
         className={cn(
-          "hidden items-center justify-center rounded-full bg-palmera-700 text-blanco group-has-checked:flex",
+          "hidden items-center justify-center rounded-full bg-plano-700 text-blanco group-has-checked:flex",
           tarjeta ? "absolute top-2.5 right-2.5 size-5" : "size-4"
         )}
       >
