@@ -46,7 +46,12 @@ El detalle y el porqué están en `docs/ARQUITECTURA.md` § Invariantes.
   falsos. Los números que se muestran salen de los datos.
 - **Sin fondos recargados ni animaciones llamativas** (pedido de Manuel): claro, sobrio,
   elegante. El movimiento es solo de transición (≤ 200 ms, `transform`/`opacity`) y respeta
-  `prefers-reduced-motion`.
+  `prefers-reduced-motion`. **Excepción acordada** (2026-10-08, spec `vivi-bolivar`): en el
+  inicio, efectos atados al scroll **en CSS puro** —la hoja que sube (`sticky`), la frase que
+  se enciende cambiando el color, el plano del pie que se dibuja y la barra que aparece—,
+  detrás de `@supports (animation-timeline: …)` y `prefers-reduced-motion: no-preference`; sin
+  soporte o con movimiento reducido, la página queda quieta y completa. Sin librerías de
+  movimiento, contadores, parallax con JS ni entradas animadas.
 - **Secrets solo en el server.** Nunca `NEXT_PUBLIC_` para algo secreto; un secreto nunca pasa
   por el chat.
 

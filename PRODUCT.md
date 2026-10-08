@@ -56,4 +56,6 @@ La pantalla de ingreso sigue la composición de referencia que pasó el equipo: 
 - El particular se deja preparado en el modelo, sin producto visible todavía.
 - El alcance es San Carlos de Bolívar y su partido.
 - Mobile primero: una pregunta por pantalla, opciones grandes, el conteo siempre a la vista.
-- Claro antes que vistoso: sin fondos recargados ni animaciones llamativas.
+- Claro antes que vistoso: sin fondos recargados ni animaciones llamativas. La excepción es el
+  hero del inicio (la casa de día y de noche, VIVÍ BOLÍVAR), con el filtro siempre en la primera
+  pantalla (spec `vivi-bolivar`).

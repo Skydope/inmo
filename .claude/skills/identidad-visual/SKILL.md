@@ -32,6 +32,11 @@ La identidad sale de los dos objetos del mundo inmobiliario de un pueblo:
 Lo que **no** es: ni crema, ni serif en itálica, ni vidrio, ni dorado, ni gradientes de
 color, ni sombras de color. Fotos de fondo, solo en el inicio y con los controles sobre blanco.
 
+**El inicio es la excepción con carácter** (spec `vivi-bolivar`, 2026-10-08): la casa de
+campo de día o de noche, **VIVÍ BOLÍVAR** enorme con el techo delante de las letras, pestañas
+color papel sobre la foto y la página que sube por encima. Todo lo demás sigue siendo
+herramienta.
+
 ## Paleta
 
 | Token | Hex | Rol |
@@ -70,6 +75,11 @@ sección. Si algo azul no avanza, está mal.
 - El sistema anterior ("papel cálido": crema `#efe8dc`, Archivo Black, Instrument Serif,
   vidrio, dorado) se retiró: el detector de Impeccable marca el fondo crema como superficie
   "por defecto" de diseño hecho por IA.
+- **2026-10-08 (más tarde)**: Manuel pidió volver al hero de esa versión (la casa, VIVÍ
+  BOLÍVAR). Vuelve **la composición**, no el sistema: sin crema ni dorado, Instrument Serif
+  solo en dos frases y derecha, VIVÍ BOLÍVAR en Encode Sans ancha. Las secciones y la
+  tipografía de todo lo demás quedan como estaban ("grande, negrita, que cualquier gente de
+  cualquier edad lo puede ver").
 
 ## Tipografía
 
@@ -86,6 +96,13 @@ sección. Si algo azul no avanza, está mal.
 - **Números que cambian** (precios, conteos): `tabular-nums`. Encode Sans trae cifras
   tabulares (verificado).
 - **Logotipo**: "**bolívar** inmo" en minúscula, como el dominio; en textos, "Bolívar Inmo".
+- **Display** (utilidad `font-display`): Encode Sans, ancho 125 %, 900, mayúsculas, tracking
+  −0,02 em. **Solo** "VIVÍ BOLÍVAR" (el hero del inicio y el cierre del pie). Es la otra
+  excepción a la regla de las mayúsculas.
+- **La voz** (utilidad `font-voz`): **Instrument Serif** 400, derecha (Rodrigo Fuenzalida y
+  Jordan Egstad, OFL; `preload: false`). **Solo** la frase de la hoja del inicio y la línea del
+  pie del inicio. Nunca menos de 24 px, nunca en itálica, nunca en controles, títulos de
+  sección, precios ni datos.
 
 ## Forma y espacio
 
@@ -122,10 +139,11 @@ de marcas).
 - Sin foto: fondo `papel` con el ícono del tipo en `tinta-suave` (nunca una foto genérica).
 - La pantalla de ingreso mantiene su composición de referencia: acceso a la izquierda, foto
   de Bolívar a la derecha (`PRODUCT.md`).
-- **El inicio lleva una foto real de Bolívar de fondo** (decisión de Manuel, 2026-10-08: sin
-  foto "se ve mucho más vacío"). Es la única pantalla con foto detrás de los controles, y
-  los controles van en una tarjeta **blanca y lisa** encima. El título sobre la foto lleva un
-  velo de `tinta` en degradé y tiene que medir ≥ 4,5 de contraste. Crédito de la foto visible.
+- **El inicio lleva la casa de campo de día y de noche** (spec `vivi-bolivar`, 2026-10-08;
+  reemplaza la foto de la plaza): `<picture>` que sigue `prefers-color-scheme`, una sola
+  descarga, sin velo. VIVÍ BOLÍVAR va en `tinta` de día y en blanco de noche (≥ 3:1 contra el
+  cielo, medido) y el techo de la casa se repite encima de las letras. Los controles van en
+  la tarjeta **blanca y lisa** del filtro. La foto es ilustrativa (no es una casa de Bolívar).
 - **Fotos de prueba**: libres (Wikimedia Commons, Unsplash), con autor y licencia anotados en
   `public/images/CREDITOS.md`. Las de licencia CC BY / BY-SA llevan crédito visible donde se
   muestran en producción.
@@ -135,6 +153,17 @@ de marcas).
 Solo de transición (aparecer una hoja, cambiar de paso): 150–200 ms, `ease-out`, solo
 `transform` y `opacity`. Sin entradas animadas, sin parallax, sin contadores que suben, sin
 zoom al pasar el mouse. `prefers-reduced-motion` apaga todo.
+
+**Excepción del inicio** (`vivi-bolivar`): efectos atados al scroll, **en CSS puro**:
+- la hoja que sube sobre la foto (`position: sticky`);
+- la frase que se enciende palabra por palabra cambiando el **color** (de `tinta-suave` a
+  `tinta`, nunca la opacidad: siempre ≥ 4,5);
+- el plano del pie que se dibuja;
+- la barra fija que aparece cuando la hoja tapa las pestañas.
+
+Todo detrás de `@supports (animation-timeline: …)` y `prefers-reduced-motion:
+no-preference`: sin soporte o con movimiento reducido, quieto y completo. Con el atajo
+`animation` se pierde `animation-timeline`: siempre propiedades sueltas.
 
 ## Tono de copy
 
@@ -152,3 +181,7 @@ Vos, directo, sin signos de exclamación, sin promesas. Dice qué pasa al tocar.
 
 No hay en el hito 1 (decisión del 2026-10-08). Las clases `dark:` de shadcn quedan atadas a
 una clase `.dark` que nunca se pone. Si se suma, se remapean los mismos tokens.
+
+**Única excepción**: la foto y el título del hero del inicio siguen
+`@media (prefers-color-scheme: dark)` (la casa de noche, el título en blanco). No usar
+`dark:` para eso: va con la media query, acotada al hero.

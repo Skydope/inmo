@@ -149,7 +149,11 @@ only (never text).
 
 ## Typography
 
-One family, **Encode Sans** (Impallari Type, Argentina), variable in weight and width.
+One family for everything functional, **Encode Sans** (Impallari Type, Argentina), variable in
+weight and width. Two scoped exceptions on the home page only (spec `vivi-bolivar`): the
+**display** "VIVÍ BOLÍVAR" (Encode Sans at 125 % width, 900, uppercase) and **the voice**,
+Instrument Serif 400 upright, for the sheet's statement and the home footer line only (never
+below 24 px, never italic).
 
 ### Hierarchy
 
@@ -159,7 +163,7 @@ width in uppercase.
 
 ### Named Rules
 
-- **The sign is the only uppercase.**
+- **The sign is the only uppercase** (plus the "VIVÍ BOLÍVAR" display).
 - **Prices use tabular numerals.**
 - **Never below 14 px for reading; inputs at 16 px** (iOS zooms below that).
 
@@ -224,7 +228,7 @@ right.
 
 ### Don't:
 
-- Animate entrances, counters or scroll.
-- Put photos or gradients behind controls, except the home hero: a real photo of Bolívar with a tinta veil behind the title and the options on a solid white card.
+- Animate entrances or counters, or animate with JS libraries. The only scroll effects are the home's CSS-only ones (the sheet over the hero, the statement lighting up by color, the footer plan drawing, the pinned bar), behind `@supports` and `prefers-reduced-motion`.
+- Put photos or gradients behind controls, except the home hero: the country house by day or by night (following `prefers-color-scheme`), "VIVÍ BOLÍVAR" behind the roof, and the search options on a solid white card.
 - Use blue for decoration.
-- Add dark mode styles without the decision recorded in the skill.
+- Add dark mode styles without the decision recorded in the skill (the hero photo and title are the only exception).
