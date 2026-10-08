@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { leerMonto } from "./numeros"
 import {
   MONEDAS,
   OPERACIONES,
@@ -66,7 +67,7 @@ function valores(entrada: Entrada, clave: string): string[] {
 
 const primero = (entrada: Entrada, clave: string) => valores(entrada, clave)[0]
 
-/** Entero escrito solo con dígitos ("45.000" o "1e9" no valen), dentro de un rango. */
+/** Entero escrito solo con dígitos ("1e9" no vale), dentro de un rango. */
 const entero = (min: number, max: number) =>
   z
     .string()
@@ -79,7 +80,6 @@ const ESQUEMA = {
   dorm: entero(1, 4),
   banos: entero(1, 3),
   moneda: z.enum(MONEDAS),
-  monto: entero(0, Number.MAX_SAFE_INTEGER),
   orden: z.enum(ORDENES),
   vista: z.enum(VISTAS),
   sel: z.string().regex(/^[a-z0-9-]{1,64}$/),
@@ -91,6 +91,9 @@ function leerCon<T>(esquema: z.ZodType<T>, valor: string | undefined): T | undef
   const r = esquema.safeParse(valor)
   return r.success ? r.data : undefined
 }
+
+/** Los montos aceptan el punto de miles: ver numeros.ts. */
+const monto = (valor: string | undefined) => (valor === undefined ? undefined : leerMonto(valor))
 
 const enOrden = <T extends string>(elegidos: Iterable<T>, orden: readonly T[]): T[] => {
   const set = new Set(elegidos)
@@ -136,8 +139,8 @@ export function leerBusqueda(entrada: Entrada, opciones: { conVista?: boolean } 
     dorm: leerCon(ESQUEMA.dorm, primero(entrada, "dorm")) as Busqueda["dorm"],
     banos: leerCon(ESQUEMA.banos, primero(entrada, "banos")) as Busqueda["banos"],
     moneda: leerCon(ESQUEMA.moneda, primero(entrada, "moneda")),
-    desde: leerCon(ESQUEMA.monto, primero(entrada, "desde")),
-    hasta: leerCon(ESQUEMA.monto, primero(entrada, "hasta")),
+    desde: monto(primero(entrada, "desde")),
+    hasta: monto(primero(entrada, "hasta")),
     con: valores(entrada, "con").filter(esCaracteristica),
     orden: leerCon(ESQUEMA.orden, primero(entrada, "orden")) ?? "recientes",
     vista: (opciones.conVista && leerCon(ESQUEMA.vista, primero(entrada, "vista"))) || "lista",

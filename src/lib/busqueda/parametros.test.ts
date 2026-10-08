@@ -69,8 +69,9 @@ describe("leerBusqueda", () => {
     }
   })
 
-  it("los números son enteros escritos solo con dígitos", () => {
-    expect(leer("desde=45.000").desde).toBeUndefined()
+  it("los montos son enteros; aceptan el punto de miles (sin JS el formulario manda lo escrito)", () => {
+    expect(leer("desde=45.000").desde).toBe(45000)
+    expect(leer("desde=4.5").desde).toBeUndefined()
     expect(leer("desde=-5").desde).toBeUndefined()
     expect(leer("desde=1e9").desde).toBeUndefined()
     expect(leer("dorm=abc").dorm).toBeUndefined()

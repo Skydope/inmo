@@ -21,8 +21,8 @@ type OpcionProps = {
 
 /**
  * La opción que se toca en los pasos del buscador y en la hoja de filtros. Es un
- * `<input>` nativo dentro de un `<label>`: anda sin JavaScript dentro de un
- * formulario GET. Elegida = borde y fondo azul plano y un ✓ (no solo color).
+ * `<input>` nativo dentro de un `<label>`, cubriéndola entera e invisible: anda sin
+ * JavaScript dentro de un formulario GET y el toque cae en el input. Elegida = borde y fondo azul plano y un ✓ (no solo color).
  */
 export function Opcion({
   tipo = "checkbox",
@@ -61,7 +61,8 @@ export function Opcion({
         checked={checked}
         disabled={disabled}
         onChange={onChange}
-        className="sr-only"
+        // Cubre toda la opción (invisible): el toque cae en el input real, no en el label.
+        className="absolute inset-0 z-10 size-full cursor-pointer appearance-none opacity-0 disabled:cursor-not-allowed"
       />
       {tarjeta && icono ? (
         <span className="text-tinta [&_svg]:size-6 [&_svg]:stroke-[1.75]">{icono}</span>
