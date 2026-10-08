@@ -19,7 +19,7 @@
 |---|---|---|---|---|
 | 1 | 🙋 Aprobar la spec madre y las cinco specs del hito 1; contestar sus preguntas abiertas | [`hito-1/README.md`](hitos/hito-1/README.md) | — | ✅ 2026-10-08 |
 | 2 | Identidad y base técnica (marca, paleta, tipografía, shadcn + Base UI, Playwright, limpieza) | [`identidad-y-base.md`](hitos/hito-1/identidad-y-base.md) | paso 1 | ✅ 2026-10-08 |
-| 3 | Modelo de búsqueda (taxonomía, contrato de URL, filtrado, datos de prueba ampliados) | [`modelo-de-busqueda.md`](hitos/hito-1/modelo-de-busqueda.md) | paso 2 (los andamios) | ⏳ |
+| 3 | Modelo de búsqueda (taxonomía, contrato de URL, filtrado, datos de prueba ampliados) | [`modelo-de-busqueda.md`](hitos/hito-1/modelo-de-busqueda.md) | paso 2 (los andamios) | ✅ 2026-10-08 |
 | 4 | Buscador guiado (inicio + pasos) | [`buscador-guiado.md`](hitos/hito-1/buscador-guiado.md) | pasos 2 y 3 | ⏳ |
 | 5 | Resultados: lista deslizable ⇄ mapa + hoja de filtros | [`resultados.md`](hitos/hito-1/resultados.md) | paso 4 | ⏳ |
 | 6 | Ficha de la propiedad + contacto | [`ficha.md`](hitos/hito-1/ficha.md) | paso 5 | ⏳ |

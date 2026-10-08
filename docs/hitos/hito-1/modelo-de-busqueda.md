@@ -1,8 +1,9 @@
 ---
 slug: modelo-de-busqueda
 hito: 1
-estado: approved
+estado: done
 aprobada: 2026-10-08
+cerrada: 2026-10-08
 creada: 2026-10-08
 ---
 
@@ -250,18 +251,18 @@ modelo viejo a andamios mínimos (ver Plan técnico).
 
 ## Criterios de aceptación
 
-- [ ] `?operacion=venta&tipo=casa,quinta&zona=centro&dorm=2&moneda=USD&hasta=150000&con=pileta`
+- [x] `?operacion=venta&tipo=casa,quinta&zona=centro&dorm=2&moneda=USD&hasta=150000&con=pileta`
       devuelve exactamente las casas o quintas en venta en Centro, con 2+ dormitorios, en
       dólares, hasta US$ 150.000, con pileta (test con fixtures).
-- [ ] Ninguna URL inventada rompe: un test recorre valores basura en cada parámetro y
+- [x] Ninguna URL inventada rompe: un test recorre valores basura en cada parámetro y
       `leerBusqueda` siempre devuelve una búsqueda válida.
-- [ ] Las cuatro reglas del contrato tienen su test.
-- [ ] `contarPorOpcion` para el paso 2 coincide con filtrar uno por uno (test por propiedad).
-- [ ] `tituloDeBusqueda` cubre los casos de las reglas.
-- [ ] `src/lib/busqueda/` no importa nada de `next`, `react` ni del DOM (lo verifica lint o un
+- [x] Las cuatro reglas del contrato tienen su test.
+- [x] `contarPorOpcion` para el paso 2 coincide con filtrar uno por uno (test por propiedad).
+- [x] `tituloDeBusqueda` cubre los casos de las reglas.
+- [x] `src/lib/busqueda/` no importa nada de `next`, `react` ni del DOM (lo verifica lint o un
       test de imports).
-- [ ] El seed cubre todos los tipos y las tres operaciones (test sobre el seed).
-- [ ] Los cuatro gates en verde.
+- [x] El seed cubre todos los tipos y las tres operaciones (test sobre el seed).
+- [x] Los cuatro gates en verde.
 
 ## Riesgos
 
@@ -349,40 +350,66 @@ Los tests usan **fixtures propias**, no el seed (el seed puede cambiar).
 ## Tareas
 
 **Bloque 1 — Taxonomía** · commit "Taxonomía de búsqueda: operaciones, tipos, zonas y características"
-- [ ] `taxonomia.test.ts` en rojo → `taxonomia.ts` en verde.
-- [ ] Gates en verde.
+- [x] `taxonomia.test.ts` en rojo → `taxonomia.ts` en verde.
+- [x] Gates en verde.
 
 **Bloque 2 — Contrato de URL** · commit "Contrato de URL de la búsqueda con zod"
-- [ ] `pnpm add zod` (si `identidad-y-base` no lo instaló).
-- [ ] `parametros.test.ts` en rojo → `parametros.ts` en verde.
-- [ ] Gates en verde.
+- [x] `pnpm add zod` (si `identidad-y-base` no lo instaló).
+- [x] `parametros.test.ts` en rojo → `parametros.ts` en verde.
+- [x] Gates en verde.
 
 **Bloque 3 — Filtrar, ordenar y contar** · commit "Filtrado, orden y conteos de la búsqueda"
-- [ ] `filtrar.test.ts` → `filtrar.ts`.
-- [ ] `contar.test.ts` → `contar.ts`.
-- [ ] Gates en verde.
+- [x] `filtrar.test.ts` → `filtrar.ts`.
+- [x] `contar.test.ts` → `contar.ts`.
+- [x] Gates en verde.
 
 **Bloque 4 — Precios, resumen y pasos** · commit "Rangos de precio, títulos y pasos del buscador"
-- [ ] `precios.test.ts` → `precios.ts`.
-- [ ] `resumen.test.ts` → `resumen.ts`.
-- [ ] `pasos.test.ts` → `pasos.ts`.
-- [ ] `index.ts` con lo público.
-- [ ] Gates en verde.
+- [x] `precios.test.ts` → `precios.ts`.
+- [x] `resumen.test.ts` → `resumen.ts`.
+- [x] `pasos.test.ts` → `pasos.ts`.
+- [x] `index.ts` con lo público.
+- [x] Gates en verde.
 
 **Bloque 5 — Tipo nuevo, seed y andamios** · commit "Modelo de propiedad nuevo, seed ampliado y andamios de resultados y ficha"
-- [ ] `types.ts` con `Property` y `Agency` nuevos.
-- [ ] 🙋 Fotos para los tipos que no tienen (o se usa el estado "sin foto").
-- [ ] `seed.ts` con ~36 propiedades + `seed.test.ts`; `agencies/seed.ts` con id, whatsapp, matrícula.
-- [ ] `format.ts` (+ test): `formatPrice` con `null`, `formatArea`.
-- [ ] Ajustar `markers.ts`, `property-map.tsx` y `sitemap.ts` a los campos nuevos.
-- [ ] Andamios de `/propiedades` (con `leerBusqueda` + `filtrarPropiedades` + `tituloDeBusqueda`) y `/propiedades/[id]` al tipo nuevo.
-- [ ] Borrar `filters.ts`, `price-range.ts` y sus tests.
-- [ ] `grep -rn "sale\|rent\b\|coverUrl\|photoCount\|areaM2" src` sin resultados.
-- [ ] Gates en verde.
+- [x] `types.ts` con `Property` y `Agency` nuevos.
+- [x] 🙋 Fotos para los tipos que no tienen (o se usa el estado "sin foto").
+- [x] `seed.ts` con ~36 propiedades + `seed.test.ts`; `agencies/seed.ts` con id, whatsapp, matrícula.
+- [x] `format.ts` (+ test): `formatPrice` con `null`, `formatArea`.
+- [x] Ajustar `markers.ts`, `property-map.tsx` y `sitemap.ts` a los campos nuevos.
+- [x] Andamios de `/propiedades` (con `leerBusqueda` + `filtrarPropiedades` + `tituloDeBusqueda`) y `/propiedades/[id]` al tipo nuevo.
+- [x] Borrar `filters.ts`, `price-range.ts` y sus tests.
+- [x] `grep -rn "sale\|rent\b\|coverUrl\|photoCount\|areaM2" src` sin resultados.
+- [x] Gates en verde.
 
 **Cierre**
-- [ ] `/cerrar modelo-de-busqueda`.
+- [x] `/cerrar modelo-de-busqueda`.
 
 ## Lo que se encontró al implementar
 
-_(se completa al ejecutar)_
+1. **Las sugerencias "qué filtro sacar" pasaron al bloque 4**: dependen de los chips de
+   `resumen.ts`. `contar.ts` importa `resumen.ts` (no al revés), sin ciclos.
+2. **El título con dos tipos** quedó "Casas y casas quinta" (el plural de la taxonomía), no
+   "Casas y quintas" como decía el ejemplo de la spec; las siglas (PH) no se pasan a minúscula.
+3. **`escribirBusqueda` devuelve un texto**, no un `URLSearchParams`: `URLSearchParams` escapa
+   las comas (`%2C`) y la URL canónica las quiere limpias. `hrefDeBusqueda` arma la ruta.
+4. **El contacto deducía WhatsApp por la cantidad de dígitos**: un fijo de Bolívar escrito
+   con 0 (`02314…`) tiene 11 y se iba a WhatsApp. Ahora sale del campo `whatsapp`.
+5. **Teléfonos de prueba con la característica de Azul** (2281): pasaron a la de Bolívar
+   (2314).
+6. **Fotos** (Manuel: "poné cualquier foto, después pongo las mías"): se repartieron las 10
+   que había por parecido y se pasaron a WebP de 1200 px (de ~9,5 MB a 1,2 MB) con
+   `scripts/optimizar-fotos.mjs`. Galpón y cochera quedan sin foto y muestran el ícono.
+7. **Test de frontera**: `frontera.test.ts` falla si algo de `src/lib/busqueda` importa Next o
+   React o toca el DOM.
+
+## Cierre (2026-10-08)
+
+**Desvíos del plan:** los de "Lo que se encontró al implementar" (sugerencias en el bloque 4,
+título con dos tipos, `escribirBusqueda` como texto, contacto por campo `whatsapp`, fotos
+repartidas en vez de buscadas).
+
+**Evidencia:** 91 tests de Vitest en verde (taxonomía 10, contrato de URL 17, filtrar y
+contar 13, resumen/precios/pasos 15, frontera 9, seed 6, más los existentes), `typecheck`,
+`lint` (0 errores) y `build` en verde; 30 e2e en verde en Android chico, iPhone y escritorio;
+`/propiedades?operacion=venta&tipo=casa,quinta&zona=centro&dorm=2` titula "Casas y casas
+quinta en venta en Centro" (curl contra el dev server). Commits de `ef5d707` a `0e7aad5`.

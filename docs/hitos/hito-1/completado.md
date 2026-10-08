@@ -28,3 +28,13 @@ Contra qué se verificó: gates en verde (32 tests de Vitest, typecheck, lint en
 —había 9 en `main`—, build); 30 e2e en verde en Android chico, iPhone (WebKit) y escritorio;
 contrastes medidos por script; capturas a 360 y 390 px miradas; Manuel aprobó la paleta en su
 celular. El detalle y los desvíos están en el cierre de la spec.
+
+## 2026-10-08 — Modelo de búsqueda ([`modelo-de-busqueda.md`](modelo-de-busqueda.md))
+
+Qué quedó: `src/lib/busqueda/` (taxonomía, contrato de URL con zod, filtrar, ordenar, contar,
+rangos de precio, títulos, chips, sugerencias, pasos), el tipo `Property` nuevo, 36
+propiedades de prueba con fotos en WebP, y los andamios filtrando por URL.
+
+Contra qué se verificó: 91 tests de Vitest (incluido el de frontera: nada de Next/React en
+`src/lib/busqueda`), gates en verde, 30 e2e en verde, y la URL del caso de la spec probada
+contra el dev server.

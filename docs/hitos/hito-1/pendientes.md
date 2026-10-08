@@ -13,7 +13,9 @@
 - [ ] 🟠 **Manuel**: una inmobiliaria local que revise la lista de zonas (default: la
       provisional, con las localidades del partido).
 - [ ] 🟡 **Manuel**: WhatsApp del portal para "Sumá tu inmobiliaria" (default: sin número).
-- [ ] 🟠 Fotos libres para quinta, campo, local, oficina, galpón y cochera
-      ([`modelo-de-busqueda.md`](modelo-de-busqueda.md) § Datos de prueba).
+- [ ] 🟠 **Manuel**: la foto aérea con dron de Bolívar para el fondo del inicio (mientras
+      tanto va una provisoria). Se optimiza con `node scripts/optimizar-fotos.mjs 1600 72 <foto>`.
+- [ ] 🟡 Fotos propias para los tipos que hoy repiten foto o no tienen (galpón, cochera,
+      oficina, campo): llegan con los avisos reales del hito 2.
 - [ ] 🟡 Si el sitio se publica antes de terminar `resultados`: sacar Carto suelto (cambiar el
       estilo del mapa a `https://tiles.openfreemap.org/styles/positron`).

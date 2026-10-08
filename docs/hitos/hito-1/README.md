@@ -237,7 +237,7 @@ flowchart LR
 | # | Spec | Estado | Qué cubre |
 |---|---|---|---|
 | 1 | [`identidad-y-base.md`](identidad-y-base.md) | `done` (2026-10-08) | Marca Bolívar Inmo, dirección visual, tokens, tipografía, íconos, componentes base (shadcn + Base UI), shell (header, menú, pie), Playwright, limpieza del front viejo |
-| 2 | [`modelo-de-busqueda.md`](modelo-de-busqueda.md) | `approved` | Operaciones, tipos, zonas y características; contrato de URL; filtrar, contar, ordenar, rangos de precio, resumen; tipo `Property` nuevo y datos de prueba ampliados |
+| 2 | [`modelo-de-busqueda.md`](modelo-de-busqueda.md) | `done` (2026-10-08) | Operaciones, tipos, zonas y características; contrato de URL; filtrar, contar, ordenar, rangos de precio, resumen; tipo `Property` nuevo y datos de prueba ampliados |
 | 3 | [`buscador-guiado.md`](buscador-guiado.md) | `approved` | El inicio y los pasos 2 a 4 |
 | 4 | [`resultados.md`](resultados.md) | `approved` | `/propiedades`: resumen, selector de vista, carrusel, mapa con tarjeta flotante, hoja de filtros, vacío; escritorio en dos columnas; tiles de OpenFreeMap |
 | 5 | [`ficha.md`](ficha.md) | `approved` | `/propiedades/[id]`: galería, precio, datos, descripción, ubicación, inmobiliaria, similares, contacto fijo, vista previa al compartir |
