@@ -34,7 +34,7 @@ function Opcion({
     <>
       <span
         aria-hidden="true"
-        className="grid size-9 shrink-0 place-items-center rounded-full bg-blanco text-plano-700 [&_svg]:size-5 [&_svg]:stroke-[1.75]"
+        className="grid size-9 shrink-0 place-items-center text-plano-700 [&_svg]:size-6 [&_svg]:stroke-[1.75]"
       >
         {icono}
       </span>

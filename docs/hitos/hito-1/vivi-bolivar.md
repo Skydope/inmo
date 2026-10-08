@@ -306,5 +306,16 @@ letra es la misma en todos los anchos. El scroll se resuelve con `sticky` y `ani
   de la página y con `cover` nunca terminaba de dibujarse.
 - **"Quiero comprar" / "Quiero alquilar"** en la invitación del pie: no "Comprar", para no
   repetir el nombre de los links de la columna Buscar.
+- **Verificación** (build de producción, 2026-10-08): Lighthouse mobile del inicio 92–93 (86
+  en el primer pedido, mientras se optimiza la foto), `/propiedades` 91; accesibilidad, buenas
+  prácticas y SEO 100. La casa baja una sola vez (AVIF, 35 KB) y la serif (15 KB) solo en el
+  inicio.
+- **Detector de Impeccable** en el inicio:
+  - `clipped-overflow-container` en el marco de la foto: es a propósito, porque el marco
+    redondeado recorta la casa. El recorte de `.casa`, que sobraba, se sacó.
+  - `organic-clip-path`: es el polígono del techo, el efecto de profundidad.
+  - `nested-cards`: las opciones del filtro son botones con fondo dentro de la tarjeta
+    blanca. Para bajar un nivel, se sacó el círculo blanco detrás del ícono. Queda a juicio
+    de Manuel cuando lo vea.
 - **Sin entrada animada**: el borrador la tenía, pero el invariante acordado no suma entradas
   animadas; el hero aparece quieto.

@@ -260,8 +260,6 @@
   .casa {
     position: absolute;
     inset: 0;
-    overflow: hidden;
-    border-radius: inherit;
     container-type: size;
     /* Celu y tablet: la casa grande, apoyada abajo y centrada. */
     --zoom: 1.36;
