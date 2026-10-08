@@ -14,7 +14,7 @@ function Grupo({
   const opciones = Array.from({ length: maximo }, (_, i) => i + 1)
   return (
     <div role="radiogroup" aria-label={titulo} className="flex flex-col gap-2">
-      <h3 className="font-semibold">{titulo}</h3>
+      <h2 className="font-semibold">{titulo}</h2>
       <div className="flex flex-wrap gap-2">
         <Opcion tipo="radio" variante="chip" name={nombre} value="" etiqueta="Indistinto" defaultChecked={!elegido} />
         {opciones.map((n) => (

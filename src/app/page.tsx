@@ -32,7 +32,8 @@ export default async function HomePage() {
             alt=""
             fill
             priority
-            sizes="(orientation: portrait) 150vh, 100vw"
+            quality={55}
+            sizes="(orientation: portrait) 130vh, 100vw"
             className="-z-20 object-cover object-[62%_25%]"
           />
           {/* El bloque va abajo, sobre un velo parejo de tinta al 85 % con un fundido corto

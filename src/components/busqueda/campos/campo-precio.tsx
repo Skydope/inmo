@@ -47,7 +47,7 @@ export function CampoPrecio({
 
   return (
     <div className="flex flex-col gap-3">
-      <h3 className="font-semibold">Precio</h3>
+      <h2 className="font-semibold">Precio</h2>
       <div role="radiogroup" aria-label="Moneda" className="flex gap-2">
         {(["USD", "ARS"] as const).map((m) => (
           <Opcion
