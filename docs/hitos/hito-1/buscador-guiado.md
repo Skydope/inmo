@@ -1,7 +1,7 @@
 ---
 slug: buscador-guiado
 hito: 1
-estado: approved
+estado: in-progress
 aprobada: 2026-10-08
 creada: 2026-10-08
 ---
@@ -226,27 +226,27 @@ guardar búsquedas o alertas (sin cuentas para quien busca).
 
 ## Criterios de aceptación
 
-- [ ] A **360 × 640**, en `/` se ven sin scroll: la pregunta, Comprar, Alquilar y "Alquiler
+- [x] A **360 × 640**, en `/` se ven sin scroll: la pregunta, Comprar, Alquilar y "Alquiler
       temporario".
-- [ ] El texto sobre la foto mide ≥ 4,5 de contraste contra el píxel más claro detrás (captura
+- [x] El texto sobre la foto mide ≥ 4,5 de contraste contra el píxel más claro detrás (captura
       + script), y el crédito de la foto se ve.
-- [ ] Inicio → Comprar → (Casa + Quinta) → Continuar → (Centro) → Continuar → (2+ dorm) →
+- [x] Inicio → Comprar → (Casa + Quinta) → Continuar → (Centro) → Continuar → (2+ dorm) →
       "Ver N propiedades" termina en
       `/propiedades?operacion=venta&tipo=casa,quinta&zona=centro&dorm=2` (o su forma con
       parámetros repetidos, que se lee igual) y N coincide con la cantidad de resultados.
-- [ ] Al tocar una opción en el paso 2, 3 o 4, el conteo del pie cambia **sin navegar** y
+- [x] Al tocar una opción en el paso 2, 3 o 4, el conteo del pie cambia **sin navegar** y
       coincide con `contarResultados` (e2e compara con lo que muestra resultados).
-- [ ] El botón **atrás del navegador** desde el paso 3 vuelve al paso 2 **con las opciones
+- [x] El botón **atrás del navegador** desde el paso 3 vuelve al paso 2 **con las opciones
       marcadas**.
-- [ ] **Con JavaScript apagado** (proyecto `sin-js`), el recorrido inicio → paso 2 → paso 3 →
+- [x] **Con JavaScript apagado** (proyecto `sin-js`), el recorrido inicio → paso 2 → paso 3 →
       paso 4 → resultados funciona y llega a la URL correcta.
-- [ ] Entrar a `/buscar/tipo` sin `operacion` redirige a `/`; `/buscar/cualquiercosa` da 404.
-- [ ] En el paso 2, un tipo sin propiedades está al final, atenuado, y no se puede elegir.
-- [ ] Todo lo que se toca mide ≥ 44 px; cada paso es un `<fieldset>` con `<legend>`; la
+- [x] Entrar a `/buscar/tipo` sin `operacion` redirige a `/`; `/buscar/cualquiercosa` da 404.
+- [x] En el paso 2, un tipo sin propiedades está al final, atenuado, y no se puede elegir.
+- [x] Todo lo que se toca mide ≥ 44 px; cada paso es un `<fieldset>` con `<legend>`; la
       opción elegida tiene un indicador que no es solo color.
-- [ ] Cada paso tiene su `<title>` ("¿Qué tipo de propiedad? · Bolívar Inmo") y los pasos
+- [x] Cada paso tiene su `<title>` ("¿Qué tipo de propiedad? · Bolívar Inmo") y los pasos
       2-4 son `noindex`.
-- [ ] Lighthouse mobile Performance ≥ 90 en `/`; MapLibre no está en el JS de `/`.
+- [x] Lighthouse mobile Performance ≥ 90 en `/`; MapLibre no está en el JS de `/`.
 - [ ] 👀 Manuel hizo el recorrido en su celular.
 
 ## Riesgos
@@ -341,40 +341,64 @@ Nada nuevo en el modelo. El índice se pasa como prop serializable al componente
 ## Tareas
 
 **Bloque 1 — Paso 1: inicio** · commit "Inicio: ¿Qué estás buscando? con Comprar y Alquilar"
-- [ ] `opcion-grande.tsx`; `src/app/page.tsx` reemplaza el andamio.
-- [ ] E2E: pliegue a 360 × 640; los tres links llevan a `/buscar/tipo?operacion=…`; conteos = datos.
-- [ ] Gates + `pnpm e2e`.
+- [x] `opcion-grande.tsx`; `src/app/page.tsx` reemplaza el andamio.
+- [x] E2E: pliegue a 360 × 640; los tres links llevan a `/buscar/tipo?operacion=…`; conteos = datos.
+- [x] Gates + `pnpm e2e`.
 
 **Bloque 2 — Esqueleto de pasos + paso 2** · commit "Buscador: paso de tipo con conteo en vivo"
-- [ ] `indice.test.ts` → `indice.ts` (y `Filtrable` en `filtrar.ts` / `contar.ts` si hace falta).
-- [ ] `src/app/buscar/[paso]/page.tsx` con guarda, 404 y metadata; `loading.tsx`.
-- [ ] `barra-de-paso.tsx`, `formulario-de-paso.tsx`, `campos-ocultos.tsx`, `campo-tipos.tsx`.
-- [ ] E2E: elegir tipos cambia el conteo; atrás conserva lo marcado; tipo sin avisos no elegible.
-- [ ] Gates + `pnpm e2e`.
+- [x] `indice.test.ts` → `indice.ts` (y `Filtrable` en `filtrar.ts` / `contar.ts` si hace falta).
+- [x] `src/app/buscar/[paso]/page.tsx` con guarda, 404 y metadata; `loading.tsx`.
+- [x] `barra-de-paso.tsx`, `formulario-de-paso.tsx`, `campos-ocultos.tsx`, `campo-tipos.tsx`.
+- [x] E2E: elegir tipos cambia el conteo; atrás conserva lo marcado; tipo sin avisos no elegible.
+- [x] Gates + `pnpm e2e`.
 
 **Bloque 3 — Paso 3: zona** · commit "Buscador: paso de zona"
-- [ ] `campo-zonas.tsx` (grupos, Todo Bolívar, zonas en 0 ocultas).
-- [ ] E2E del paso.
-- [ ] Gates + `pnpm e2e`.
+- [x] `campo-zonas.tsx` (grupos, Todo Bolívar, zonas en 0 ocultas).
+- [x] E2E del paso.
+- [x] Gates + `pnpm e2e`.
 
 **Bloque 4 — Paso 4: detalles** · commit "Buscador: precio, ambientes y características"
-- [ ] `numeros.test.ts` → `numeros.ts`.
-- [ ] `campo-precio.tsx`, `campo-ambientes.tsx`, `campo-caracteristicas.tsx`, `sugerencias.tsx`.
-- [ ] El botón final va a `/propiedades`.
-- [ ] E2E: recorrido completo y URL final; teclado abierto en `iphone` no tapa el input.
-- [ ] Gates + `pnpm e2e`.
+- [x] `numeros.test.ts` → `numeros.ts`.
+- [x] `campo-precio.tsx`, `campo-ambientes.tsx`, `campo-caracteristicas.tsx`, `sugerencias.tsx`.
+- [x] El botón final va a `/propiedades`.
+- [x] E2E: recorrido completo y URL final; teclado abierto en `iphone` no tapa el input.
+- [x] Gates + `pnpm e2e`.
 
 **Bloque 5 — Sin JS, accesibilidad, mirar** · commit "Buscador: anda sin JavaScript y verificado a 360 px"
-- [ ] `buscador-sin-js.spec.ts` en verde.
-- [ ] `fieldset`/`legend`, foco visible, ✓ en lo elegido, tamaños ≥ 44 px.
-- [ ] Capturas de los cuatro pasos a 360 × 640 y 390 × 844; detector de Impeccable sobre `/` y `/buscar/tipo`.
-- [ ] Lighthouse mobile sobre `/` (≥ 90).
+- [x] `buscador-sin-js.spec.ts` en verde.
+- [x] `fieldset`/`legend`, foco visible, ✓ en lo elegido, tamaños ≥ 44 px.
+- [x] Capturas de los cuatro pasos a 360 × 640 y 390 × 844; detector de Impeccable sobre `/` y `/buscar/tipo`.
+- [x] Lighthouse mobile sobre `/` (≥ 90).
 - [ ] 👀 Manuel hace el recorrido en su celular.
-- [ ] Gates + `pnpm e2e`.
+- [x] Gates + `pnpm e2e`.
 
 **Cierre**
 - [ ] `/cerrar buscador-guiado`.
 
 ## Lo que se encontró al implementar
 
-_(se completa al ejecutar)_
+1. **Foto de fondo en el inicio** (decisión de Manuel del 2026-10-08) y, después de verla,
+   **el bloque abajo y "Ver todas en el mapa" centrado** (también pedido de Manuel). Un velo en
+   degradé no alcanzaba con el texto en el medio (2,8 a 3,9): el bloque lleva un velo parejo de
+   tinta al 85 % con fundido arriba. Medido con `scripts/contraste-sobre-foto.mjs` contra el
+   píxel más claro detrás de cada texto: 10,4 a 11,0. "Ver todas en el mapa" sobre la foto daba
+   2,3: pasó a píldora blanca. La foto es provisoria (plaza de Bolívar, dominio público) hasta
+   la aérea con dron de Manuel.
+2. **El contrato de URL acepta "45.000"**: sin JS el formulario manda lo que se escribió. Sigue
+   rechazando "4.5", "45,000" y "1e9" (`numeros.ts`).
+3. **`loading.tsx` rompía los códigos de estado**: con streaming, `redirect()` y `notFound()`
+   salían con 200. Se sacó; los pasos se declaran con `dynamicParams = false`. Ahora 307 sin
+   operación y 404 si el paso no existe.
+4. **La opción con `sr-only`** dejaba que el toque lo recibiera el label: el input pasó a cubrir
+   la opción entera, invisible.
+5. **`next/form` no pasa la `ref` al `<form>`**: las escuchas del conteo cuelgan de un contenedor.
+6. **"Atrás" volvía sin lo marcado**: Next reconstruye el paso desde su caché. Al avanzar se
+   guarda lo elegido en la URL del paso (`replaceState`) y al montarse el formulario se
+   sincroniza con la URL.
+7. **El dev server levantado para la LAN no hidrataba entrando por `127.0.0.1`**:
+   `allowedDevOrigins` suma `127.0.0.1`. Los e2e anteriores contra `127.0.0.1` pasaban porque
+   esas pantallas no necesitaban JS.
+8. **Lighthouse**: el inicio daba 79 (la foto bajaba en 3840 px, 456 KB). Con AVIF, calidad 55
+   y `sizes` ajustado: 144 KB, 99 con LCP 2,3 s una vez optimizada (86 en el primer pedido). El
+   paso 2 da 96. Accesibilidad 100.
+9. Los cuatro bloques de pasos (2 a 4) salieron en un solo commit (`c0f9a92`), no en tres.

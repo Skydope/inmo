@@ -62,6 +62,16 @@ Fuente: [CARTO Basemaps Terms](https://carto.com/legal/basemap-terms/) (actualiz
   traen clases `dark:`. `globals.css` las ata a una clase `.dark` que nunca se pone; no sacar
   ese `@custom-variant` mientras no haya modo oscuro.
 - **Inputs a 16 px como mínimo**: con menos, Safari de iPhone hace zoom al tocar el campo.
+- **`allowedDevOrigins` tiene que incluir `127.0.0.1`**: con el dev server levantado con
+  `--hostname 0.0.0.0`, entrar por `127.0.0.1` sirve el HTML pero **no hidrata** (sin error
+  visible). Los e2e corren contra `localhost`.
+- **`loading.tsx` + `redirect()`/`notFound()`**: con el streaming que habilita `loading.tsx`, la
+  respuesta ya salió y el código queda en 200. Donde importa el código (guardas, 404), sin
+  `loading.tsx`; los parámetros válidos, con `dynamicParams = false`.
+- **`next/form` no pasa la `ref` al `<form>`**: se escucha desde un elemento de adentro con
+  `closest("form")`.
+- **Next 16 exige `images.qualities`**: una calidad que no esté en la lista se redondea a la más
+  cercana. Hoy: 55 (fotos con velo) y 75.
 - **Next 16 no levanta dos dev servers en el mismo proyecto**: si `pnpm dev` está corriendo
   (por ejemplo, para que Manuel mire en el celu), `pnpm e2e` falla al arrancar el suyo. Se
   corre contra el que ya está: `E2E_BASE_URL=http://127.0.0.1:43123 pnpm e2e`.

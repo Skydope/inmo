@@ -20,7 +20,7 @@
 | 1 | 🙋 Aprobar la spec madre y las cinco specs del hito 1; contestar sus preguntas abiertas | [`hito-1/README.md`](hitos/hito-1/README.md) | — | ✅ 2026-10-08 |
 | 2 | Identidad y base técnica (marca, paleta, tipografía, shadcn + Base UI, Playwright, limpieza) | [`identidad-y-base.md`](hitos/hito-1/identidad-y-base.md) | paso 1 | ✅ 2026-10-08 |
 | 3 | Modelo de búsqueda (taxonomía, contrato de URL, filtrado, datos de prueba ampliados) | [`modelo-de-busqueda.md`](hitos/hito-1/modelo-de-busqueda.md) | paso 2 (los andamios) | ✅ 2026-10-08 |
-| 4 | Buscador guiado (inicio + pasos) | [`buscador-guiado.md`](hitos/hito-1/buscador-guiado.md) | pasos 2 y 3 | ⏳ |
+| 4 | Buscador guiado (inicio + pasos) | [`buscador-guiado.md`](hitos/hito-1/buscador-guiado.md) | pasos 2 y 3 | 🔄 implementado (2026-10-08); falta 👀 Manuel en el celu |
 | 5 | Resultados: lista deslizable ⇄ mapa + hoja de filtros | [`resultados.md`](hitos/hito-1/resultados.md) | paso 4 | ⏳ |
 | 6 | Ficha de la propiedad + contacto | [`ficha.md`](hitos/hito-1/ficha.md) | paso 5 | ⏳ |
 | 7 | Cierre del hito 1: e2e del recorrido entero, Manuel en el celu, `/cerrar` | [`hito-1/README.md`](hitos/hito-1/README.md) § Definición de terminado | paso 6 | ⏳ |
@@ -42,8 +42,8 @@ paralelo al paso 2; el bloque 5 necesita los andamios.
 
 ## Lo próximo (top 3)
 
-1. 🔴 **[Modelo de búsqueda](hitos/hito-1/modelo-de-busqueda.md)**: la taxonomía, el contrato
-   de URL y los datos de prueba ampliados; todo lo que sigue se apoya en él.
+1. 🔴 **👀 Manuel recorre el buscador en el celu** ([`buscador-guiado.md`](hitos/hito-1/buscador-guiado.md)),
+   y después **[Resultados](hitos/hito-1/resultados.md)**: lista deslizable, mapa y filtros.
 2. 🔴 **Sacar el mapa de Carto** (está fuera de sus términos desde el 29/09/2026): entra en
    [`resultados.md`](hitos/hito-1/resultados.md), pero si el sitio se publica antes, se hace
    suelto (es cambiar una URL).
