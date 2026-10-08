@@ -1,5 +1,6 @@
 import { filtrarPropiedades, type Filtrable } from "./filtrar"
 import type { Busqueda } from "./parametros"
+import { chipsDeBusqueda, type Chip } from "./resumen"
 import { OPERACIONES, TIPOS, ZONAS, tiposDe } from "./taxonomia"
 
 type Campo = "operacion" | "tipo" | "zona"
@@ -34,4 +35,17 @@ export function contarPorOpcion(
 
 export function contarResultados(props: readonly Filtrable[], b: Busqueda): number {
   return filtrarPropiedades(props, b).length
+}
+
+export type Sugerencia = Chip & { conteo: number }
+
+/**
+ * Cuando una búsqueda da 0: por cada filtro, cuántas aparecen si se saca **solo ese**. De más
+ * a menos, sin los que igual dan 0. Así nunca hay un callejón sin salida.
+ */
+export function sugerenciasSinResultados(props: readonly Filtrable[], b: Busqueda): Sugerencia[] {
+  return chipsDeBusqueda(b)
+    .map((chip) => ({ ...chip, conteo: contarResultados(props, chip.sin) }))
+    .filter((s) => s.conteo > 0)
+    .sort((a, c) => c.conteo - a.conteo)
 }
