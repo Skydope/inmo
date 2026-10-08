@@ -22,7 +22,7 @@
 | 3 | Modelo de búsqueda (taxonomía, contrato de URL, filtrado, datos de prueba ampliados) | [`modelo-de-busqueda.md`](hitos/hito-1/modelo-de-busqueda.md) | paso 2 (los andamios) | ✅ 2026-10-08 |
 | 4 | Buscador guiado (inicio + pasos) | [`buscador-guiado.md`](hitos/hito-1/buscador-guiado.md) | pasos 2 y 3 | 🔄 implementado (2026-10-08); falta 👀 Manuel en el celu |
 | 5 | Resultados: lista deslizable ⇄ mapa + hoja de filtros | [`resultados.md`](hitos/hito-1/resultados.md) | paso 4 | ⏳ |
-| 5b | Inicio con contenido y pie completo (pedido de Manuel) | [`inicio-y-pie.md`](hitos/hito-1/inicio-y-pie.md) | paso 5 (usa la tarjeta chica) | 📝 `draft` |
+| 5b | Inicio con contenido y pie completo (pedido de Manuel) | [`inicio-y-pie.md`](hitos/hito-1/inicio-y-pie.md) | paso 5 (usa la tarjeta chica) | 🔄 `in-progress` |
 | 6 | Ficha de la propiedad + contacto | [`ficha.md`](hitos/hito-1/ficha.md) | paso 5 | ⏳ |
 | 7 | Cierre del hito 1: e2e del recorrido entero, Manuel en el celu, `/cerrar` | [`hito-1/README.md`](hitos/hito-1/README.md) § Definición de terminado | paso 6 | ⏳ |
 

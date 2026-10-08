@@ -80,7 +80,8 @@ function AgencyBand({ agency }: { agency: AgencyRow }) {
   const catalogHref = `/propiedades?agencia=${encodeURIComponent(agency.name)}`
 
   return (
-    <li className="overflow-hidden rounded-tarjeta border border-linea bg-blanco">
+    // El id es el ancla de "/inmobiliarias#<id>" (las tarjetas del inicio).
+    <li id={agency.id} className="scroll-mt-20 overflow-hidden rounded-tarjeta border border-linea bg-blanco target:ring-2 target:ring-plano-700">
       <div className="flex flex-col gap-4 px-4 py-4 md:flex-row md:items-center md:justify-between md:px-5">
         <div className="flex min-w-0 items-center gap-3">
           <CoverImage

@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { AgencyDirectory } from "@/components/agency-directory"
 import { Header } from "@/components/shell/header"
 import { Pie } from "@/components/shell/pie"
+import { resumenDeInmobiliarias } from "@/lib/agencies/resumen"
 import { SEED_AGENCIES } from "@/lib/agencies/seed"
 import { contactLinkFor } from "@/lib/contact"
 import { getProperties } from "@/lib/properties/adapter"
@@ -13,7 +14,9 @@ export const metadata: Metadata = {
 
 export default async function AgenciesPage() {
   const properties = await getProperties()
-  const agencies = Object.values(SEED_AGENCIES).map((agency) => {
+  const seed = Object.values(SEED_AGENCIES)
+  const resumen = resumenDeInmobiliarias(properties, seed)
+  const agencies = seed.map((agency, i) => {
     const listings = properties
       .filter((p) => p.agency.id === agency.id)
       .sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)))
@@ -23,8 +26,8 @@ export default async function AgenciesPage() {
       name: agency.name,
       logoUrl: agency.logoUrl,
       address: agency.address,
-      sale: listings.filter((p) => p.operation === "venta").length,
-      rent: listings.filter((p) => p.operation !== "venta").length,
+      sale: resumen[i].venta,
+      rent: resumen[i].alquiler,
       listings: listings.filter((p) => p.photos.length > 0).map((p) => ({
         id: p.id,
         title: p.title,

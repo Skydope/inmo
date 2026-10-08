@@ -40,6 +40,9 @@ Fuente: [CARTO Basemaps Terms](https://carto.com/legal/basemap-terms/) (actualiz
   → pasar a una capa GeoJSON con símbolos (GPU) y clustering.
 - **`/inmobiliarias`, `/ingresar`, `/cuenta`, `/publicar`** quedan con el shell nuevo pero
   sin re-vestir hasta el hito 2.
+- **"Ver catálogo" de `/inmobiliarias` no filtra**: arma `/propiedades?agencia=<nombre>`,
+  pero `agencia` no está en el contrato de URL (`modelo-de-busqueda.md`) y se ignora: muestra
+  todas. Resolver con un parámetro `inmobiliaria=<id>` (spec propia) o sacando el link.
 
 ## Gotchas del stack
 

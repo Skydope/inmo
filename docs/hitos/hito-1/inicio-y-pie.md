@@ -1,7 +1,7 @@
 ---
 slug: inicio-y-pie
 hito: 1
-estado: draft
+estado: approved
 creada: 2026-10-08
 ---
 
@@ -151,11 +151,10 @@ con su spec); newsletter; redes sociales; animaciones de entrada ([descartado](.
 - **Con pocos datos reales, secciones flacas**: cada sección se oculta si no llega a un mínimo
   (destacadas 3, categorías 2, inmobiliarias 1).
 
-## Preguntas abiertas
+## Preguntas resueltas
 
-- ¿El pie oscuro (fondo `tinta`) o claro? *(Default: oscuro, más formal y cierra la página.)*
-- ¿Va la franja de números? Con datos de prueba son chicos. *(Default: sí; se oculta si hay
-  menos de 10 propiedades.)*
+- **Pie oscuro** (fondo `tinta`): Manuel, 2026-10-08.
+- **Franja de números: sí**, oculta si hay menos de 10 propiedades: Manuel, 2026-10-08.
 
 ---
 
@@ -206,9 +205,10 @@ carruseles son lo único cliente (por las flechas). El pie nuevo reemplaza a
 ## Tareas
 
 **Bloque 1 — Datos del inicio** · commit "Inicio: recientes, categorías, zonas y números desde los datos"
-- [ ] `inicio.test.ts` → `inicio.ts`; `resumen.test.ts` → `resumen.ts`.
-- [ ] `/inmobiliarias` pasa a usar `resumenDeInmobiliarias`.
-- [ ] Gates en verde.
+- [x] `inicio.test.ts` → `inicio.ts`; `resumen.test.ts` → `resumen.ts`.
+- [x] `/inmobiliarias` pasa a usar `resumenDeInmobiliarias` (y cada inmobiliaria tiene su ancla,
+      `/inmobiliarias#<id>`, para las tarjetas del inicio).
+- [x] Gates en verde.
 
 **Bloque 2 — Secciones** · commit "Inicio: secciones deslizables debajo del buscador"
 - [ ] `carrusel-horizontal.tsx`, `seccion.tsx` y las siete secciones.
@@ -230,4 +230,8 @@ carruseles son lo único cliente (por las flechas). El pie nuevo reemplaza a
 
 ## Lo que se encontró al implementar
 
-_(se completa al ejecutar)_
+- `inmobiliariasDelInicio` toma las inmobiliarias de las propiedades mismas (las que publican),
+  no del seed: el inicio no muestra una inmobiliaria sin avisos.
+- ⚠️ **Fuera de esta spec**: en `/inmobiliarias`, "Ver catálogo" arma
+  `/propiedades?agencia=<nombre>`, pero `agencia` no está en el contrato de URL y se ignora
+  (muestra todas). Anotado en `riesgos.md`; se resuelve con la ficha o con un filtro nuevo.
