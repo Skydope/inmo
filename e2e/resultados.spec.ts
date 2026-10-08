@@ -61,3 +61,40 @@ test.describe("resultados: lista deslizable", () => {
     expect(documento).toBeLessThanOrEqual(ventana)
   })
 })
+
+test.describe("resultados: la propiedad elegida vive en la URL", () => {
+  test.beforeEach(({}, info) => {
+    test.skip(info.project.name === "escritorio", "en escritorio la lista es una grilla (bloque 5)")
+  })
+
+  test("ir a la ficha y volver deja la misma tarjeta", async ({ page }) => {
+    await page.goto(URL_VENTA)
+    await page.getByRole("button", { name: "Propiedad siguiente" }).click()
+    await page.getByRole("button", { name: "Propiedad siguiente" }).click()
+    await expect(page.getByText(/^3 de 22$/)).toBeVisible()
+    await expect(page).toHaveURL(/sel=/)
+    await page.locator("[data-activo='true']").getByRole("link", { name: /Ver detalles/ }).click()
+    await expect(page).toHaveURL(/\/propiedades\/bol-/)
+    await page.goBack()
+    await expect(page.getByText(/^3 de 22$/)).toBeVisible()
+  })
+
+  test("una URL compartida con sel abre en esa propiedad", async ({ page }) => {
+    await page.goto(URL_VENTA)
+    const id = await page.locator("[data-slide='4']").getAttribute("data-id")
+    await page.goto(`${URL_VENTA}&sel=${id}`)
+    await expect(page.getByText(/^5 de 22$/)).toBeVisible()
+  })
+
+  test("Lista y Mapa cambian la vista sin perder la propiedad elegida", async ({ page }) => {
+    await page.goto(URL_VENTA)
+    await page.getByRole("button", { name: "Propiedad siguiente" }).click()
+    await expect(page.getByText(/^2 de 22$/)).toBeVisible()
+    await page.getByRole("link", { name: "Mapa", exact: true }).click()
+    await expect(page).toHaveURL(/vista=mapa/)
+    await page.getByRole("link", { name: "Lista", exact: true }).click()
+    await expect(page.getByText(/^2 de 22$/)).toBeVisible()
+    await expect(page).not.toHaveURL(/vista=mapa/)
+  })
+})
+
