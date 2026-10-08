@@ -1,6 +1,14 @@
 import { expect, test } from "@playwright/test"
 
-const RUTAS = ["/"]
+const RUTAS = [
+  "/",
+  "/propiedades",
+  "/propiedades/bol-01",
+  "/inmobiliarias",
+  "/ingresar",
+  "/cuenta",
+  "/publicar",
+]
 
 for (const ruta of RUTAS) {
   test(`${ruta} carga sin errores ni scroll horizontal`, async ({ page }) => {

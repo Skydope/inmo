@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next"
-import { Archivo_Black, Encode_Sans, Instrument_Serif, Manrope } from "next/font/google"
-import { ThemeProvider } from "@/components/theme-provider"
+import { Encode_Sans } from "next/font/google"
 import { brandName } from "@/lib/brand"
 import { siteUrl } from "@/lib/site"
 import "./globals.css"
@@ -16,24 +15,6 @@ const encode = Encode_Sans({
   axes: ["wdth"],
 })
 
-const manrope = Manrope({
-  variable: "--font-manrope",
-  subsets: ["latin"],
-})
-
-const archivo = Archivo_Black({
-  variable: "--font-archivo",
-  weight: "400",
-  subsets: ["latin"],
-})
-
-const instrument = Instrument_Serif({
-  variable: "--font-instrument",
-  weight: "400",
-  style: ["normal", "italic"],
-  subsets: ["latin"],
-})
-
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
@@ -41,14 +22,14 @@ export const metadata: Metadata = {
     template: `%s · ${brandName}`,
   },
   description:
-    "Portal inmobiliario local de San Carlos de Bolívar, Buenos Aires. Venta y alquiler con mapa interactivo y filtros vivos.",
+    "Las propiedades en venta y alquiler de las inmobiliarias de San Carlos de Bolívar, en un solo lugar.",
   openGraph: {
     type: "website",
     locale: "es_AR",
     siteName: brandName,
     title: `${brandName} · Propiedades en Bolívar`,
     description:
-      "Venta y alquiler en San Carlos de Bolívar con mapa interactivo y filtros vivos.",
+      "Las propiedades en venta y alquiler de las inmobiliarias de San Carlos de Bolívar, en un solo lugar.",
     images: [
       {
         url: "/images/hero/hero-day.jpg",
@@ -64,10 +45,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#efe8dc" },
-    { media: "(prefers-color-scheme: dark)", color: "#1a1a1a" },
-  ],
+  themeColor: "#ffffff",
 }
 
 export default function RootLayout({
@@ -76,14 +54,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html
-      lang="es-AR"
-      suppressHydrationWarning
-      className={`${encode.variable} ${manrope.variable} ${archivo.variable} ${instrument.variable} h-full antialiased`}
-    >
-      <body className="page-atmosphere min-h-full flex flex-col text-fg">
-        <ThemeProvider>{children}</ThemeProvider>
-      </body>
+    <html lang="es-AR" className={`${encode.variable} h-full antialiased`}>
+      <body className="flex min-h-full flex-col">{children}</body>
     </html>
   )
 }

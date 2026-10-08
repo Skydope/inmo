@@ -1,208 +1,28 @@
 import Link from "next/link"
-import { ArrowUpRight, Compass } from "@phosphor-icons/react/dist/ssr"
-import { CountUp } from "@/components/count-up"
-import { CoverImage } from "@/components/cover-image"
-import { HeroInteractive } from "@/components/hero-interactive"
-import { HeroSearch } from "@/components/hero-search"
-import { LandingNav } from "@/components/landing-nav"
-import { LandingPropertyCard } from "@/components/landing-property-card"
-import { Reveal } from "@/components/reveal"
-import { ScrollRevealLine } from "@/components/scroll-reveal-line"
-import { SiteFooter } from "@/components/site-footer"
+import { ChevronRight } from "lucide-react"
+import { Header } from "@/components/shell/header"
+import { Pie } from "@/components/shell/pie"
 import { buttonVariants } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import { brandName } from "@/lib/brand"
-import { getProperties } from "@/lib/properties/adapter"
 
-const CATEGORIES = [
-  {
-    label: "Casas",
-    href: "/propiedades?type=house",
-    image: "/images/properties/house-2.jpg",
-  },
-  {
-    label: "Departamentos",
-    href: "/propiedades?type=apartment",
-    image: "/images/properties/apt-2.jpg",
-  },
-  {
-    label: "Lotes",
-    href: "/propiedades?type=lot",
-    image: "/images/properties/lot-1.jpg",
-  },
-  {
-    label: "En alquiler",
-    href: "/propiedades?op=rent",
-    image: "/images/properties/apt-1.jpg",
-  },
-  {
-    label: "Hoteles",
-    href: "/propiedades?op=temporary",
-    image: "/images/properties/apt-2.jpg",
-  },
-] as const
-
-export default async function HomePage() {
-  const properties = await getProperties()
-  const featured = properties.filter((p) => p.featured).slice(0, 6)
-  const grid = featured.length >= 6 ? featured : properties.slice(0, 6)
-  const saleCount = properties.filter((p) => p.operation === "sale").length
-  const rentCount = properties.filter((p) => p.operation === "rent").length
-  const agencies = new Set(properties.map((p) => p.agency.name)).size
-
+/*
+ * ANDAMIO (hito 1, identidad-y-base): el inicio queda mínimo, con el shell nuevo,
+ * hasta que `buscador-guiado` lo reemplace por el paso 1 ("¿Qué estás buscando?").
+ */
+export default function HomePage() {
   return (
-    <div>
-      <section data-cover-hero className="sticky top-0 z-0 px-2 pt-2 md:px-3 md:pt-3">
-        <HeroInteractive>
-          <LandingNav />
-
-          <div className="mt-auto flex w-full flex-col items-center gap-5 md:contents">
-          <div className="flex max-w-sm flex-col items-center text-center md:mt-auto md:max-w-xl md:items-start md:pb-5 md:pt-[28rem] md:text-left">
-            <div className="animate-rise inline-flex items-center gap-2 rounded-full glass px-3.5 py-1.5 text-xs uppercase tracking-[0.2em] text-accent backdrop-blur">
-              <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
-              San Carlos de Bolívar
-            </div>
-            <p className="animate-rise-delay mt-3 max-w-xs text-sm leading-relaxed text-white/90 drop-shadow-[0_1px_10px_rgba(0,0,0,0.85)] md:mt-4 md:max-w-md md:text-base md:drop-shadow-none">
-              {brandName} conecta venta y alquiler en Bolívar con mapa interactivo,
-              filtros vivos y un catálogo con verdadero carácter de ciudad.
-            </p>
-          </div>
-
-          <div className="w-full md:w-auto md:pt-3 lg:pt-4">
-            <Link
-              href="/propiedades"
-              className="animate-rise-delay mx-auto flex w-full max-w-xs items-center justify-center gap-2.5 rounded-full bg-gold px-7 py-3 text-lg font-medium text-gold-fg transition hover:bg-gold-muted md:mb-3 md:w-fit md:px-5 md:py-2 md:text-base"
-            >
-              <Compass weight="fill" className="h-5 w-5" aria-hidden />
-              Explorar
-            </Link>
-            <div className="hidden md:block">
-              <HeroSearch />
-            </div>
-          </div>
-          </div>
-        </HeroInteractive>
-      </section>
-
-      <div className="relative z-10 -mt-8 px-2 md:-mt-12 md:px-3">
-        <div className="sheet-over rounded-t-panel bg-bg pb-16 md:rounded-t-sheet">
-      <section id="nosotros" className="mx-auto max-w-6xl px-4 pb-6 pt-14 md:pt-16">
-        <ScrollRevealLine
-          className="max-w-4xl text-3xl leading-snug tracking-tight text-fg md:text-5xl md:leading-[1.15]"
-          parts={[
-            { text: "Nuestra red cubre " },
-            { text: "todos los tipos", accent: true },
-            { text: " de operación en Bolívar: una experiencia " },
-            { text: "ágil", accent: true },
-            { text: " y " },
-            { text: "personal", accent: true },
-            { text: " para cada búsqueda." },
-          ]}
-        />
-
-        <div className="mt-12 grid grid-cols-2 gap-x-6 gap-y-8 border-y border-glass-border py-10 md:grid-cols-4">
-          {[
-            { n: 2012, l: "Año de arranque local", plain: true },
-            { n: properties.length, l: "Avisos activos" },
-            { n: saleCount + rentCount, l: "Venta y alquiler" },
-            { n: agencies, l: "Inmobiliarias" },
-          ].map((s) => (
-            <div key={s.l}>
-              <p className="font-display text-3xl text-fg md:text-5xl">
-                {"plain" in s ? s.n : <CountUp value={s.n} />}
-              </p>
-              <p className="mt-2 text-balance text-sm leading-snug text-fg-muted">{s.l}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="px-4 py-10">
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
-          {CATEGORIES.map((c, i) => (
-            <Reveal
-              key={c.label}
-              delay={i * 140}
-              className={i === CATEGORIES.length - 1 ? "col-span-2 lg:col-span-1" : undefined}
-            >
-            <Link
-              href={c.href}
-              className={cn(
-                "group relative block aspect-[5/3] overflow-hidden rounded-panel lg:aspect-[3/4]",
-                i === CATEGORIES.length - 1 && "max-lg:aspect-[2.4/1]",
-              )}
-            >
-              <CoverImage
-                src={c.image}
-                alt={c.label}
-                className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent" />
-              <span className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white/90 text-neutral-900 transition group-hover:bg-white">
-                <ArrowUpRight weight="fill" className="h-4 w-4" aria-hidden />
-              </span>
-              <p className="absolute bottom-4 left-4 text-lg font-medium text-white">
-                {c.label}
-              </p>
-            </Link>
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
-      <section id="servicios" className="px-4 py-6">
-        <div className="relative overflow-hidden rounded-panel">
-          <CoverImage
-            src="/images/properties/house-3.jpg"
-            alt=""
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/55" />
-          <div className="relative flex min-h-[280px] flex-col justify-end gap-4 p-8 md:min-h-[320px] md:max-w-xl md:p-12">
-            <h2 className="text-4xl tracking-tight text-white md:text-5xl">
-              Gestión de{" "}
-              <span className="font-accent">propiedades</span>
-            </h2>
-            <p className="text-sm leading-relaxed text-white/80 md:text-base">
-              Coordinamos publicación, visitas y seguimiento con las
-              inmobiliarias locales — vos elegís el aviso, ellas cierran el trato.
-            </p>
-            <div>
-              <Link
-                href="/propiedades"
-                className="inline-flex rounded-full border border-white/50 px-5 py-2.5 text-sm text-white transition hover:bg-white/10"
-              >
-                Ver catálogo
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="px-4 pb-8 pt-14">
-        <h2 className="mb-8 text-4xl tracking-tight text-fg md:text-5xl">
-          Mejores <span className="font-accent">propiedades</span>
-        </h2>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {grid.map((p) => (
-            <LandingPropertyCard key={p.id} property={p} />
-          ))}
-        </div>
-        <div className="mt-10 flex justify-center">
-          <Link
-            href="/propiedades"
-            className={cn(
-              buttonVariants({ variant: "secondary", size: "lg" }),
-              "w-full max-w-md border-0 bg-black/8 hover:bg-black/12 dark:bg-white/10 dark:hover:bg-white/15",
-            )}
-          >
-            Ver todas las propiedades
-          </Link>
-        </div>
-      </section>
-      <SiteFooter />
-        </div>
-      </div>
-    </div>
+    <>
+      <Header />
+      <main className="mx-auto flex w-full max-w-xl flex-1 flex-col gap-6 px-4 py-10">
+        <h1 className="text-[2rem] leading-[1.1] font-titulo">¿Qué estás buscando?</h1>
+        <p className="text-tinta-suave">
+          Las propiedades de las inmobiliarias de Bolívar. Estamos armando el buscador nuevo.
+        </p>
+        <Link href="/propiedades" className={buttonVariants({ size: "lg", className: "w-full" })}>
+          Ver todas las propiedades
+          <ChevronRight aria-hidden="true" />
+        </Link>
+      </main>
+      <Pie />
+    </>
   )
 }

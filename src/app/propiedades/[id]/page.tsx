@@ -1,22 +1,20 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import type { Metadata } from "next"
-import {
-  ArrowLeft,
-  ArrowsOutSimple,
-  Bathtub,
-  Bed,
-  Envelope,
-  Phone,
-  WhatsappLogo,
-} from "@phosphor-icons/react/dist/ssr"
+import { ChevronLeft, Mail, MessageCircle, Phone } from "lucide-react"
 import { CoverImage } from "@/components/cover-image"
-import { LandingNav } from "@/components/landing-nav"
+import { Header } from "@/components/shell/header"
+import { Pie } from "@/components/shell/pie"
 import { buttonVariants } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { EtiquetaOperacion } from "@/components/ui/etiqueta-operacion"
 import { contactLinkFor } from "@/lib/contact"
 import { formatPrice, operationLabel, typeLabel } from "@/lib/format"
 import { getProperties, getPropertyById } from "@/lib/properties/adapter"
+
+/*
+ * ANDAMIO (hito 1, identidad-y-base): la ficha mínima con el shell nuevo. La reemplaza
+ * `ficha` (galería, datos clave, ubicación, contacto fijo).
+ */
 
 export async function generateStaticParams() {
   const all = await getProperties()
@@ -40,6 +38,8 @@ export async function generateMetadata({
   }
 }
 
+const ICONO_CONTACTO = { whatsapp: MessageCircle, tel: Phone, mailto: Mail } as const
+
 export default async function PropertyDetailPage({
   params,
 }: {
@@ -50,125 +50,50 @@ export default async function PropertyDetailPage({
   if (!property) notFound()
 
   const contact = contactLinkFor(property.agency)
-  const ContactIcon =
-    contact.kind === "whatsapp"
-      ? WhatsappLogo
-      : contact.kind === "tel"
-        ? Phone
-        : Envelope
+  const IconoContacto = ICONO_CONTACTO[contact.kind]
+  const datos = [
+    property.areaM2 > 0 ? `${property.areaM2} m²` : null,
+    property.beds > 0 ? `${property.beds} dorm.` : null,
+    property.baths > 0 ? `${property.baths} baños` : null,
+  ].filter(Boolean)
 
   return (
-    <div className="pb-20">
-      <div className="px-2 pt-2 md:px-3 md:pt-3">
-        <div className="px-4 md:px-7">
-          <LandingNav />
+    <>
+      <Header />
+      <main className="mx-auto flex w-full max-w-xl flex-1 flex-col gap-4 px-4 py-6">
+        <Link
+          href="/propiedades"
+          className="inline-flex min-h-11 w-fit items-center gap-1 text-sm font-semibold text-tinta-suave hover:text-tinta"
+        >
+          <ChevronLeft className="size-4" aria-hidden="true" /> Volver
+        </Link>
+        <div className="relative overflow-hidden rounded-tarjeta bg-papel">
+          <CoverImage src={property.coverUrl} alt={property.title} className="aspect-[4/3] w-full object-cover" />
+          <EtiquetaOperacion className="absolute top-3 left-3">{operationLabel(property.operation)}</EtiquetaOperacion>
         </div>
-      </div>
-      <div className="mx-auto max-w-5xl px-4 pt-8">
-      <Link
-        href="/propiedades"
-        className="mb-6 inline-flex items-center gap-2 text-sm text-fg-muted hover:text-fg"
-      >
-        <ArrowLeft className="h-4 w-4" aria-hidden /> Volver al catálogo
-      </Link>
-
-      <div className="overflow-hidden rounded-panel border border-glass-border">
-        <div className="relative aspect-[16/9] bg-bg-elevated">
-          <CoverImage
-            src={property.coverUrl}
-            alt={property.title}
-            className="h-full w-full object-cover"
-          />
-          <span className="absolute right-4 top-4 rounded-full bg-black/55 px-3 py-1 text-sm backdrop-blur">
-            {property.photoCount} fotos
-          </span>
+        <div className="flex flex-col gap-1">
+          <p className="text-[1.875rem] leading-none font-titulo tabular-nums">
+            {formatPrice(property.price, property.currency)}
+          </p>
+          <h1 className="mt-1 text-xl font-titulo">{property.title}</h1>
+          <p className="text-tinta-suave">{property.address}</p>
+          {datos.length > 0 ? <p className="text-sm">{datos.join(" · ")}</p> : null}
         </div>
-
-        <div className="space-y-6 bg-bg-elevated/50 p-6 md:p-8">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <p className="text-sm text-fg-muted">
-                {operationLabel(property.operation)} · {typeLabel(property.type)}
-              </p>
-              <h1 className="mt-2 max-w-2xl font-display text-3xl leading-tight text-fg md:text-5xl">
-                {property.title}
-              </h1>
-              <p className="mt-2 text-fg-muted">{property.address}</p>
-            </div>
-            <p className="font-display text-3xl text-accent md:text-4xl">
-              {formatPrice(property.price, property.currency)}
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-4 text-fg-muted">
-            {property.beds > 0 ? (
-              <span className="inline-flex items-center gap-2 rounded-full border border-glass-border px-3 py-1.5">
-                <Bed className="h-4 w-4" aria-hidden /> {property.beds} dorm.
-              </span>
-            ) : null}
-            {property.baths > 0 ? (
-              <span className="inline-flex items-center gap-2 rounded-full border border-glass-border px-3 py-1.5">
-                <Bathtub className="h-4 w-4" aria-hidden /> {property.baths} baños
-              </span>
-            ) : null}
-            <span className="inline-flex items-center gap-2 rounded-full border border-glass-border px-3 py-1.5">
-              <ArrowsOutSimple className="h-4 w-4" aria-hidden /> {property.areaM2} m²
-            </span>
-          </div>
-
-          <div className="glass flex flex-wrap items-center justify-between gap-4 rounded-2xl p-4">
-            <div className="flex items-center gap-3">
-              <CoverImage
-                src={property.agency.logoUrl}
-                alt=""
-                className="h-12 w-12 rounded-full object-cover"
-              />
-              <div>
-                <p className="font-medium text-fg">{property.agency.name}</p>
-                <p className="text-sm text-fg-muted">
-                  Inmobiliaria en Bolívar{property.agency.address ? ` · ${property.agency.address}` : ""}
-                </p>
-              </div>
-            </div>
-            <a
-              href={contact.href}
-              target={contact.kind === "whatsapp" ? "_blank" : undefined}
-              rel={contact.kind === "whatsapp" ? "noopener noreferrer" : undefined}
-              className={cn(buttonVariants({ size: "lg" }))}
-            >
-              <ContactIcon className="h-4 w-4" aria-hidden />
-              Contactar · {contact.label}
-            </a>
-          </div>
-
-          {property.description ? (
-            <div className="space-y-2 border-t border-glass-border pt-6">
-              <h2 className="font-display text-xl text-fg">Descripción</h2>
-              <p className="text-base leading-relaxed text-fg-muted whitespace-pre-line">
-                {property.description}
-              </p>
-            </div>
-          ) : null}
-
-          {property.features && property.features.length > 0 ? (
-            <div className="space-y-3 border-t border-glass-border pt-6">
-              <h2 className="font-display text-xl text-fg">Características y comodidades</h2>
-              <div className="grid gap-2.5 sm:grid-cols-2 md:grid-cols-3">
-                {property.features.map((feat) => (
-                  <div
-                    key={feat}
-                    className="flex items-center gap-2 rounded-xl bg-bg/50 px-3.5 py-2 text-sm text-fg"
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-                    {feat}
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : null}
-        </div>
-      </div>
-      </div>
-    </div>
+        {property.description ? (
+          <p className="leading-relaxed whitespace-pre-line text-tinta">{property.description}</p>
+        ) : null}
+        <p className="text-sm text-tinta-suave">Publicada por {property.agency.name}</p>
+        <a
+          href={contact.href}
+          target={contact.kind === "whatsapp" ? "_blank" : undefined}
+          rel={contact.kind === "whatsapp" ? "noopener noreferrer" : undefined}
+          className={buttonVariants({ size: "lg", className: "w-full" })}
+        >
+          <IconoContacto aria-hidden="true" />
+          Consultar · {contact.label}
+        </a>
+      </main>
+      <Pie />
+    </>
   )
 }

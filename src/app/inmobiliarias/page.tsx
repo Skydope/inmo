@@ -1,13 +1,10 @@
 import type { Metadata } from "next"
 import { AgencyDirectory } from "@/components/agency-directory"
-import { LandingNav } from "@/components/landing-nav"
-import { SiteFooter } from "@/components/site-footer"
+import { Header } from "@/components/shell/header"
+import { Pie } from "@/components/shell/pie"
 import { SEED_AGENCIES } from "@/lib/agencies/seed"
 import { contactLinkFor } from "@/lib/contact"
 import { getProperties } from "@/lib/properties/adapter"
-
-const DAY = "/images/hero/residence-day.webp"
-const NIGHT = "/images/hero/residence-night.webp"
 
 export const metadata: Metadata = {
   title: "Inmobiliarias",
@@ -42,40 +39,18 @@ export default async function AgenciesPage() {
   })
 
   return (
-    <div>
-      <section data-cover-hero className="sticky top-0 z-0 px-2 pt-2 md:px-3 md:pt-3">
-        <div className="relative overflow-hidden rounded-t-panel md:rounded-t-sheet">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={DAY} alt="" className="absolute inset-0 h-full w-full object-cover" />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={NIGHT}
-            alt=""
-            className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-[1200ms] dark:opacity-100"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-black/10" />
-          <div className="relative z-10 flex min-h-80 flex-col px-4 md:min-h-[26rem] md:px-7">
-            <LandingNav />
-            <div className="mt-auto max-w-xl pb-16 pt-8">
-              <h1 className="font-display text-4xl tracking-tight text-white md:text-5xl">
-                Inmobiliarias que trabajan con nosotros
-              </h1>
-              <p className="mt-3 max-w-md text-sm leading-relaxed text-white/85 md:text-base">
-                Te acompañan en la tasación, la compra o el alquiler de tu propiedad en Bolívar.
-              </p>
-            </div>
-          </div>
+    <>
+      <Header />
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
+        <h1 className="text-3xl font-titulo md:text-4xl">Inmobiliarias de Bolívar</h1>
+        <p className="mt-2 max-w-md text-tinta-suave">
+          Te acompañan en la tasación, la compra o el alquiler de tu propiedad.
+        </p>
+        <div className="mt-6">
+          <AgencyDirectory agencies={agencies} />
         </div>
-      </section>
-
-      <div className="relative z-10 -mt-8 px-2 md:-mt-12 md:px-3">
-        <div className="sheet-over rounded-t-panel bg-bg pb-16 md:rounded-t-sheet">
-          <div className="px-4 pb-8 pt-10 md:px-6 md:pt-14">
-            <AgencyDirectory agencies={agencies} />
-          </div>
-          <SiteFooter />
-        </div>
-      </div>
-    </div>
+      </main>
+      <Pie />
+    </>
   )
 }

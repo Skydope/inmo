@@ -45,7 +45,7 @@ export function Menu() {
       </DrawerTrigger>
       <DrawerContent className="bg-blanco">
         <div className="flex h-14 items-center justify-between border-b border-linea px-4">
-          <DrawerTitle className="font-encode text-lg font-bold [font-stretch:87.5%]">
+          <DrawerTitle className="text-lg font-titulo">
             Menú
           </DrawerTitle>
           <DrawerClose render={<Button variant="ghost" size="icon" aria-label="Cerrar menú" />}>

@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { ArrowUpRight, Envelope, MagnifyingGlass, Phone, WhatsappLogo } from "@phosphor-icons/react"
+import { ArrowUpRight, Mail, MessageCircle, Phone, Search } from "lucide-react"
 import { CoverImage } from "@/components/cover-image"
 import { formatPrice } from "@/lib/format"
 import type { Currency } from "@/lib/properties/types"
@@ -41,22 +41,22 @@ export function AgencyDirectory({ agencies }: { agencies: AgencyRow[] }) {
 
   return (
     <div>
-      <label className="flex max-w-md items-center gap-2 rounded-full border border-glass-border bg-bg-elevated px-4 py-2.5 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent">
+      <label className="flex min-h-11 max-w-md items-center gap-2 rounded-full border border-linea bg-blanco px-4 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-plano-700">
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Buscar por nombre o dirección"
           aria-label="Buscar inmobiliaria"
-          className="min-w-0 flex-1 appearance-none rounded-full border-0 bg-transparent text-sm text-fg outline-none placeholder:text-fg-muted focus-visible:outline-none!"
+          className="min-w-0 flex-1 appearance-none rounded-full border-0 bg-transparent text-base text-tinta outline-none placeholder:text-tinta-suave focus-visible:outline-none!"
         />
-        <MagnifyingGlass className="h-4 w-4 shrink-0 text-fg-muted" aria-hidden />
+        <Search className="size-4 shrink-0 text-tinta-suave" aria-hidden="true" />
       </label>
 
       {list.length === 0 ? (
-        <p className="mt-8 text-sm text-fg-muted">Ninguna inmobiliaria coincide con esa búsqueda.</p>
+        <p className="mt-8 text-sm text-tinta-suave">Ninguna inmobiliaria coincide con esa búsqueda.</p>
       ) : (
         <>
-          <p className="mt-8 font-display text-2xl tracking-tight text-fg md:text-3xl">
+          <p className="mt-8 text-2xl font-titulo md:text-3xl">
             {list.length} {list.length === 1 ? "inmobiliaria" : "inmobiliarias"} en Bolívar
           </p>
           <ul className="mt-4 flex flex-col gap-4">
@@ -73,14 +73,14 @@ export function AgencyDirectory({ agencies }: { agencies: AgencyRow[] }) {
 function AgencyBand({ agency }: { agency: AgencyRow }) {
   const ContactIcon =
     agency.contactKind === "whatsapp"
-      ? WhatsappLogo
+      ? MessageCircle
       : agency.contactKind === "tel"
         ? Phone
-        : Envelope
+        : Mail
   const catalogHref = `/propiedades?agencia=${encodeURIComponent(agency.name)}`
 
   return (
-    <li className="overflow-hidden rounded-card border border-glass-border bg-bg-elevated">
+    <li className="overflow-hidden rounded-tarjeta border border-linea bg-blanco">
       <div className="flex flex-col gap-4 px-4 py-4 md:flex-row md:items-center md:justify-between md:px-5">
         <div className="flex min-w-0 items-center gap-3">
           <CoverImage
@@ -89,44 +89,44 @@ function AgencyBand({ agency }: { agency: AgencyRow }) {
             className="h-12 w-12 shrink-0 rounded-full object-cover"
           />
           <div className="min-w-0">
-            <p className="truncate text-base font-semibold text-fg">{agency.name}</p>
-            <p className="truncate text-sm text-fg-muted">{agency.address}</p>
+            <p className="truncate text-base font-semibold">{agency.name}</p>
+            <p className="truncate text-sm text-tinta-suave">{agency.address}</p>
           </div>
-          <p className="hidden shrink-0 text-sm text-fg-muted sm:block">
-            <span className="font-display text-lg text-fg">{agency.sale}</span> compra
+          <p className="hidden shrink-0 text-sm text-tinta-suave sm:block">
+            <span className="text-lg font-titulo text-tinta">{agency.sale}</span> compra
             <span className="mx-2">·</span>
-            <span className="font-display text-lg text-fg">{agency.rent}</span> alquiler
+            <span className="text-lg font-titulo text-tinta">{agency.rent}</span> alquiler
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <p className="mr-auto text-sm text-fg-muted sm:hidden">
-            <span className="font-display text-lg text-fg">{agency.sale}</span> compra
+          <p className="mr-auto text-sm text-tinta-suave sm:hidden">
+            <span className="text-lg font-titulo text-tinta">{agency.sale}</span> compra
             <span className="mx-2">·</span>
-            <span className="font-display text-lg text-fg">{agency.rent}</span> alquiler
+            <span className="text-lg font-titulo text-tinta">{agency.rent}</span> alquiler
           </p>
           {agency.listings.length > 0 ? (
             <Link
               href={catalogHref}
-              className="inline-flex items-center gap-1 rounded-full px-3 py-2.5 text-sm font-medium text-fg transition hover:bg-black/5 dark:hover:bg-white/10"
+              className="inline-flex min-h-11 items-center gap-1 rounded-control px-3 text-sm font-semibold hover:bg-papel"
             >
               Ver avisos
-              <ArrowUpRight className="h-4 w-4" aria-hidden />
+              <ArrowUpRight className="size-4" aria-hidden="true" />
             </Link>
           ) : null}
           <a
             href={agency.contactHref}
             target={agency.contactKind === "whatsapp" ? "_blank" : undefined}
             rel={agency.contactKind === "whatsapp" ? "noreferrer" : undefined}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-gold px-4 py-2.5 text-sm font-medium text-gold-fg transition hover:bg-gold-muted"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-control bg-plano-700 px-4 text-sm font-semibold text-blanco transition-colors hover:bg-plano-800"
           >
-            <ContactIcon className="h-4 w-4" aria-hidden />
+            <ContactIcon className="size-4" aria-hidden="true" />
             Contactar
           </a>
           {agency.email ? (
             <a
               href={`mailto:${agency.email}?subject=${encodeURIComponent("Solicitar tasación")}`}
-              className="inline-flex items-center justify-center rounded-full border border-glass-border px-4 py-2.5 text-sm font-medium text-fg transition hover:bg-black/5 dark:hover:bg-white/10"
+              className="inline-flex min-h-11 items-center justify-center rounded-control border border-linea px-4 text-sm font-semibold transition-colors hover:border-tinta-suave"
             >
               Solicitar tasación
             </a>
@@ -185,7 +185,7 @@ function Gallery({
                   />
                   <span className="absolute inset-0 grid place-items-center bg-black/55 text-white">
                     <span className="text-center">
-                      <span className="block font-display text-3xl">+{extra}</span>
+                      <span className="block text-3xl font-titulo">+{extra}</span>
                       <span className="text-sm">Ver más</span>
                     </span>
                   </span>
@@ -215,9 +215,9 @@ function ListingPhoto({ listing, className }: { listing: AgencyListing; classNam
       <CoverImage
         src={listing.coverUrl}
         alt={listing.title}
-        className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+        className="absolute inset-0 h-full w-full object-cover"
       />
-      <span className="absolute bottom-3 left-3 rounded-full bg-fg/90 px-3 py-1 text-sm text-bg">
+      <span className="absolute bottom-3 left-3 rounded-full bg-tinta/85 px-3 py-1 text-sm font-semibold text-blanco tabular-nums">
         {formatPrice(listing.price, listing.currency)}
       </span>
     </Link>

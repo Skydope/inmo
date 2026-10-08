@@ -11,15 +11,15 @@ export default function PropiedadesError({
 }) {
   return (
     <div className="flex min-h-[60dvh] flex-col items-center justify-center gap-4 px-4 text-center">
-      <h1 className="font-display text-3xl text-fg">Algo salió mal</h1>
-      <p className="max-w-md text-fg-muted">
+      <h1 className="text-3xl font-titulo">Algo salió mal</h1>
+      <p className="max-w-md text-tinta-suave">
         No pudimos cargar las propiedades. Intentá de nuevo en unos segundos.
       </p>
       <div className="flex gap-3">
         <button type="button" onClick={reset} className={buttonVariants()}>
           Reintentar
         </button>
-        <Link href="/" className={buttonVariants({ variant: "secondary" })}>
+        <Link href="/" className={buttonVariants({ variant: "outline" })}>
           Ir al inicio
         </Link>
       </div>

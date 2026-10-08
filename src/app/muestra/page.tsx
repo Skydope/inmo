@@ -50,7 +50,7 @@ function Celular({
   return (
     <section className="flex w-full max-w-[360px] flex-col gap-3">
       <div>
-        <h2 className="font-encode text-xl font-bold [font-stretch:87.5%]">{titulo}</h2>
+        <h2 className="text-xl font-titulo">{titulo}</h2>
         <p className="text-sm text-tinta-suave">{bajada}</p>
         <p className="mt-1 flex items-center gap-2 text-sm">
           <span
@@ -84,7 +84,7 @@ function Celular({
                 <Icono className="size-7 stroke-[1.75] text-plano-700" aria-hidden="true" />
                 <span className="flex items-end justify-between gap-3">
                   <span className="flex flex-col">
-                    <span className="font-encode text-2xl leading-none font-bold [font-stretch:87.5%]">{t}</span>
+                    <span className="text-2xl leading-none font-titulo">{t}</span>
                     <span className="mt-1 text-sm text-tinta-suave">{ayuda}</span>
                   </span>
                   <span className="flex items-center gap-1 text-sm text-tinta-suave tabular-nums">
@@ -106,7 +106,7 @@ function Celular({
         </div>
 
         <div className="border-t border-linea bg-blanco px-4 pt-5 pb-5">
-          <p className="font-encode text-[1.375rem] leading-tight font-bold [font-stretch:87.5%]">
+          <p className="text-[1.375rem] leading-tight font-titulo">
             ¿Qué tipo de propiedad?
           </p>
           <p className="mt-1 text-sm text-tinta-suave">Podés elegir más de uno.</p>
@@ -179,7 +179,7 @@ export default function MuestraPage() {
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-8">
         <div className="max-w-xl">
           <p className="text-sm font-semibold text-tinta-suave">Muestra de identidad · solo desarrollo</p>
-          <h1 className="mt-1 font-encode text-[2rem] leading-[1.1] font-bold [font-stretch:87.5%]">
+          <h1 className="mt-1 text-[2rem] leading-[1.1] font-titulo">
             El cartel y el plano
           </h1>
           <p className="mt-3 text-tinta-suave">
@@ -197,7 +197,7 @@ export default function MuestraPage() {
         </div>
 
         <section className="flex flex-col gap-4">
-          <h2 className="font-encode text-xl font-bold [font-stretch:87.5%]">Los demás colores</h2>
+          <h2 className="text-xl font-titulo">Los demás colores</h2>
           <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
             {COLORES.map((c) => (
               <li key={c.token} className="flex flex-col gap-2">
@@ -210,9 +210,9 @@ export default function MuestraPage() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="font-encode text-xl font-bold [font-stretch:87.5%]">Tipografía: Encode Sans</h2>
+          <h2 className="text-xl font-titulo">Tipografía: Encode Sans</h2>
           <div className="flex flex-col gap-4 rounded-tarjeta border border-linea bg-blanco p-5">
-            <p className="font-encode text-[2rem] leading-[1.1] font-bold [font-stretch:87.5%]">¿Qué estás buscando? · 32</p>
+            <p className="text-[2rem] leading-[1.1] font-titulo">¿Qué estás buscando? · 32</p>
             <p className="font-encode text-[1.875rem] leading-none font-bold tabular-nums [font-stretch:87.5%]">US$ 120.000 · precio ficha 30</p>
             <p className="font-encode text-xl font-semibold [font-stretch:87.5%]">Título de sección · 20</p>
             <p>Texto de lectura a 16 px. Casa de tres dormitorios con patio, a dos cuadras de la plaza.</p>
@@ -231,7 +231,7 @@ export default function MuestraPage() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="font-encode text-xl font-bold [font-stretch:87.5%]">Botones</h2>
+          <h2 className="text-xl font-titulo">Botones</h2>
           <div className="flex flex-wrap items-center gap-3 rounded-tarjeta border border-linea bg-blanco p-5">
             <Button size="lg">Ver 12 propiedades</Button>
             <Button>Continuar</Button>

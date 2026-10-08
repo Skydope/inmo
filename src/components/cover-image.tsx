@@ -18,7 +18,7 @@ export function CoverImage({
     return (
       <div
         className={cn(
-          "grid place-items-center bg-bg-elevated text-fg-muted",
+          "grid place-items-center bg-papel text-tinta-suave",
           className,
         )}
         role="img"

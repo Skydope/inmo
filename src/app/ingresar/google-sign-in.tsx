@@ -22,13 +22,13 @@ export function GoogleSignIn({ initialError }: { initialError?: string }) {
         type="submit"
         disabled={pending}
         aria-busy={pending}
-        className="flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-glass-border bg-bg-elevated px-4 text-sm font-medium text-fg shadow-[0_10px_28px_rgba(26,26,26,0.08)] transition hover:bg-bg disabled:opacity-60"
+        className="flex h-14 w-full items-center justify-center gap-3 rounded-control border border-linea bg-blanco px-4 text-base font-semibold text-tinta transition-colors hover:border-tinta-suave disabled:opacity-60"
       >
         <GoogleMark />
         {pending ? "Conectando con Google…" : "Continuar con Google"}
       </button>
       {error ? (
-        <p role="alert" className="mt-3 text-sm leading-relaxed text-danger">
+        <p role="alert" className="mt-3 text-sm leading-relaxed text-alerta">
           {error}
         </p>
       ) : null}
