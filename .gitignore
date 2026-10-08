@@ -48,3 +48,6 @@ next-env.d.ts
 /.agents/
 /.cursor/
 /.impeccable/
+
+# capturas y logs del MCP de Playwright
+/.playwright-mcp/
