@@ -1,6 +1,8 @@
 import Link from "next/link"
 import { Logo } from "@/components/marca/logo"
 import { brandName } from "@/lib/brand"
+import { cn } from "@/lib/utils"
+import { PlanoDeBolivar } from "./plano-de-bolivar"
 import {
   BUSQUEDA_VACIA,
   etiquetaTipo,
@@ -47,9 +49,31 @@ const COLUMNAS = [
  * El pie de todo el sitio: oscuro (fondo tinta), cierra la página. Texto secundario en
  * `niebla` (7,49 sobre tinta, medido). Spec: docs/hitos/hito-1/inicio-y-pie.md.
  */
-export function Pie() {
+export function Pie({ inicio = false }: { inicio?: boolean }) {
   return (
     <footer className="mt-auto bg-tinta text-blanco">
+      {/* Solo en el inicio: la invitación, en la voz del inicio. */}
+      {inicio ? (
+        <div className="mx-auto max-w-6xl px-4 pt-12 md:pt-16">
+          <p className="max-w-2xl font-voz text-[2rem] leading-[1.1] text-balance md:text-5xl">
+            ¿Buscás casa en Bolívar? Empezá por acá.
+          </p>
+          <div className="mt-5 flex flex-wrap gap-2">
+            <Link
+              href={buscar("venta")}
+              className="inline-flex min-h-11 items-center rounded-full bg-blanco px-5 font-semibold text-tinta transition-colors hover:bg-papel"
+            >
+              Quiero comprar
+            </Link>
+            <Link
+              href={buscar("alquiler")}
+              className="inline-flex min-h-11 items-center rounded-full border border-blanco/40 px-5 font-semibold text-blanco transition-colors hover:border-blanco"
+            >
+              Quiero alquilar
+            </Link>
+          </div>
+        </div>
+      ) : null}
       <div className="mx-auto grid max-w-6xl grid-cols-2 gap-x-6 gap-y-8 px-4 pt-10 pb-8 md:grid-cols-4">
         <div className="col-span-2 flex flex-col gap-3 md:col-span-1">
           <Link
@@ -83,9 +107,30 @@ export function Pie() {
           </nav>
         ))}
       </div>
+      {/* El cierre: VIVÍ BOLÍVAR en todas las páginas; en el inicio, sobre el plano de la ciudad. */}
+      <div className={cn("relative overflow-hidden", inicio ? "pt-40 md:pt-56" : "pt-4")}>
+        {inicio ? <PlanoDeBolivar className="absolute inset-0" /> : null}
+        <p
+          aria-hidden="true"
+          className="relative mx-auto max-w-6xl px-4 pb-6 font-display text-[clamp(3.25rem,calc((100vw-2rem)/5.1),7rem)] leading-[0.82] md:text-[clamp(4rem,calc((100vw-4rem)/8.6),9.5rem)]"
+        >
+          <span className="block md:inline">Viví </span>
+          <span className="block md:inline">Bolívar</span>
+        </p>
+      </div>
       <div className="border-t border-blanco/15">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] text-sm text-niebla md:flex-row md:justify-between md:gap-8">
-          <p>© 2026 {brandName} · San Carlos de Bolívar, Buenos Aires</p>
+          <div className="flex flex-col">
+            <p>© 2026 {brandName} · San Carlos de Bolívar, Buenos Aires</p>
+            {inicio ? (
+              <a
+                href="https://www.openstreetmap.org/copyright"
+                className="inline-flex min-h-11 w-fit items-center underline-offset-4 hover:text-blanco hover:underline"
+              >
+                Plano: © colaboradores de OpenStreetMap
+              </a>
+            ) : null}
+          </div>
           <p className="max-w-md md:text-right">
             Las propiedades las publican las inmobiliarias: precios y datos son responsabilidad de
             cada una.

@@ -268,9 +268,9 @@ letra es la misma en todos los anchos. El scroll se resuelve con `sticky` y `ani
 - [x] Gates + `pnpm e2e`.
 
 **Bloque 3 — El pie con el plano** · commit "Pie: el plano de Bolívar y VIVÍ BOLÍVAR"
-- [ ] Script y datos del plano; `PlanoDeBolivar`; `Pie({ inicio })`.
-- [ ] E2E del pie.
-- [ ] Gates + `pnpm e2e`.
+- [x] Script y datos del plano; `PlanoDeBolivar`; `Pie({ inicio })`.
+- [x] E2E del pie.
+- [x] Gates + `pnpm e2e`.
 
 **Bloque 4 — Mirar**
 - [ ] Capturas a mitad de scroll; Lighthouse mobile (build de producción); detector.
@@ -298,5 +298,13 @@ letra es la misma en todos los anchos. El scroll se resuelve con `sticky` y `ani
   scroll; la barra aparece entre 528 y 584 px (cuando la hoja llega a las pestañas) y desde ahí
   las pestañas dejan de ser enfocables. El build mantiene `animation-timeline` (Lightning CSS no
   junta las propiedades en el atajo).
+- **El plano** (Overpass, 2026-10-08): 191 avenidas y 429 calles en 12 KB de datos, la caja
+  de ≈ 4 × 4 km toma el casco urbano entero (la cuadrícula en diagonal, la plaza, el parque con
+  la laguna). Node no llegaba a Overpass (el intento de conexión de 250 ms no alcanza en esta
+  red): el script se corre con `--network-family-autoselection-attempt-timeout=3000`.
+- **El dibujo del plano** va con rangos de `entry` (mientras entra en pantalla): está al fondo
+  de la página y con `cover` nunca terminaba de dibujarse.
+- **"Quiero comprar" / "Quiero alquilar"** en la invitación del pie: no "Comprar", para no
+  repetir el nombre de los links de la columna Buscar.
 - **Sin entrada animada**: el borrador la tenía, pero el invariante acordado no suma entradas
   animadas; el hero aparece quieto.

@@ -49,7 +49,7 @@ export default async function HomePage() {
           <SosInmobiliaria />
         </div>
       </main>
-      <Pie />
+      <Pie inicio />
     </>
   )
 }

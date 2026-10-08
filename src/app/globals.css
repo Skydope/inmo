@@ -391,6 +391,34 @@
     display: none;
   }
 
+  /* El plano de Bolívar en el pie del inicio: líneas finas, que se apagan hacia los bordes. */
+  .plano {
+    color: color-mix(in oklab, var(--color-niebla) 30%, var(--color-tinta));
+    mask-image: linear-gradient(to bottom, transparent, black 30%, black 75%, transparent);
+  }
+  .plano path {
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: butt;
+    stroke-linejoin: round;
+  }
+  /* El plano se escala con `slice`: el trazo va en unidades del plano, más grueso en el celu. */
+  .plano .calles path {
+    stroke-width: 2.4;
+  }
+  .plano .avenidas path {
+    stroke-width: 4.5;
+    color: color-mix(in oklab, var(--color-niebla) 50%, var(--color-tinta));
+  }
+  @media (min-width: 48rem) {
+    .plano .calles path {
+      stroke-width: 1.3;
+    }
+    .plano .avenidas path {
+      stroke-width: 2.6;
+    }
+  }
+
   /* La hoja: el resto del inicio sube por encima de la foto al scrollear. */
   .hoja {
     position: relative;
@@ -421,6 +449,29 @@
       animation-timeline: --frase;
       animation-range-start: cover calc(8% + var(--i) / var(--n) * 34%);
       animation-range-end: cover calc(14% + var(--i) / var(--n) * 34%);
+    }
+  }
+
+  /* El plano del pie se dibuja mientras entra en pantalla: primero las avenidas, después las
+     calles. Con rangos de "entry": está al fondo de la página y no llega a cruzarla. */
+  @media (prefers-reduced-motion: no-preference) {
+    .plano {
+      view-timeline-name: --plano;
+      view-timeline-axis: block;
+    }
+    .plano path {
+      stroke-dasharray: 1;
+      animation-name: plano-dibujar;
+      animation-duration: auto;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: --plano;
+      animation-range-start: entry 0%;
+      animation-range-end: entry 70%;
+    }
+    .plano .calles path {
+      animation-range-start: entry 25%;
+      animation-range-end: entry 100%;
     }
   }
 
@@ -456,6 +507,14 @@
   }
 }
 
+@keyframes plano-dibujar {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
 @keyframes frase-encender {
   from {
     color: var(--color-tinta-suave);
