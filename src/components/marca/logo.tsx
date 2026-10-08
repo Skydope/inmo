@@ -26,14 +26,19 @@ export function Isotipo({ className }: { className?: string }) {
   )
 }
 
-/** Isotipo + "bolívar inmo" en minúscula, como el dominio. */
-export function Logo({ className }: { className?: string }) {
+/** Isotipo + "bolívar inmo" en minúscula, como el dominio. `claro`: sobre fondo tinta (el pie). */
+export function Logo({ className, claro = false }: { className?: string; claro?: boolean }) {
   return (
     <span
       className={cn("inline-flex items-center gap-[0.45em] leading-none", className)}
     >
       <Isotipo />
-      <span className="font-encode text-[1.1em] tracking-[-0.01em] text-tinta [font-stretch:87.5%]">
+      <span
+        className={cn(
+          "font-encode text-[1.1em] tracking-[-0.01em] [font-stretch:87.5%]",
+          claro ? "text-blanco" : "text-tinta"
+        )}
+      >
         <span className="font-bold">bolívar</span> <span className="font-normal">inmo</span>
       </span>
       <span className="sr-only">{brandName}</span>

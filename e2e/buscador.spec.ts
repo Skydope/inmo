@@ -6,7 +6,7 @@ const opcion = (page: Page, rol: "checkbox" | "radio", nombre: RegExp) => page.g
 test.describe("buscador guiado", () => {
   test("recorrido completo: el conteo del botón es lo que muestran los resultados", async ({ page }) => {
     await page.goto("/")
-    await page.getByRole("link", { name: /^Comprar/ }).click()
+    await page.getByRole("navigation", { name: "Qué querés hacer" }).getByRole("link", { name: /^Comprar/ }).click()
     await expect(page).toHaveURL(/\/buscar\/tipo\?operacion=venta$/)
 
     await opcion(page, "checkbox", /^Casa \d+$/).check()

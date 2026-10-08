@@ -4,7 +4,7 @@ import { expect, test } from "@playwright/test"
 // común y tiene que llegar a los resultados igual.
 test("sin JavaScript, del inicio a los resultados", async ({ page }) => {
   await page.goto("/")
-  await page.getByRole("link", { name: /^Comprar/ }).click()
+  await page.getByRole("navigation", { name: "Qué querés hacer" }).getByRole("link", { name: /^Comprar/ }).click()
   await expect(page).toHaveURL(/\/buscar\/tipo\?operacion=venta$/)
 
   await page.getByRole("checkbox", { name: /^Casa \d+$/ }).check()

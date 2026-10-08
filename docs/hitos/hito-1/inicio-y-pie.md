@@ -217,9 +217,10 @@ carruseles son lo único cliente (por las flechas). El pie nuevo reemplaza a
 - [x] Gates + `pnpm e2e`.
 
 **Bloque 3 — Pie** · commit "Pie completo de Bolívar Inmo"
-- [ ] `pie.tsx` nuevo; contraste del gris claro sobre `tinta` medido con `scripts/contraste.mjs`.
-- [ ] E2E del pie (links, 44 px).
-- [ ] Gates + `pnpm e2e`.
+- [x] `pie.tsx` nuevo; contraste del gris claro sobre `tinta` medido con `scripts/contraste.mjs`
+      (token nuevo `niebla` `#a7b1ab`: 7,49 sobre tinta; `Logo claro` para el fondo oscuro).
+- [x] E2E del pie (links, 44 px, cuatro columnas en escritorio).
+- [x] Gates + `pnpm e2e`.
 
 **Bloque 4 — Mirar**
 - [ ] Capturas a 360, 390 y 1280; detector de Impeccable; Lighthouse mobile del inicio ≥ 90.
@@ -232,6 +233,8 @@ carruseles son lo único cliente (por las flechas). El pie nuevo reemplaza a
 
 - La tarjeta `chica` pasa a `next/image` (`sizes="240px"`) y lleva el cartel de la operación:
   en "Recién publicadas" se mezclan venta y alquiler.
+- El pie repite "Comprar" / "Alquilar": los e2e del inicio buscan esos links dentro de la
+  tarjeta del buscador (`navigation` "Qué querés hacer").
 - Destacadas no tiene "Ver todas": no hay filtro de destacadas en la URL.
 - `inmobiliariasDelInicio` toma las inmobiliarias de las propiedades mismas (las que publican),
   no del seed: el inicio no muestra una inmobiliaria sin avisos.

@@ -8,14 +8,14 @@ test.describe("inicio: ¿Qué estás buscando?", () => {
   })
 
   test("las tres opciones llevan al paso 2 con la operación", async ({ page }) => {
-    await expect(page.getByRole("link", { name: /^Comprar/ })).toHaveAttribute("href", "/buscar/tipo?operacion=venta")
-    await expect(page.getByRole("link", { name: /^Alquilar/ })).toHaveAttribute("href", "/buscar/tipo?operacion=alquiler")
-    await expect(page.getByRole("link", { name: /^Alquiler temporario/ })).toHaveAttribute("href", "/buscar/tipo?operacion=temporario")
+    await expect(page.getByRole("navigation", { name: "Qué querés hacer" }).getByRole("link", { name: /^Comprar/ })).toHaveAttribute("href", "/buscar/tipo?operacion=venta")
+    await expect(page.getByRole("navigation", { name: "Qué querés hacer" }).getByRole("link", { name: /^Alquilar/ })).toHaveAttribute("href", "/buscar/tipo?operacion=alquiler")
+    await expect(page.getByRole("navigation", { name: "Qué querés hacer" }).getByRole("link", { name: /^Alquiler temporario/ })).toHaveAttribute("href", "/buscar/tipo?operacion=temporario")
     await expect(page.getByRole("link", { name: /Ver todas en el mapa/ })).toHaveAttribute("href", "/propiedades?vista=mapa")
   })
 
   test("el conteo de Comprar coincide con los resultados de venta", async ({ page }) => {
-    const enInicio = numero(await page.getByRole("link", { name: /^Comprar/ }).textContent())
+    const enInicio = numero(await page.getByRole("navigation", { name: "Qué querés hacer" }).getByRole("link", { name: /^Comprar/ }).textContent())
     expect(enInicio).toBeGreaterThan(0)
     await page.goto("/propiedades?operacion=venta")
     expect(numero(await page.locator("main p").first().textContent())).toBe(enInicio)
@@ -31,9 +31,9 @@ test("a 360×640 la pregunta y las tres opciones entran sin scroll", async ({ pa
   await page.goto("/")
   for (const elemento of [
     page.getByRole("heading", { name: "¿Qué estás buscando?" }),
-    page.getByRole("link", { name: /^Comprar/ }),
-    page.getByRole("link", { name: /^Alquilar/ }),
-    page.getByRole("link", { name: /^Alquiler temporario/ }),
+    page.getByRole("navigation", { name: "Qué querés hacer" }).getByRole("link", { name: /^Comprar/ }),
+    page.getByRole("navigation", { name: "Qué querés hacer" }).getByRole("link", { name: /^Alquilar/ }),
+    page.getByRole("navigation", { name: "Qué querés hacer" }).getByRole("link", { name: /^Alquiler temporario/ }),
   ]) {
     const caja = await elemento.boundingBox()
     expect(caja).not.toBeNull()
