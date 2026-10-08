@@ -32,10 +32,10 @@ export const metadata: Metadata = {
       "Las propiedades en venta y alquiler de las inmobiliarias de San Carlos de Bolívar, en un solo lugar.",
     images: [
       {
-        url: "/images/hero/hero-day.jpg",
-        width: 1672,
-        height: 941,
-        alt: "San Carlos de Bolívar",
+        url: "/images/inicio/casa-compartir.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Viví Bolívar: una casa de campo al atardecer",
       },
     ],
   },

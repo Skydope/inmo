@@ -7,9 +7,10 @@ const nextConfig: NextConfig = {
   // celu por la IP de la LAN, y desde 127.0.0.1 (lo usan los e2e y las capturas).
   allowedDevOrigins: ["192.168.*.*", "127.0.0.1"],
   images: {
-    // AVIF primero: la foto de fondo del inicio es el LCP y pesa la mitad que en WebP.
+    // AVIF primero: la casa del hero del inicio es el LCP y pesa la mitad que en WebP.
     formats: ["image/avif", "image/webp"],
-    // Next 16 exige declarar las calidades. 55: fotos de fondo, que llevan velo encima.
+    // Next 16 exige declarar las calidades. 55: la casa del hero (una foto grande, sin texto
+    // chico encima); 75: el resto.
     qualities: [55, 75],
   },
   async headers() {

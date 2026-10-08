@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test"
+import { PRIMER_PLANO } from "../src/lib/casa"
 
 const numero = (texto: string | null) => Number(/(\d+) propiedades?/.exec(texto ?? "")?.[1] ?? NaN)
 
@@ -21,16 +22,84 @@ test.describe("inicio: ¿Qué estás buscando?", () => {
     expect(numero(await page.locator("main p").first().textContent())).toBe(enInicio)
   })
 
-  test("se ve la foto con su crédito", async ({ page }) => {
-    await expect(page.getByText(/Foto: Gobierno de Bolívar/)).toBeVisible()
+  test("el título es Viví Bolívar y la pregunta es el título del filtro", async ({ page }) => {
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Viví\s*Bolívar/i)
+    await expect(page.getByRole("heading", { level: 2, name: "¿Qué estás buscando?" })).toBeVisible()
+    await expect(page.getByText(/Gobierno de Bolívar/)).toHaveCount(0)
   })
 })
 
-test("a 360×640 la pregunta y las tres opciones entran sin scroll", async ({ page }, info) => {
+test.describe("inicio: la casa de día y de noche", () => {
+  const fotoDelHero = (page: import("@playwright/test").Page) =>
+    page.locator(".casa-foto img").first().evaluate((img: HTMLImageElement) => img.currentSrc)
+
+  test("de día, la casa de día y el título en tinta", async ({ page }) => {
+    await page.goto("/")
+    await expect.poll(() => fotoDelHero(page)).toContain("casa-dia")
+    await expect(page.getByRole("heading", { level: 1 })).toHaveCSS("color", "rgb(23, 33, 28)")
+  })
+
+  test("con el celular en modo oscuro, la casa de noche y el título blanco", async ({ browser }) => {
+    const contexto = await browser.newContext({ colorScheme: "dark" })
+    const page = await contexto.newPage()
+    await page.goto("/")
+    await expect.poll(() => fotoDelHero(page)).toContain("casa-noche")
+    await expect(page.getByRole("heading", { level: 1 })).toHaveCSS("color", "rgb(255, 255, 255)")
+    await contexto.close()
+  })
+
+  test("baja una sola foto del hero, aunque se use dos veces (el recorte del techo)", async ({ page }) => {
+    const pedidas = new Set<string>()
+    page.on("response", (r) => {
+      if (/casa-(dia|noche)/.test(r.url())) pedidas.add(r.url())
+    })
+    await page.goto("/")
+    await expect(page.locator(".casa-foto img")).toHaveCount(2)
+    await page.waitForLoadState("networkidle")
+    expect([...pedidas]).toHaveLength(1)
+    expect([...pedidas][0]).toContain("casa-dia")
+  })
+
+  test("el techo tapa la base de la R y deja la B libre", async ({ page }) => {
+    await page.goto("/")
+    const tapado = await page.evaluate((puntos) => {
+      const techoEn = (x: number) => {
+        let techo = 941
+        puntos.forEach(([x1, y1], i) => {
+          const [x2, y2] = puntos[(i + 1) % puntos.length]
+          if (x1 === x2 || x < Math.min(x1, x2) || x > Math.max(x1, x2)) return
+          techo = Math.min(techo, y1 + ((x - x1) / (x2 - x1)) * (y2 - y1))
+        })
+        return techo
+      }
+      const foto = document.querySelector(".casa-foto")!.getBoundingClientRect()
+      const s = foto.height / 941
+      const palabra = document.querySelectorAll(".vivi-titulo > span")[1]
+      const texto = palabra.firstChild as Text
+      const cuerpo = palabra.getBoundingClientRect()
+      const letra = (i: number) => {
+        const rango = document.createRange()
+        rango.setStart(texto, i)
+        rango.setEnd(texto, i + 1)
+        const caja = rango.getBoundingClientRect()
+        const techo = foto.y + techoEn((caja.x + caja.width / 2 - foto.x) / s) * s
+        return Math.max(0, (cuerpo.bottom - techo) / cuerpo.height)
+      }
+      return { b: letra(0), r: letra(texto.length - 1) }
+    }, PRIMER_PLANO as [number, number][])
+    expect(tapado.r).toBeGreaterThan(0.15)
+    expect(tapado.r).toBeLessThan(0.5)
+    expect(tapado.b).toBeLessThanOrEqual(0.1)
+  })
+})
+
+test("a 360×640 Viví Bolívar, la pregunta y las tres opciones entran sin scroll", async ({ page }, info) => {
   test.skip(info.project.name !== "android-chico", "el pliegue se mide en el Android chico")
   await page.goto("/")
   for (const elemento of [
+    page.getByRole("heading", { level: 1 }),
     page.getByRole("heading", { name: "¿Qué estás buscando?" }),
+    page.getByRole("link", { name: /Ver todas en el mapa/ }),
     page.getByRole("navigation", { name: "Qué querés hacer" }).getByRole("link", { name: /^Comprar/ }),
     page.getByRole("navigation", { name: "Qué querés hacer" }).getByRole("link", { name: /^Alquilar/ }),
     page.getByRole("navigation", { name: "Qué querés hacer" }).getByRole("link", { name: /^Alquiler temporario/ }),
@@ -52,6 +121,7 @@ test.describe("inicio: lo que hay debajo de la foto", () => {
     await expect(numeros.locator("dd").first()).toHaveText("36")
     const titulos = await page.locator("main h2").allTextContents()
     expect(titulos).toEqual([
+      "¿Qué estás buscando?",
       "Recién publicadas",
       "Buscá por tipo",
       "Destacadas",

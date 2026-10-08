@@ -97,6 +97,16 @@
   letter-spacing: -0.01em;
 }
 
+/* VIVÍ BOLÍVAR: Encode Sans en su ancho máximo y su peso máximo. Solo el hero del inicio y el
+   cierre del pie (spec vivi-bolivar). */
+@utility font-display {
+  font-family: var(--font-encode);
+  font-weight: 900;
+  font-stretch: 125%;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
@@ -203,4 +213,169 @@
   border: 2px solid var(--color-blanco);
   background: var(--color-tinta);
   color: transparent;
+}
+
+/*
+ * El hero del inicio (spec vivi-bolivar): la casa de día o de noche, VIVÍ BOLÍVAR detrás del
+ * techo y el filtro. La foto vive en un "escenario" con su proporción (1672:941) que cubre el
+ * marco; la copia recortada del techo usa el mismo escenario, así el polígono en % siempre
+ * calza. El título se apoya en el techo (`--techo`, en px de la foto), no en un % del marco:
+ * así cada letra queda tapada en la misma proporción en cualquier pantalla.
+ */
+@layer components {
+  .vivi-hero {
+    position: relative;
+    z-index: 0;
+    padding: 0.5rem;
+  }
+  /* Quieto mientras la hoja sube encima. En pantallas bajas (celular acostado) no: la hoja
+     taparía el filtro antes de poder tocarlo. */
+  @media (min-height: 37rem) {
+    .vivi-hero {
+      position: sticky;
+      top: 0;
+    }
+  }
+  .vivi-marco {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: max(calc(100svh - 1rem), 36rem);
+    overflow: clip;
+    border-radius: var(--radius-hoja);
+    /* El cielo, mientras llega la foto: sin destello blanco y con el título legible. */
+    background: #9fc2e6;
+  }
+
+  .casa {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    container-type: size;
+    /* Celu y tablet: la casa grande, apoyada abajo y centrada. */
+    --zoom: 1.36;
+    --fx: 0.5;
+    --fy: 1;
+    --techo: var(--techo-centro);
+    --hundido: 0.035em;
+  }
+  /* Las medidas usan unidades del contenedor (.casa): se resuelven en los hijos. */
+  .casa > * {
+    --ancho: calc(max(100cqw, 100cqh * 1672 / 941) * var(--zoom));
+    --alto: calc(var(--ancho) * 941 / 1672);
+    --s: calc(var(--alto) / 941);
+    --x: calc((100cqw - var(--ancho)) * var(--fx));
+    --y: calc((100cqh - var(--alto)) * var(--fy));
+  }
+  .casa-foto {
+    position: absolute;
+    top: var(--y);
+    left: var(--x);
+    width: var(--ancho);
+    height: var(--alto);
+  }
+  .casa-foto img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .vivi-titulo {
+    position: absolute;
+    inset-inline: 1rem;
+    bottom: calc(100cqh - var(--y) - var(--s) * var(--techo) - var(--hundido));
+    margin: 0;
+    color: var(--color-tinta);
+    line-height: 0.8;
+    text-align: center;
+    /* Lo que mide "BOLÍVAR" en em: el título ocupa el ancho sin pasarse. */
+    --em-bolivar: 5.1;
+    font-size: clamp(2.75rem, min(calc((100cqw - 2rem) / var(--em-bolivar)), 18cqh), 7.5rem);
+  }
+  .vivi-titulo > span {
+    display: block;
+    /* La caja va de la altura de las mayúsculas a la línea de base: el techo tapa la base. */
+    text-box: trim-both cap alphabetic;
+  }
+  .vivi-titulo .vivi {
+    margin-bottom: 1.06em;
+    padding-left: 0.2em;
+    font-size: 0.34em;
+    letter-spacing: 0.2em;
+  }
+
+  /* Escritorio: la casa entera a la derecha y el título a la izquierda, con la R contra la
+     punta del techo. */
+  @media (min-width: 64rem) {
+    .casa {
+      --zoom: 1;
+      --fy: 0.5;
+      --techo: var(--techo-ancla);
+      --hundido: 0.28em;
+    }
+    .vivi-titulo {
+      inset-inline: auto;
+      right: calc(100cqw - var(--x) - var(--s) * var(--ancla-x));
+      text-align: left;
+      font-size: clamp(
+        6rem,
+        min(15cqw, 27cqh, calc((var(--x) + var(--s) * var(--ancla-x) - 2rem) / var(--em-bolivar))),
+        18rem
+      );
+    }
+  }
+
+  /* De noche (el modo del celular): la foto la elige el <picture>; acá, el título y el cielo. */
+  @media (prefers-color-scheme: dark) {
+    .vivi-marco {
+      background: #0c2560;
+    }
+    .vivi-titulo {
+      color: var(--color-blanco);
+    }
+  }
+
+  /* Pestañas invertidas: color papel, pegadas al borde de arriba de la foto, con una muesca
+     cóncava a cada costado. */
+  .pestana {
+    --muesca: 0.875rem;
+    position: relative;
+    background: var(--color-papel);
+    border-radius: 0 0 var(--radius-tarjeta) var(--radius-tarjeta);
+  }
+  .pestana::before,
+  .pestana::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: var(--muesca);
+    height: var(--muesca);
+    pointer-events: none;
+  }
+  .pestana::before {
+    right: 100%;
+    background: radial-gradient(
+      circle at 0 100%,
+      transparent calc(var(--muesca) - 0.5px),
+      var(--color-papel) var(--muesca)
+    );
+  }
+  .pestana::after {
+    left: 100%;
+    background: radial-gradient(
+      circle at 100% 100%,
+      transparent calc(var(--muesca) - 0.5px),
+      var(--color-papel) var(--muesca)
+    );
+  }
+
+  /* La hoja: el resto del inicio sube por encima de la foto al scrollear. */
+  .hoja {
+    position: relative;
+    z-index: 10;
+    background: var(--color-papel);
+    border-radius: var(--radius-hoja) var(--radius-hoja) 0 0;
+    box-shadow: 0 -28px 70px rgb(23 33 28 / 0.16);
+  }
 }

@@ -254,13 +254,13 @@ letra es la misma en todos los anchos. El scroll se resuelve con `sticky` y `ani
 ## Tareas
 
 **Bloque 0 — Spec y documentos** · commit "Spec vivi-bolivar: el hero de antes con nuestro filtro"
-- [ ] Esta spec, `descartado.md`, `CLAUDE.md`, `PRODUCT.md`, `identidad-visual`, `DESIGN.md`, `ROADMAP.md`.
+- [x] Esta spec, `descartado.md`, `CLAUDE.md`, `PRODUCT.md`, `identidad-visual`, `DESIGN.md`, `ROADMAP.md`.
 
 **Bloque 1 — El hero** · commit "Inicio: la casa de día y de noche con VIVÍ BOLÍVAR"
-- [ ] `casa.test.ts` → `casa.ts`.
-- [ ] Fotos, `hero.tsx`, `pestanas.tsx`, `filtro.tsx`, CSS, `page.tsx`, Open Graph, `CREDITOS.md`.
-- [ ] E2E del hero; capturas a 360, 390, 412, 768 y 1280, de día y de noche; contraste medido.
-- [ ] Gates + `pnpm e2e`.
+- [x] `casa.test.ts` → `casa.ts`.
+- [x] Fotos, `hero.tsx`, `pestanas.tsx`, `filtro.tsx`, CSS, `page.tsx`, Open Graph, `CREDITOS.md`.
+- [x] E2E del hero; capturas a 360, 390, 412, 768 y 1280, de día y de noche; contraste medido.
+- [x] Gates + `pnpm e2e`.
 
 **Bloque 2 — La hoja y la frase** · commit "Inicio: la hoja sube y la frase cuenta qué es esto"
 - [ ] `fraseDelPortal` (test primero), Instrument Serif, `frase.tsx`, barra fija.
@@ -281,4 +281,18 @@ letra es la misma en todos los anchos. El scroll se resuelve con `sticky` y `ani
 
 ## Lo que se encontró al implementar
 
-_(se completa al ejecutar)_
+- **El techo tapa igual en todos los tamaños** (medido con Playwright de 360 × 640 a
+  1920 × 1080, de día y de noche): R 33–35 %, A 21–24 %, V 10–12 %, B, O y L nada. El título se
+  apoya en el techo (`techoEn`), no en un % del marco.
+- **Una sola descarga**: las dos copias de la foto (la de fondo y la del recorte) piden la
+  misma URL; el e2e lo verifica escuchando la red.
+- **El `<picture>` cambia de foto en vivo** al pasar el celular a modo oscuro (visto con la
+  emulación de Playwright), sin recargar.
+- **Contraste del título contra el cielo** (`scripts/contraste-sobre-foto.mjs`, percentil 1):
+  de día 6,9–9,6 y de noche 9,8–11,4. Pide 3 (texto grande): pasa holgado, sin sombras.
+- **El filtro**: Comprar y Alquilar lado a lado no entraban con el número y la flecha en la
+  misma línea ("C…"); el número pasó abajo del nombre ("22 en venta") y la flecha quedó solo
+  en Alquiler temporario. En escritorio, la tercera columna es un 30 % más ancha para que
+  entre "Alquiler temporario".
+- **Sin entrada animada**: el borrador la tenía, pero el invariante acordado no suma entradas
+  animadas; el hero aparece quieto.
