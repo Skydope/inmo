@@ -196,13 +196,13 @@
   border: 2px solid rgba(26, 26, 26, 0.4);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
-.map-pin.is-house .map-pin-badge {
+.map-pin.is-casa .map-pin-badge {
   background: var(--color-trigo);
 }
-.map-pin.is-apartment .map-pin-badge {
+.map-pin.is-departamento .map-pin-badge {
   background: #6ea8d8;
 }
-.map-pin.is-lot .map-pin-badge {
+.map-pin.is-terreno .map-pin-badge {
   background: #6fbf7a;
 }
 .map-pin.is-selected .map-pin-badge {

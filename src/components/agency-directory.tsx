@@ -12,7 +12,7 @@ export type AgencyListing = {
   id: string
   title: string
   coverUrl: string
-  price: number
+  price: number | null
   currency: Currency
 }
 

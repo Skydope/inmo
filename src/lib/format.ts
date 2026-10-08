@@ -1,25 +1,23 @@
-import type { Currency, Operation, PropertyType } from "@/lib/properties/types"
+import type { Currency, Property } from "@/lib/properties/types"
 
-export function formatPrice(price: number, currency: Currency): string {
-  const formatted = new Intl.NumberFormat("es-AR", {
-    maximumFractionDigits: 0,
-  }).format(price)
+const numero = new Intl.NumberFormat("es-AR", { maximumFractionDigits: 0 })
+
+/** "US$ 120.000", "$ 450.000"; sin precio, "Consultar precio". Nunca convierte monedas. */
+export function formatPrice(price: number | null, currency: Currency): string {
+  if (price === null) return "Consultar precio"
+  const formatted = numero.format(price)
   return currency === "USD" ? `US$ ${formatted}` : `$ ${formatted}`
 }
 
-export function operationLabel(op: Operation): string {
-  if (op === "sale") return "Venta"
-  if (op === "rent") return "Alquiler"
-  return "Temporaria"
-}
-
-export function formatPriceCompact(price: number, currency: Currency): string {
+/** Para los pines del mapa: "US$150k", "$45M"; sin precio, "Consultar". */
+export function formatPriceCompact(price: number | null, currency: Currency): string {
+  if (price === null) return "Consultar"
   const body =
     price >= 1_000_000
       ? `${trimNum(price / 1_000_000)}M`
       : price >= 1_000
         ? `${trimNum(price / 1_000)}k`
-        : new Intl.NumberFormat("es-AR", { maximumFractionDigits: 0 }).format(price)
+        : numero.format(price)
   return currency === "USD" ? `US$${body}` : `$${body}`
 }
 
@@ -28,21 +26,11 @@ function trimNum(n: number): string {
   return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1)
 }
 
-export function typeLabel(type: PropertyType): string {
-  switch (type) {
-    case "house":
-      return "Casa"
-    case "apartment":
-      return "Depto"
-    case "ph":
-      return "PH"
-    case "lot":
-      return "Lote"
-    case "commercial":
-      return "Local"
-    case "rural":
-      return "Campo"
-    case "vacational_house":
-      return "Quinta"
-  }
+/** La superficie principal: hectáreas en campos; si no, la total o la cubierta. */
+export function formatArea(
+  p: Pick<Property, "areaHa" | "areaTotalM2" | "areaCoveredM2">
+): string | null {
+  if (p.areaHa) return `${numero.format(p.areaHa)} ha`
+  const m2 = p.areaTotalM2 ?? p.areaCoveredM2
+  return m2 ? `${numero.format(m2)} m²` : null
 }

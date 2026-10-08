@@ -136,7 +136,7 @@ function Celular({
       <article className="overflow-hidden rounded-tarjeta border border-linea bg-blanco">
         <div className="relative aspect-[4/3] bg-papel">
           <Image
-            src="/images/properties/house-2.jpg"
+            src="/images/properties/house-2.webp"
             alt="Casa de ejemplo"
             fill
             sizes="360px"

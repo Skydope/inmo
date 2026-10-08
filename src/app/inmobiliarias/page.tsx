@@ -13,22 +13,22 @@ export const metadata: Metadata = {
 
 export default async function AgenciesPage() {
   const properties = await getProperties()
-  const agencies = Object.entries(SEED_AGENCIES).map(([id, agency]) => {
+  const agencies = Object.values(SEED_AGENCIES).map((agency) => {
     const listings = properties
-      .filter((p) => p.agency.name === agency.name)
+      .filter((p) => p.agency.id === agency.id)
       .sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)))
     const contact = contactLinkFor(agency)
     return {
-      id,
+      id: agency.id,
       name: agency.name,
       logoUrl: agency.logoUrl,
       address: agency.address,
-      sale: listings.filter((p) => p.operation === "sale").length,
-      rent: listings.filter((p) => p.operation === "rent").length,
-      listings: listings.map((p) => ({
+      sale: listings.filter((p) => p.operation === "venta").length,
+      rent: listings.filter((p) => p.operation !== "venta").length,
+      listings: listings.filter((p) => p.photos.length > 0).map((p) => ({
         id: p.id,
         title: p.title,
-        coverUrl: p.coverUrl,
+        coverUrl: p.photos[0],
         price: p.price,
         currency: p.currency,
       })),

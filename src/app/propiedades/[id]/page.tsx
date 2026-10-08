@@ -2,13 +2,14 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ChevronLeft, Mail, MessageCircle, Phone } from "lucide-react"
-import { CoverImage } from "@/components/cover-image"
+import { FotoPropiedad } from "@/components/busqueda/foto-propiedad"
 import { Header } from "@/components/shell/header"
 import { Pie } from "@/components/shell/pie"
 import { buttonVariants } from "@/components/ui/button"
 import { EtiquetaOperacion } from "@/components/ui/etiqueta-operacion"
 import { contactLinkFor } from "@/lib/contact"
-import { formatPrice, operationLabel, typeLabel } from "@/lib/format"
+import { etiquetaOperacion, etiquetaTipo, nombreZona } from "@/lib/busqueda"
+import { formatArea, formatPrice } from "@/lib/format"
 import { getProperties, getPropertyById } from "@/lib/properties/adapter"
 
 /*
@@ -31,10 +32,10 @@ export async function generateMetadata({
   if (!property) return { title: "Propiedad no encontrada", robots: { index: false } }
   return {
     title: property.title,
-    description: `${operationLabel(property.operation)} · ${typeLabel(property.type)} en ${property.address} — ${formatPrice(property.price, property.currency)}.`,
-    openGraph: {
-      images: [{ url: property.coverUrl, width: 1200, height: 675, alt: property.title }],
-    },
+    description: `${etiquetaOperacion(property.operation)} · ${etiquetaTipo(property.type)} en ${nombreZona(property.zone)} — ${formatPrice(property.price, property.currency)}.`,
+    openGraph: property.photos[0]
+      ? { images: [{ url: property.photos[0], width: 1200, height: 670, alt: property.title }] }
+      : undefined,
   }
 }
 
@@ -52,9 +53,9 @@ export default async function PropertyDetailPage({
   const contact = contactLinkFor(property.agency)
   const IconoContacto = ICONO_CONTACTO[contact.kind]
   const datos = [
-    property.areaM2 > 0 ? `${property.areaM2} m²` : null,
-    property.beds > 0 ? `${property.beds} dorm.` : null,
-    property.baths > 0 ? `${property.baths} baños` : null,
+    formatArea(property),
+    property.beds ? `${property.beds} dorm.` : null,
+    property.baths ? `${property.baths} baños` : null,
   ].filter(Boolean)
 
   return (
@@ -68,15 +69,18 @@ export default async function PropertyDetailPage({
           <ChevronLeft className="size-4" aria-hidden="true" /> Volver
         </Link>
         <div className="relative overflow-hidden rounded-tarjeta bg-papel">
-          <CoverImage src={property.coverUrl} alt={property.title} className="aspect-[4/3] w-full object-cover" />
-          <EtiquetaOperacion className="absolute top-3 left-3">{operationLabel(property.operation)}</EtiquetaOperacion>
+          <FotoPropiedad src={property.photos[0]} tipo={property.type} alt={property.title} className="aspect-[4/3] w-full" />
+          <EtiquetaOperacion className="absolute top-3 left-3">{etiquetaOperacion(property.operation)}</EtiquetaOperacion>
         </div>
         <div className="flex flex-col gap-1">
           <p className="text-[1.875rem] leading-none font-titulo tabular-nums">
             {formatPrice(property.price, property.currency)}
           </p>
           <h1 className="mt-1 text-xl font-titulo">{property.title}</h1>
-          <p className="text-tinta-suave">{property.address}</p>
+          <p className="text-tinta-suave">
+            {property.showAddress ? `${property.address} · ` : ""}
+            {nombreZona(property.zone)}
+          </p>
           {datos.length > 0 ? <p className="text-sm">{datos.join(" · ")}</p> : null}
         </div>
         {property.description ? (

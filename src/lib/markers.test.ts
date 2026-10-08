@@ -35,12 +35,12 @@ describe("markerReducer", () => {
   it("keeps MapLibre classes when a pin opens", () => {
     expect(
       markerElementClass(
-        "map-pin is-house maplibregl-marker maplibregl-marker-anchor-bottom",
-        "house",
+        "map-pin is-casa maplibregl-marker maplibregl-marker-anchor-bottom",
+        "casa",
         true,
         true,
       ),
-    ).toBe("map-pin is-house is-selected is-open maplibregl-marker maplibregl-marker-anchor-bottom")
+    ).toBe("map-pin is-casa is-selected is-open maplibregl-marker maplibregl-marker-anchor-bottom")
   })
 
   it("hover-card highlights without forcing expand", () => {
