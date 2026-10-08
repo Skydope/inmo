@@ -1,9 +1,20 @@
 import type { Metadata, Viewport } from "next"
-import { Archivo_Black, Instrument_Serif, Manrope } from "next/font/google"
+import { Archivo_Black, Encode_Sans, Instrument_Serif, Manrope } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import { brandName } from "@/lib/brand"
 import { siteUrl } from "@/lib/site"
 import "./globals.css"
+
+/*
+ * La voz de Bolívar Inmo: Encode Sans (Impallari Type, Argentina), una sola familia
+ * variable en peso y en ancho. Semi condensada y pesada para precios y preguntas (el
+ * cartel de VENDE); ancho normal para el texto.
+ */
+const encode = Encode_Sans({
+  variable: "--font-encode-sans",
+  subsets: ["latin"],
+  axes: ["wdth"],
+})
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -68,7 +79,7 @@ export default function RootLayout({
     <html
       lang="es-AR"
       suppressHydrationWarning
-      className={`${manrope.variable} ${archivo.variable} ${instrument.variable} h-full antialiased`}
+      className={`${encode.variable} ${manrope.variable} ${archivo.variable} ${instrument.variable} h-full antialiased`}
     >
       <body className="page-atmosphere min-h-full flex flex-col text-fg">
         <ThemeProvider>{children}</ThemeProvider>
