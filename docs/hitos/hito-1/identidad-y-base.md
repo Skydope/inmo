@@ -312,17 +312,17 @@ muestra a Manuel **antes** de la limpieza, para que elija paleta con algo andand
 - [x] Gates en verde.
 
 **Bloque 5 — Limpieza y andamios** · commit "Se retira el front de Inmu: andamios con el shell nuevo"
-- [ ] Andamios de `/`, `/propiedades`, `/propiedades/[id]` con el shell nuevo.
-- [ ] Shell + lucide + tokens en `/inmobiliarias`, `agency-directory`, `/ingresar`, `/cuenta`, `/publicar`.
-- [ ] Borrar los componentes, clases CSS, fuentes y el `@theme` viejos de la lista; `pnpm remove @phosphor-icons/react`.
-- [ ] `grep -rni "inmu\|phosphor\|glass\|archivo_black\|instrument" src` sin resultados.
-- [ ] Todas las rutas responden (e2e de humo ampliado a las siete rutas).
-- [ ] Gates en verde + `pnpm e2e`.
+- [x] Andamios de `/`, `/propiedades`, `/propiedades/[id]` con el shell nuevo.
+- [x] Shell + lucide + tokens en `/inmobiliarias`, `agency-directory`, `/ingresar`, `/cuenta`, `/publicar`.
+- [x] Borrar los componentes, clases CSS, fuentes y el `@theme` viejos de la lista; `pnpm remove @phosphor-icons/react`.
+- [x] `grep -rni "inmu\|phosphor\|glass\|archivo_black\|instrument" src` sin resultados.
+- [x] Todas las rutas responden (e2e de humo ampliado a las siete rutas).
+- [x] Gates en verde + `pnpm e2e` (lint en 0 errores; queda 1 advertencia del mapa, que reescribe `resultados`).
 
 **Bloque 6 — Documentos de identidad** · commit "DESIGN, PRODUCT y skill identidad-visual de Bolívar Inmo"
-- [ ] `.claude/skills/identidad-visual/SKILL.md` con lo aprobado.
-- [ ] `DESIGN.md` y `PRODUCT.md` reescritos; `README.md` al día.
-- [ ] `docs/FICHA.md`: grafía de la marca confirmada.
+- [x] `.claude/skills/identidad-visual/SKILL.md` con lo aprobado.
+- [x] `DESIGN.md` y `PRODUCT.md` reescritos; `README.md` al día.
+- [x] `docs/FICHA.md`: grafía de la marca confirmada.
 
 **Cierre**
 - [ ] `/cerrar identidad-y-base`.
@@ -358,3 +358,12 @@ muestra a Manuel **antes** de la limpieza, para que elija paleta con algo andand
 10. **Detector de Impeccable sobre `/muestra`**: tarjetas anidadas (el marco de celular, a
     propósito), fondo crema (el `body` viejo: se va en el bloque 5) y el botón deshabilitado
     (exceptuado por WCAG).
+11. **Las clases `dark:` de shadcn** se activaban con el modo oscuro del sistema al borrar la
+    variante vieja (en Tailwind 4, `dark:` es `prefers-color-scheme` por defecto). Quedaron
+    atadas a una clase `.dark` que nunca se pone.
+12. **El `input` de shadcn medía 32 px con letra de 14 px** (iOS hace zoom al tocar un campo de
+    menos de 16 px): pasó a 44 px y 16 px.
+13. **La pantalla de ingreso conserva su foto y su composición** (compromiso de marca en
+    `PRODUCT.md`); por eso `public/images/hero/hero-day.jpg` se queda.
+14. Los tests de Vitest bajaron de 37 a 32: se fueron los de `count-up` y `landing-nav` junto
+    con sus componentes.

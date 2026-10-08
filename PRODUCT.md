@@ -10,13 +10,13 @@ web
 
 Quien busca una propiedad en San Carlos de Bolívar (venta, alquiler o temporal) entra sin cuenta, elige un aviso y contacta a la inmobiliaria.
 
-La inmobiliaria entra con Google. Publicar no viene con la cuenta: el equipo de Inmu la asigna a mano a una inmobiliaria. Hasta entonces la cuenta existe y no puede cargar avisos.
+La inmobiliaria entra con Google. Publicar no viene con la cuenta: el equipo de Bolívar Inmo la asigna a mano a una inmobiliaria. Hasta entonces la cuenta existe y no puede cargar avisos.
 
 El particular que publica en nombre propio queda para después, sin pantalla ni flujo propio ahora.
 
 ## Product Purpose
 
-Inmu es el portal local de San Carlos de Bolívar. Conecta venta y alquiler con mapa, filtros y el catálogo de las inmobiliarias de la ciudad. Quien busca elige el aviso; la inmobiliaria cierra el trato.
+Bolívar Inmo (`bolivarinmo.com.ar`) es el portal local de San Carlos de Bolívar. Reúne las propiedades en venta y alquiler de las inmobiliarias de la ciudad y su partido. Quien busca contesta unas pocas preguntas (¿comprar o alquilar?, tipo, zona, algo más), recorre los resultados deslizando o en el mapa y consulta por WhatsApp; la inmobiliaria cierra el trato.
 
 ## Positioning
 
@@ -26,7 +26,7 @@ El catálogo es de una sola ciudad y las inmobiliarias locales son quienes publi
 
 La exploración (inicio, mapa, ficha, directorio de inmobiliarias) es pública. El ingreso es solo para quien va a publicar o administrar.
 
-El equipo de Inmu habilita cuentas desde un panel: vincula una cuenta de Google a una inmobiliaria. Los avisos de hoy en el front son datos de prueba; el backend del proyecto Supabase Inmo (`hkojikwadtngrxtaumrg`) está en otra organización, no en MatiasDev.
+El equipo de Bolívar Inmo habilita cuentas desde un panel: vincula una cuenta de Google a una inmobiliaria. Los avisos de hoy en el front son datos de prueba; el backend del proyecto Supabase Inmo (`hkojikwadtngrxtaumrg`) está en otra organización, no en MatiasDev.
 
 ## Capabilities and Constraints
 
@@ -38,7 +38,7 @@ El equipo de Inmu habilita cuentas desde un panel: vincula una cuenta de Google 
 
 ## Brand Commitments
 
-El nombre público es Inmu. La constante `brandName` en `src/lib/brand.ts` dice Inmu.
+El nombre público es **Bolívar Inmo** (confirmado por Manuel el 2026-10-08); el logotipo dice "bolívar inmo" en minúscula, como el dominio `bolivarinmo.com.ar`. La constante `brandName` en `src/lib/brand.ts` dice Bolívar Inmo. La identidad visual ("el cartel y el plano", azul plano) está en la skill `identidad-visual` y en `DESIGN.md`.
 
 La pantalla de ingreso sigue la composición de referencia que pasó el equipo: panel de acceso a la izquierda y panel visual a la derecha, con un solo medio de entrada (Google).
 
@@ -54,4 +54,6 @@ La pantalla de ingreso sigue la composición de referencia que pasó el equipo: 
 - Entrar con Google no es lo mismo que poder publicar.
 - Una sola puerta de cuenta, y el permiso lo da el equipo.
 - El particular se deja preparado en el modelo, sin producto visible todavía.
-- El alcance es San Carlos de Bolívar.
+- El alcance es San Carlos de Bolívar y su partido.
+- Mobile primero: una pregunta por pantalla, opciones grandes, el conteo siempre a la vista.
+- Claro antes que vistoso: sin fondos recargados ni animaciones llamativas.
