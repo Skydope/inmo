@@ -20,7 +20,7 @@ function Casa({ recorte = false }: { recorte?: boolean }) {
     width: FOTO_DE_LA_CASA.ancho,
     height: FOTO_DE_LA_CASA.alto,
     sizes: SIZES,
-    quality: 55,
+    quality: 80,
   }
   return (
     <span

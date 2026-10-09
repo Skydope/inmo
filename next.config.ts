@@ -9,9 +9,8 @@ const nextConfig: NextConfig = {
   images: {
     // AVIF primero: la casa del hero del inicio es el LCP y pesa la mitad que en WebP.
     formats: ["image/avif", "image/webp"],
-    // Next 16 exige declarar las calidades. 55: la casa del hero (una foto grande, sin texto
-    // chico encima); 75: el resto.
-    qualities: [55, 75],
+    // Next 16 exige declarar las calidades permitidas.
+    qualities: [55, 75, 80, 85, 95],
   },
   async headers() {
     return [
