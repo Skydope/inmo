@@ -156,7 +156,9 @@ export function PanelDelMapa({
               />
               <li className="min-w-0 flex-1">
                 <div
-                  ref={pista}
+                  ref={(node) => {
+                    pista.current = node
+                  }}
                   className="tira-scroll flex h-full items-stretch gap-3 overflow-x-auto py-1"
                 >
                   {resto.map((t) => (
@@ -176,7 +178,9 @@ export function PanelDelMapa({
             </ul>
           ) : (
             <ul
-              ref={pista}
+              ref={(node) => {
+                pista.current = node
+              }}
               aria-label="Propiedades"
               className="tira-scroll -mx-1 flex min-w-0 flex-1 items-stretch gap-3 overflow-x-auto px-1 py-1"
             >
