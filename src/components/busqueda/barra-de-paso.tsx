@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ChevronLeft } from "lucide-react"
+import { CaretLeft } from "@/components/iconos"
 import {
   PASOS,
   etiquetaTipo,
@@ -38,7 +38,7 @@ export function BarraDePaso({ paso, busqueda }: { paso: PasoEnBuscar; busqueda: 
           aria-label="Volver al paso anterior"
           className="grid size-11 shrink-0 place-items-center rounded-control text-tinta hover:bg-papel"
         >
-          <ChevronLeft className="size-6" aria-hidden="true" />
+          <CaretLeft className="size-6" aria-hidden="true" />
         </Link>
         <p className="min-w-0 flex-1 truncate font-semibold">{resumen}</p>
         <p className="shrink-0 text-sm text-tinta-suave tabular-nums">

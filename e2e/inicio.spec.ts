@@ -31,33 +31,38 @@ test.describe("inicio: ¿Qué estás buscando?", () => {
 
 test.describe("inicio: la casa de día y de noche", () => {
   const fotoDelHero = (page: import("@playwright/test").Page) =>
-    page.locator(".casa-foto img").first().evaluate((img: HTMLImageElement) => img.currentSrc)
+    page.locator(".casa-foto").first().evaluate((el) => {
+      const imgs = [...el.querySelectorAll("img")] as HTMLImageElement[]
+      const visible = imgs.find((img) => getComputedStyle(img).opacity !== "0") ?? imgs[0]
+      return visible?.currentSrc ?? ""
+    })
 
   test("de día, la casa de día y el título en tinta", async ({ page }) => {
     await page.goto("/")
     await expect.poll(() => fotoDelHero(page)).toContain("casa-dia")
-    await expect(page.getByRole("heading", { level: 1 })).toHaveCSS("color", "rgb(23, 33, 28)")
+    await expect(page.getByRole("heading", { level: 1 })).toHaveCSS("color", "rgb(26, 26, 26)")
   })
 
-  test("con el celular en modo oscuro, la casa de noche y el título blanco", async ({ browser }) => {
+  test("con el sistema en oscuro, la casa de noche y el título en tinta clara", async ({ browser }) => {
     const contexto = await browser.newContext({ colorScheme: "dark" })
     const page = await contexto.newPage()
     await page.goto("/")
     await expect.poll(() => fotoDelHero(page)).toContain("casa-noche")
-    await expect(page.getByRole("heading", { level: 1 })).toHaveCSS("color", "rgb(255, 255, 255)")
+    await expect(page.getByRole("heading", { level: 1 })).toHaveCSS("color", "rgb(243, 239, 230)")
     await contexto.close()
   })
 
-  test("baja una sola foto del hero, aunque se use dos veces (el recorte del techo)", async ({ page }) => {
+  test("el hero pide la foto de día y la de noche, para cambiar sin recargar", async ({ page }) => {
     const pedidas = new Set<string>()
     page.on("response", (r) => {
       if (/casa-(dia|noche)/.test(r.url())) pedidas.add(r.url())
     })
     await page.goto("/")
-    await expect(page.locator(".casa-foto img")).toHaveCount(2)
+    await expect(page.locator(".casa-foto img")).toHaveCount(4)
     await page.waitForLoadState("networkidle")
-    expect([...pedidas]).toHaveLength(1)
-    expect([...pedidas][0]).toContain("casa-dia")
+    const urls = [...pedidas]
+    expect(urls.some((u) => u.includes("casa-dia"))).toBe(true)
+    expect(urls.some((u) => u.includes("casa-noche"))).toBe(true)
   })
 
   test("el techo tapa la base de la R y deja la B libre", async ({ page }) => {

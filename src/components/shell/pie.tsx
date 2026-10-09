@@ -46,12 +46,12 @@ const COLUMNAS = [
 ]
 
 /**
- * El pie de todo el sitio: oscuro (fondo tinta), cierra la página. Texto secundario en
- * `niebla` (7,49 sobre tinta, medido). Spec: docs/hitos/hito-1/inicio-y-pie.md.
+ * El pie de todo el sitio: siempre oscuro (`noche`), también de día. No usa `tinta`
+ * porque de noche ese token pasa a claro. Spec: docs/hitos/hito-1/inicio-y-pie.md.
  */
 export function Pie({ inicio = false }: { inicio?: boolean }) {
   return (
-    <footer className="mt-auto bg-tinta text-blanco">
+    <footer className="mt-auto bg-noche text-sobre-noche">
       {/* Solo en el inicio: la invitación, en la voz del inicio. */}
       {inicio ? (
         <div className="mx-auto max-w-6xl px-4 pt-12 md:pt-16">
@@ -61,13 +61,13 @@ export function Pie({ inicio = false }: { inicio?: boolean }) {
           <div className="mt-5 flex flex-wrap gap-2">
             <Link
               href={buscar("venta")}
-              className="inline-flex min-h-11 items-center rounded-full bg-blanco px-5 font-semibold text-tinta transition-colors hover:bg-papel"
+              className="inline-flex min-h-11 items-center rounded-full bg-sobre-noche px-5 font-semibold text-noche transition-opacity hover:opacity-90"
             >
               Quiero comprar
             </Link>
             <Link
               href={buscar("alquiler")}
-              className="inline-flex min-h-11 items-center rounded-full border border-blanco/40 px-5 font-semibold text-blanco transition-colors hover:border-blanco"
+              className="inline-flex min-h-11 items-center rounded-full border border-sobre-noche/40 px-5 font-semibold text-sobre-noche transition-colors hover:border-sobre-noche"
             >
               Quiero alquilar
             </Link>
@@ -89,7 +89,7 @@ export function Pie({ inicio = false }: { inicio?: boolean }) {
         </div>
         {COLUMNAS.map((columna) => (
           <nav key={columna.id} aria-labelledby={columna.id} className="flex flex-col">
-            <h2 id={columna.id} className="pb-1 text-sm font-semibold tracking-wide text-blanco">
+            <h2 id={columna.id} className="pb-1 text-sm font-semibold tracking-wide text-sobre-noche">
               {columna.titulo}
             </h2>
             <ul>
@@ -97,7 +97,7 @@ export function Pie({ inicio = false }: { inicio?: boolean }) {
                 <li key={enlace.href}>
                   <Link
                     href={enlace.href}
-                    className="inline-flex min-h-11 items-center text-niebla transition-colors hover:text-blanco"
+                    className="inline-flex min-h-11 items-center text-niebla transition-colors hover:text-sobre-noche"
                   >
                     {enlace.texto}
                   </Link>
@@ -112,20 +112,20 @@ export function Pie({ inicio = false }: { inicio?: boolean }) {
         {inicio ? <PlanoDeBolivar className="absolute inset-0" /> : null}
         <p
           aria-hidden="true"
-          className="relative mx-auto max-w-6xl px-4 pb-6 font-display text-[clamp(3.25rem,calc((100vw-2rem)/5.1),7rem)] leading-[0.82] md:text-[clamp(4rem,calc((100vw-4rem)/8.6),9.5rem)]"
+          className="relative mx-auto max-w-6xl px-4 pb-6 font-display text-[clamp(3.25rem,calc((100vw-2rem)/4.8),7rem)] leading-[0.82] md:text-[clamp(4rem,calc((100vw-4rem)/7.37),9.5rem)]"
         >
           <span className="block md:inline">Viví </span>
           <span className="block md:inline">Bolívar</span>
         </p>
       </div>
-      <div className="border-t border-blanco/15">
+      <div className="border-t border-sobre-noche/15">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] text-sm text-niebla md:flex-row md:justify-between md:gap-8">
           <div className="flex flex-col">
             <p>© 2026 {brandName} · San Carlos de Bolívar, Buenos Aires</p>
             {inicio ? (
               <a
                 href="https://www.openstreetmap.org/copyright"
-                className="inline-flex min-h-11 w-fit items-center underline-offset-4 hover:text-blanco hover:underline"
+                className="inline-flex min-h-11 w-fit items-center underline-offset-4 hover:text-sobre-noche hover:underline"
               >
                 Plano: © colaboradores de OpenStreetMap
               </a>

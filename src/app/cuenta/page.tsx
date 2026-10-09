@@ -7,13 +7,23 @@ import { buttonVariants } from "@/components/ui/button"
 import { brandName } from "@/lib/brand"
 import { createClient } from "@/lib/supabase/server"
 import { signOut } from "@/app/ingresar/actions"
+import { Bienvenida, CuentaLista, CuentaVacia } from "./bienvenida"
 
 export const metadata: Metadata = {
   title: "Tu cuenta",
   description: `Estado de tu cuenta en ${brandName}.`,
 }
 
-export default async function CuentaPage() {
+export default async function CuentaPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ como?: string }>
+}) {
+  const { como } = await searchParams
+  if (como === "primera") return <Bienvenida />
+  if (como === "vacio") return <CuentaVacia />
+  if (como === "lista") return <CuentaLista />
+
   const supabase = await createClient()
   if (!supabase) redirect("/ingresar")
 

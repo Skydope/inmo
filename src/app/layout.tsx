@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next"
-import { Encode_Sans, Instrument_Serif } from "next/font/google"
+import { Archivo_Black, Encode_Sans, Instrument_Serif } from "next/font/google"
+import { MarcaDeHistorial } from "@/components/shell/marca-de-historial"
+import { ThemeProvider } from "@/components/theme-provider"
 import { brandName } from "@/lib/brand"
 import { siteUrl } from "@/lib/site"
 import "./globals.css"
@@ -20,6 +22,14 @@ const encode = Encode_Sans({
  * (spec vivi-bolivar). Sin precarga: el navegador la baja recién cuando algo la usa, abajo del
  * pliegue, y no compite con la foto del hero.
  */
+/** VIVÍ BOLÍVAR: la B cerrada de cartel. No se usa en el resto de la interfaz. */
+const archivo = Archivo_Black({
+  variable: "--font-archivo",
+  weight: "400",
+  subsets: ["latin"],
+  preload: false,
+})
+
 const voz = Instrument_Serif({
   variable: "--font-instrument",
   weight: "400",
@@ -68,8 +78,27 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es-AR" className={`${encode.variable} ${voz.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col">{children}</body>
+    <html
+      lang="es-AR"
+      suppressHydrationWarning
+      className={`${encode.variable} ${archivo.variable} ${voz.variable} h-full antialiased`}
+    >
+      <body className="flex min-h-full flex-col">
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem("tema");var o=t==="dark"||(t!=="light"&&matchMedia("(prefers-color-scheme: dark)").matches);if(o)document.documentElement.classList.add("dark");document.documentElement.style.colorScheme=o?"dark":"light"}catch(e){}`,
+          }}
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var f=/^\\/propiedades\\/[^/]+$/.test(location.pathname);if(f)sessionStorage.removeItem("inmo-volver");else sessionStorage.setItem("inmo-volver","1")}catch(e){}`,
+          }}
+        />
+        <ThemeProvider>
+          <MarcaDeHistorial />
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   )
 }

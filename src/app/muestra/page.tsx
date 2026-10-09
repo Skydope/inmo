@@ -2,16 +2,16 @@ import type { Metadata } from "next"
 import Image from "next/image"
 import { notFound } from "next/navigation"
 import {
-  Bath,
-  BedDouble,
+  Bathtub,
+  Bed,
   Building2,
-  ChevronRight,
+  CaretRight,
   House,
-  KeyRound,
+  Key,
   LandPlot,
   Ruler,
   Trees,
-} from "lucide-react"
+} from "@/components/iconos"
 import { Header } from "@/components/shell/header"
 import { Pie } from "@/components/shell/pie"
 import { Button } from "@/components/ui/button"
@@ -30,12 +30,12 @@ export const metadata: Metadata = {
 }
 
 const COLORES = [
-  { token: "papel", hex: "#f7f8f6", nota: "fondo" },
-  { token: "blanco", hex: "#ffffff", nota: "superficies" },
-  { token: "tinta", hex: "#17211c", nota: "texto · 15,5" },
-  { token: "tinta-suave", hex: "#56635c", nota: "texto secundario · 5,9" },
-  { token: "linea", hex: "#dfe4e0", nota: "bordes" },
-  { token: "trigo", hex: "#e3b04b", nota: "destacada" },
+  { token: "papel", hex: "#efe8dc", nota: "fondo" },
+  { token: "blanco", hex: "#f7f2ea", nota: "superficies" },
+  { token: "tinta", hex: "#1a1a1a", nota: "texto" },
+  { token: "tinta-suave", hex: "#6e675e", nota: "texto secundario" },
+  { token: "linea", hex: "#e4dcd0", nota: "bordes" },
+  { token: "trigo", hex: "#c4a574", nota: "oro" },
 ]
 
 function Celular({
@@ -73,7 +73,7 @@ function Celular({
 
           <div className="flex flex-col gap-3">
             {[
-              { icono: KeyRound, titulo: "Comprar", ayuda: "Casas, terrenos, campos…", n: 48 },
+              { icono: Key, titulo: "Comprar", ayuda: "Casas, terrenos, campos…", n: 48 },
               { icono: House, titulo: "Alquilar", ayuda: "Para vivir o para tu negocio", n: 21 },
             ].map(({ icono: Icono, titulo: t, ayuda, n }) => (
               <a
@@ -88,7 +88,7 @@ function Celular({
                     <span className="mt-1 text-sm text-tinta-suave">{ayuda}</span>
                   </span>
                   <span className="flex items-center gap-1 text-sm text-tinta-suave tabular-nums">
-                    {n} <ChevronRight className="size-4" aria-hidden="true" />
+                    {n} <CaretRight className="size-4" aria-hidden="true" />
                   </span>
                 </span>
               </a>
@@ -99,7 +99,7 @@ function Celular({
             >
               Alquiler temporario
               <span className="flex items-center gap-1 text-sm font-normal text-tinta-suave">
-                3 <ChevronRight className="size-4" aria-hidden="true" />
+                3 <CaretRight className="size-4" aria-hidden="true" />
               </span>
             </a>
           </div>
@@ -143,7 +143,7 @@ function Celular({
             className="object-cover"
           />
           <EtiquetaOperacion className="absolute top-3 left-3">Venta</EtiquetaOperacion>
-          <span className="absolute right-3 bottom-3 rounded-full bg-tinta/75 px-2 py-0.5 text-xs font-semibold text-blanco tabular-nums">
+          <span className="absolute right-3 bottom-3 rounded-full bg-noche/75 px-2 py-0.5 text-xs font-semibold text-sobre-noche tabular-nums">
             1/8
           </span>
         </div>
@@ -155,13 +155,13 @@ function Celular({
           <p className="text-sm text-tinta-suave">Belgrano 450</p>
           <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-tinta">
             <span className="inline-flex items-center gap-1"><Ruler className="size-4 text-tinta-suave" aria-hidden="true" />180 m²</span>
-            <span className="inline-flex items-center gap-1"><BedDouble className="size-4 text-tinta-suave" aria-hidden="true" />3 dorm.</span>
-            <span className="inline-flex items-center gap-1"><Bath className="size-4 text-tinta-suave" aria-hidden="true" />2 baños</span>
+            <span className="inline-flex items-center gap-1"><Bed className="size-4 text-tinta-suave" aria-hidden="true" />3 dorm.</span>
+            <span className="inline-flex items-center gap-1"><Bathtub className="size-4 text-tinta-suave" aria-hidden="true" />2 baños</span>
           </p>
           <div className="mt-2 flex items-center justify-between gap-3 border-t border-linea pt-3">
             <span className="truncate text-sm text-tinta-suave">Inmobiliaria Norte</span>
             <a href="#" className="inline-flex min-h-11 items-center gap-1 font-semibold text-plano-700">
-              Ver detalles <ChevronRight className="size-4" aria-hidden="true" />
+              Ver detalles <CaretRight className="size-4" aria-hidden="true" />
             </a>
           </div>
         </div>
@@ -190,9 +190,9 @@ export default function MuestraPage() {
 
         <div className="flex flex-col gap-12 md:flex-row md:items-start md:justify-center">
           <Celular
-            titulo="Azul plano"
-            bajada="El azul de las copias heliográficas de los planos. Elegido el 2026-10-08."
-            acento={{ hex: "#1f4e79", nombre: "plano-700", contraste: "8,66" }}
+            titulo="Tinta"
+            bajada="Papel, tinta y oro. La acción es tinta de día y oro de noche."
+            acento={{ hex: "#1a1a1a", nombre: "plano-700", contraste: "tinta" }}
           />
         </div>
 

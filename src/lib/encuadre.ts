@@ -7,7 +7,7 @@ const RADIO_DE_LA_CIUDAD_KM = 6
 /**
  * Qué propiedades encuadrar al abrir el mapa. Si la mayoría está en la ciudad, la ciudad
  * (las de los campos y las localidades la dejarían en un puñado de puntos) y cuántas quedan
- * afuera, para ofrecer "Ver todo". Si la mayoría está afuera, todas.
+ * de afuera. Si la mayoría está afuera, todas.
  */
 export function encuadreInicial(puntos: readonly { id: string; lat: number; lng: number }[]): {
   ids: string[]

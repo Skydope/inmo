@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { CaretLeft, CaretRight } from "@/components/iconos"
 import { useState } from "react"
 import { IconoTipo } from "@/components/busqueda/icono-tipo"
 import type { TipoPropiedad } from "@/lib/busqueda"
@@ -83,7 +83,7 @@ export function FotosDeTarjeta({
             className="absolute top-1/2 left-1 z-10 grid size-11 -translate-y-1/2 place-items-center"
           >
             <span className="grid size-8 place-items-center rounded-full bg-blanco/90 text-tinta shadow-sm">
-              <ChevronLeft className="size-5" aria-hidden="true" />
+              <CaretLeft className="size-5" aria-hidden="true" />
             </span>
           </button>
           <button
@@ -94,10 +94,10 @@ export function FotosDeTarjeta({
             className="absolute top-1/2 right-1 z-10 grid size-11 -translate-y-1/2 place-items-center"
           >
             <span className="grid size-8 place-items-center rounded-full bg-blanco/90 text-tinta shadow-sm">
-              <ChevronRight className="size-5" aria-hidden="true" />
+              <CaretRight className="size-5" aria-hidden="true" />
             </span>
           </button>
-          <span className="absolute right-3 bottom-3 z-10 rounded-full bg-tinta/75 px-2 py-0.5 text-xs font-semibold text-blanco tabular-nums">
+          <span className="absolute right-3 bottom-3 z-10 rounded-full bg-noche/75 px-2 py-0.5 text-xs font-semibold text-sobre-noche tabular-nums">
             {i + 1}/{n}
           </span>
         </>

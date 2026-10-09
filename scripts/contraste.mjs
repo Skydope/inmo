@@ -17,17 +17,19 @@ export const contraste = (a, b) => {
 }
 
 const PALETA = {
-  papel: "#f7f8f6",
-  blanco: "#ffffff",
-  tinta: "#17211c",
-  "tinta-suave": "#56635c",
-  niebla: "#a7b1ab",
-  linea: "#dfe4e0",
-  trigo: "#e3b04b",
+  papel: "#efe8dc",
+  blanco: "#f7f2ea",
+  tinta: "#1a1a1a",
+  "tinta-suave": "#6e675e",
+  niebla: "#a8a297",
+  linea: "#e4dcd0",
+  trigo: "#c4a574",
   alerta: "#b4432f",
-  "plano-50": "#eaf0f6",
-  "plano-700": "#1f4e79",
-  "plano-800": "#183d5f",
+  noche: "#1a1a1a",
+  "sobre-noche": "#f7f2ea",
+  "plano-50": "#f3efe6",
+  "plano-700": "#1a1a1a",
+  "plano-800": "#3a3530",
 }
 
 // [texto, fondo, mínimo] — 4,5 texto normal, 3 texto grande o bordes que importan.
@@ -48,6 +50,28 @@ const PARES = [
   ["plano-700", "plano-50", 4.5],
   ["plano-800", "plano-50", 4.5],
   ["tinta", "plano-50", 4.5],
+  ["sobre-noche", "noche", 4.5],
+  ["niebla", "noche", 4.5],
+]
+
+// De noche los tokens de superficie se invierten. `noche` y `niebla` no.
+const NOCHE = {
+  papel: "#1a1a1a",
+  blanco: "#262626",
+  tinta: "#f3efe6",
+  "tinta-suave": "#a8a297",
+  "plano-700": "#c4a574",
+  noche: "#1a1a1a",
+  "sobre-noche": "#f7f2ea",
+  niebla: "#a8a297",
+}
+const PARES_NOCHE = [
+  ["tinta", "papel", 4.5],
+  ["tinta-suave", "papel", 4.5],
+  ["tinta-suave", "blanco", 4.5],
+  ["blanco", "plano-700", 4.5],
+  ["sobre-noche", "noche", 4.5],
+  ["niebla", "noche", 4.5],
 ]
 
 const args = process.argv.slice(2)
@@ -58,11 +82,15 @@ if (args.length > 0) {
   }
 } else {
   let falla = false
-  for (const [texto, fondo, minimo] of PARES) {
-    const valor = contraste(PALETA[texto], PALETA[fondo])
-    const ok = valor >= minimo
-    if (!ok) falla = true
-    console.log(`${ok ? "✓" : "✗"} ${texto} sobre ${fondo}: ${valor.toFixed(2)} (mínimo ${minimo})`)
+  const medir = (nombre, paleta, pares) => {
+    for (const [texto, fondo, minimo] of pares) {
+      const valor = contraste(paleta[texto], paleta[fondo])
+      const ok = valor >= minimo
+      if (!ok) falla = true
+      console.log(`${ok ? "✓" : "✗"} ${nombre} ${texto} sobre ${fondo}: ${valor.toFixed(2)} (mínimo ${minimo})`)
+    }
   }
+  medir("día", PALETA, PARES)
+  medir("noche", NOCHE, PARES_NOCHE)
   process.exitCode = falla ? 1 : 0
 }

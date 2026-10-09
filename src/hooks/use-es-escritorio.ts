@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from "react"
 
-/** Desde acá, resultados es lista y mapa lado a lado (el `lg` de Tailwind). */
+/** Desde acá, la hoja de filtros entra de costado (el `lg` de Tailwind). */
 const CONSULTA = "(min-width: 1024px)"
 
 /** Para leer en el momento (en un handler o un efecto), sin esperar al render. */

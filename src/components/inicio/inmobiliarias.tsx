@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ChevronRight } from "lucide-react"
+import { CaretRight } from "@/components/iconos"
 import type { ResumenDeInmobiliaria } from "@/lib/agencies/resumen"
 import { CarruselHorizontal, ItemDeCarrusel } from "./carrusel-horizontal"
 import { Seccion } from "./seccion"
@@ -44,7 +44,7 @@ export function Inmobiliarias({ inmobiliarias }: { inmobiliarias: ResumenDeInmob
           href="/inmobiliarias"
           className="inline-flex min-h-11 items-center gap-0.5 font-semibold text-plano-700 hover:underline hover:underline-offset-4"
         >
-          Ver todas las inmobiliarias <ChevronRight className="size-4" aria-hidden="true" />
+          Ver todas las inmobiliarias <CaretRight className="size-4" aria-hidden="true" />
         </Link>
       </div>
     </Seccion>

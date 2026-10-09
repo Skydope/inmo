@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Logo } from "@/components/marca/logo"
 import { Menu } from "@/components/shell/menu"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { cn } from "@/lib/utils"
 
 /**
@@ -18,7 +19,10 @@ export function Header({ fija = false }: { fija?: boolean }) {
         >
           <Logo />
         </Link>
-        <Menu />
+        <span className="flex items-center">
+          <ThemeToggle />
+          <Menu />
+        </span>
       </div>
     </header>
   )

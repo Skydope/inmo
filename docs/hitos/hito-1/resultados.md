@@ -375,6 +375,16 @@ Ninguno nuevo. Al cliente viajan solo las tarjetas (no la descripción ni todas 
 
 ## Lo que se encontró al implementar
 
+- **2026-10-08, pedido de Manuel**: los resultados son siempre el mapa. No hay lista ni botón
+  Mapa. La tira de abajo es la tarjeta flotante de siempre; deslizarla no cambia la elegida.
+  El conteo queda a la izquierda y Filtros a la derecha. En escritorio la hoja entra desde la
+  derecha, como el menú. No hay polígonos de barrio: marcar Las Flores filtra los pines, no
+  pinta la zona. El rango de precio se aplica al soltar. Elegir una tarjeta o su pin la mueve
+  al principio. En escritorio queda a la izquierda, fuera del scroll, con una sola foto un
+  poco más grande; el resto pasa al lado con el mismo ancho. En el celular no se agranda:
+  la tira salta hasta esa propiedad. A la ficha se entra con Ver detalles.
+  En escritorio la rueda sobre la tira la desplaza. El chip elegido no se rellena: lleva un
+  punto. Limpiar es un botón con ícono.
 - **Mapa**: Carto → OpenFreeMap con estilo propio (`scripts/estilo-mapa.mjs`). Rotar e
   inclinar con dos dedos quedan habilitados (Manuel los pidió); arranca plano.
 - **Volver de la ficha**: Next reconstruye la página con las props de la primera visita;

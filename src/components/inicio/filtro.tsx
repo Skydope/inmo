@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { CalendarDays, ChevronRight, House, KeyRound, Map as MapIcono } from "lucide-react"
+import { Calendar, CaretRight, House, Key } from "@/components/iconos"
 import { BUSQUEDA_VACIA, rutaDePaso, type Operacion } from "@/lib/busqueda"
 import { cn } from "@/lib/utils"
 
@@ -34,7 +34,7 @@ function Opcion({
     <>
       <span
         aria-hidden="true"
-        className="grid size-9 shrink-0 place-items-center text-plano-700 [&_svg]:size-6 [&_svg]:stroke-[1.75]"
+        className="grid size-9 shrink-0 place-items-center text-plano-700 [&_svg]:size-6"
       >
         {icono}
       </span>
@@ -43,7 +43,7 @@ function Opcion({
           <span className="min-w-0 flex-1 truncate text-base leading-tight font-semibold">{titulo}</span>
           <span className="flex shrink-0 items-center gap-0.5 text-sm text-tinta-suave tabular-nums">
             {numero}
-            <ChevronRight className="size-4" aria-hidden="true" />
+            <CaretRight className="size-4" aria-hidden="true" />
           </span>
         </>
       ) : (
@@ -77,22 +77,14 @@ export function Filtro({ conteo }: { conteo: Record<string, number> }) {
   return (
     <nav
       aria-label="Qué querés hacer"
-      className="w-full max-w-md rounded-hoja bg-blanco p-2 shadow-[0_2px_6px_rgb(0_0_0/0.08),0_16px_40px_rgb(0_0_0/0.18)] lg:max-w-[46rem] lg:p-3"
+      className="mx-auto w-full max-w-md rounded-hoja bg-blanco p-2 shadow-[0_2px_6px_rgb(0_0_0/0.08),0_16px_40px_rgb(0_0_0/0.18)] lg:mx-0 lg:max-w-[46rem] lg:p-3"
     >
-      <div className="flex items-center justify-between gap-3 px-2 pt-1 pb-2">
+      <div className="px-2 pt-1 pb-2 text-center lg:text-left">
         <h2 className="text-[1.375rem] leading-tight font-titulo lg:text-[1.75rem]">¿Qué estás buscando?</h2>
-        <Link
-          href="/propiedades?vista=mapa"
-          className="hidden min-h-11 shrink-0 items-center gap-1.5 font-semibold text-plano-700 hover:underline hover:underline-offset-4 lg:inline-flex"
-        >
-          <MapIcono className="size-5" aria-hidden="true" />
-          Ver todas en el mapa
-          <ChevronRight className="size-4" aria-hidden="true" />
-        </Link>
       </div>
       <ul className="grid grid-cols-2 gap-1.5 lg:grid-cols-[1fr_1fr_1.3fr]">
         <li>
-          <Opcion operacion="venta" titulo="Comprar" detalle="en venta" icono={<KeyRound />} conteo={conteo.venta ?? 0} />
+          <Opcion operacion="venta" titulo="Comprar" detalle="en venta" icono={<Key />} conteo={conteo.venta ?? 0} />
         </li>
         <li>
           <Opcion
@@ -107,7 +99,7 @@ export function Filtro({ conteo }: { conteo: Record<string, number> }) {
           <Opcion
             operacion="temporario"
             titulo="Alquiler temporario"
-            icono={<CalendarDays />}
+            icono={<Calendar />}
             conteo={conteo.temporario ?? 0}
             ancha
           />

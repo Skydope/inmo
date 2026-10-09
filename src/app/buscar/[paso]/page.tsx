@@ -20,7 +20,7 @@ import {
   monedaPorDefecto,
   pasoAccesible,
   pasoSiguiente,
-  rangosDePrecio,
+  limitesDePrecio,
   rutaDePaso,
   type Busqueda,
   type PasoEnBuscar,
@@ -105,9 +105,9 @@ export default async function PasoPage({ params, searchParams }: Props) {
           moneda={busqueda.moneda ?? monedaPorDefecto(busqueda.operacion)}
           desde={busqueda.desde}
           hasta={busqueda.hasta}
-          rangos={{
-            USD: rangosDePrecio(indice, busqueda, "USD"),
-            ARS: rangosDePrecio(indice, busqueda, "ARS"),
+          limites={{
+            USD: limitesDePrecio(indice, busqueda, "USD"),
+            ARS: limitesDePrecio(indice, busqueda, "ARS"),
           }}
         />
         {hayVivienda ? <CampoAmbientes dorm={busqueda.dorm} banos={busqueda.banos} /> : null}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { formatArea, formatPrice, formatPriceCompact } from "@/lib/format"
+import { formatArea, formatFecha, formatPrice, formatPriceCompact } from "@/lib/format"
 
 describe("formatPrice", () => {
   it("escribe el precio en la moneda en que se publicó", () => {
@@ -21,6 +21,12 @@ describe("formatPriceCompact", () => {
 
   it("sin precio dice 'Consultar'", () => {
     expect(formatPriceCompact(null, "USD")).toBe("Consultar")
+  })
+})
+
+describe("formatFecha", () => {
+  it("escribe el día y el mes sin cero", () => {
+    expect(formatFecha("2026-09-30")).toBe("30/9/2026")
   })
 })
 

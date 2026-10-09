@@ -1,5 +1,4 @@
 import type { Metadata } from "next"
-import { Encabezado } from "@/components/resultados/encabezado"
 import { ResultadosCliente } from "@/components/resultados/resultados-cliente"
 import { Header } from "@/components/shell/header"
 import {
@@ -18,8 +17,7 @@ import { getProperties } from "@/lib/properties/adapter"
 import { aTarjeta } from "@/lib/properties/tarjeta"
 
 /*
- * Resultados: las propiedades de la búsqueda, de a una tarjeta grande que se desliza, o en
- * el mapa. Spec: docs/hitos/hito-1/resultados.md.
+ * Resultados: el mapa, con las propiedades en una tira abajo. Spec: docs/hitos/hito-1/resultados.md.
  */
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> }
@@ -53,10 +51,8 @@ export default async function PropiedadesPage({ searchParams }: Props) {
     <div className="flex min-h-dvh flex-col bg-papel">
       <Header />
       <main className="flex flex-1 flex-col">
-        {/* Otra búsqueda (los filtros navegan acá mismo) arranca de cero: carrusel, selección. */}
+        {/* Sin key: la hoja de filtros sigue abierta cuando un ajuste cambia la URL. */}
         <ResultadosCliente
-          key={canonica(busqueda)}
-          encabezado={<Encabezado titulo={titulo} total={propiedades.length} />}
           titulo={titulo}
           tarjetas={propiedades.map(aTarjeta)}
           busqueda={busqueda}

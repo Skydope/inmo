@@ -297,4 +297,9 @@ teléfono para probar los caminos alternativos (se suman al seed en el bloque 1)
 
 ## Lo que se encontró al implementar
 
-_(se completa al ejecutar)_
+- Las inmobiliarias sin WhatsApp y sin teléfono ya estaban en el seed (`Campo & Ciudad`,
+  `Bolívar Homes`). No hizo falta agregar otras.
+- En escritorio el precio queda grande debajo del mosaico, como en la referencia, y se repite
+  en la tarjeta fija para que no se pierda al bajar.
+- `next/og` no decodifica WebP. La foto se pasa a JPEG con `sharp` y la vista previa se
+  entrega en JPEG, por debajo de 300 KB.

@@ -2,52 +2,38 @@
 @import "tw-animate-css";
 @import "maplibre-gl/dist/maplibre-gl.css";
 
-/* Solo modo claro en el hito 1. Los componentes de shadcn traen clases `dark:`; sin
-   esto Tailwind 4 las aplica con el modo oscuro del sistema. Atadas a una clase `.dark`
-   que nunca se pone, quedan apagadas hasta que se decida sumar el modo oscuro. */
+/* El botón de día/noche pone `html.dark`. Sin la variante, Tailwind 4 aplicaría
+   `dark:` con el modo del sistema y el botón no mandaría. */
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
  * Identidad de Bolívar Inmo: "el cartel y el plano".
- * El cartel de VENDE (letra compacta y pesada, color liso) y el plano de la ciudad
- * (papel blanco, líneas finas). El color de acción es el AZUL PLANO: el de las
- * copias heliográficas, como se copiaban los planos. Lo eligió Manuel en la muestra
- * (2026-10-08) sobre el verde palmera. Es el único color liso de la interfaz y
- * significa "avanzar". El porqué de cada decisión está en la skill `identidad-visual`
- * y en docs/hitos/hito-1/identidad-y-base.md.
- *
- * Contrastes MEDIDOS con `node scripts/contraste.mjs` (WCAG 2.x, 2026-10-08):
- *   tinta sobre papel / blanco ................ 15,51 / 16,53
- *   tinta-suave sobre papel / blanco .......... 5,91 / 6,30
- *   blanco sobre plano-700 / plano-800 ........ 8,66 / 11,22
- *   plano-700 como texto sobre papel / blanco . 8,13 / 8,66
- *   plano-700 sobre plano-50 .................. 7,55
- *   plano-800 sobre plano-50 .................. 9,77
- *   tinta sobre plano-50 / trigo .............. 14,40 / 8,32
- *   blanco sobre alerta / tinta ............... 5,55 / 16,53
- *   linea sobre blanco ........................ 1,29 (borde: nunca texto)
- *   blanco / niebla sobre tinta (el pie) ...... 16,53 / 7,49
+ * Papel cálido, tinta y oro. De día la acción es tinta. De noche el acento es oro.
+ * El pie, el cartel de operación y los velos usan `noche` / `sobre-noche`, un par
+ * que no se invierte. Los números salen de `node scripts/contraste.mjs`.
  */
 @theme {
-  /* Fondo de la página: blanco apenas verdoso. Nunca crema. */
-  --color-papel: #f7f8f6;
+  /* Fondo: papel cálido. */
+  --color-papel: #efe8dc;
   /* Superficies: tarjetas, hoja de filtros, barras fijas. */
-  --color-blanco: #ffffff;
+  --color-blanco: #f7f2ea;
   /* Texto principal e íconos. */
-  --color-tinta: #17211c;
+  --color-tinta: #1a1a1a;
   /* Texto secundario: dirección, datos, ayudas. */
-  --color-tinta-suave: #56635c;
-  /* Texto secundario sobre fondo tinta (el pie). Nunca sobre claro. */
-  --color-niebla: #a7b1ab;
+  --color-tinta-suave: #6e675e;
+  /* Texto secundario sobre `noche` (el pie). Nunca sobre claro. No se invierte. */
+  --color-niebla: #a8a297;
+  /* Par fijo del cartel y del pie. No sigue el tema. */
+  --color-noche: #1a1a1a;
+  --color-sobre-noche: #f7f2ea;
   /* Bordes y divisores. Nunca texto. */
-  --color-linea: #dfe4e0;
-  /* Acción: botón principal, opción elegida, pin activo, links. 800 = presionado;
-     50 = fondo de lo elegido. */
-  --color-plano-50: #eaf0f6;
-  --color-plano-700: #1f4e79;
-  --color-plano-800: #183d5f;
-  /* Acento escaso: "Destacada". Nunca botón. Texto tinta encima. */
-  --color-trigo: #e3b04b;
+  --color-linea: #e4dcd0;
+  /* Acción de día: tinta. De noche estos tres pasan a oro (ver `.dark`). */
+  --color-plano-50: #f3efe6;
+  --color-plano-700: #1a1a1a;
+  --color-plano-800: #3a3530;
+  /* Oro escaso: destacada, y de noche el acento. Texto tinta encima. */
+  --color-trigo: #c4a574;
   /* Errores. Texto blanco encima. */
   --color-alerta: #b4432f;
 
@@ -107,14 +93,42 @@
   letter-spacing: -0.01em;
 }
 
-/* VIVÍ BOLÍVAR: Encode Sans en su ancho máximo y su peso máximo. Solo el hero del inicio y el
-   cierre del pie (spec vivi-bolivar). */
+/* VIVÍ BOLÍVAR: Archivo Black. Solo el hero del inicio y el cierre del pie.
+   Encode Sans estirada redondeaba la B. */
 @utility font-display {
-  font-family: var(--font-encode);
-  font-weight: 900;
-  font-stretch: 125%;
+  font-family: var(--font-archivo), Impact, sans-serif;
+  font-weight: 400;
   letter-spacing: -0.02em;
   text-transform: uppercase;
+}
+
+/* De noche el acento es oro. Fuera de capa para ganarle a los tokens de @theme. */
+html.dark {
+  --color-papel: #1a1a1a;
+  --color-blanco: #262626;
+  --color-tinta: #f3efe6;
+  --color-tinta-suave: #a8a297;
+  --color-linea: #3a3530;
+  --color-plano-50: #2c2824;
+  --color-plano-700: #c4a574;
+  --color-plano-800: #a8906a;
+  --color-primary: #c4a574;
+  --color-primary-foreground: #1a1a1a;
+  --color-ring: #c4a574;
+  --color-background: #1a1a1a;
+  --color-foreground: #f3efe6;
+  --color-card: #262626;
+  --color-card-foreground: #f3efe6;
+  --color-popover: #262626;
+  --color-popover-foreground: #f3efe6;
+  --color-muted: #1a1a1a;
+  --color-muted-foreground: #a8a297;
+  --color-secondary: #2c2824;
+  --color-secondary-foreground: #c4a574;
+  --color-border: #3a3530;
+  --color-input: #3a3530;
+  --color-accent: #2c2824;
+  --color-accent-foreground: #f3efe6;
 }
 
 @layer base {
@@ -122,11 +136,15 @@
     -webkit-text-size-adjust: 100%;
     color-scheme: light;
   }
+  html.dark {
+    color-scheme: dark;
+  }
   body {
     min-height: 100dvh;
     background: var(--color-papel);
     color: var(--color-tinta);
     font-family: var(--font-sans);
+    transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1), color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   }
   ::selection {
     background: var(--color-plano-700);
@@ -139,15 +157,12 @@
   }
 }
 
-/* Sin animaciones llamativas: lo poco que se mueve se apaga si la persona lo pide. */
+/* Menos viaje, no menos feedback: el scroll suave se apaga. Las transiciones de
+   color y la barra (sin deslizarse) siguen. El apagado global de 0.01ms le sacaba
+   la duración `auto` a las animaciones de scroll y la barra no llegaba a entrar. */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  html {
+    scroll-behavior: auto;
   }
 }
 
@@ -170,7 +185,56 @@
   height: 2.75rem !important;
 }
 
-/* El pin: una píldora blanca con el precio compacto. Elegido: azul plano, encima. */
+/* El pin: una píldora de papel con el precio. Elegido: tinta de día, oro de noche. */
+
+/* Dos thumbs nativos. El gesto lo toma la fila (44 px): el más cercano se mueve,
+   y si coinciden el lado decide. El teclado sigue en los inputs. */
+.rango-doble {
+  touch-action: pan-y;
+  cursor: pointer;
+}
+.rango-doble input[type="range"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  margin: 0;
+  background: none;
+  pointer-events: none;
+  appearance: none;
+}
+.rango-doble input[type="range"]::-webkit-slider-runnable-track {
+  height: 2px;
+  background: transparent;
+}
+.rango-doble input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  height: 1.5rem;
+  width: 1.5rem;
+  margin-top: -11px;
+  border-radius: 999px;
+  background: var(--color-blanco);
+  border: 2px solid var(--color-plano-700);
+}
+.rango-doble input[type="range"]:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--color-plano-700);
+  outline-offset: 2px;
+}
+.rango-doble input[type="range"]::-moz-range-track {
+  height: 2px;
+  background: transparent;
+  border: 0;
+}
+.rango-doble input[type="range"]::-moz-range-thumb {
+  height: 1.5rem;
+  width: 1.5rem;
+  border-radius: 999px;
+  background: var(--color-blanco);
+  border: 2px solid var(--color-plano-700);
+}
+.rango-doble input[type="range"]:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--color-plano-700);
+  outline-offset: 2px;
+}
 .map-pin {
   cursor: pointer;
   display: grid;
@@ -186,7 +250,7 @@
   background: var(--color-blanco);
   color: var(--color-tinta);
   font-family: var(--font-encode);
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 700;
   font-stretch: 87.5%;
   font-variant-numeric: tabular-nums;
@@ -215,6 +279,18 @@
 }
 
 /* Con el mapa alejado, los pines no elegidos son puntos: los precios no entran. */
+.tira-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-tinta-suave) transparent;
+}
+.tira-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+.tira-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-tinta-suave);
+  border-radius: 999px;
+}
+
 .is-lejos .map-pin:not(.is-selected, .is-resaltado) .map-pin-precio {
   width: 0.75rem;
   height: 0.75rem;
@@ -253,8 +329,8 @@
     height: max(calc(100svh - 1rem), 36rem);
     overflow: clip;
     border-radius: var(--radius-hoja);
-    /* El cielo, mientras llega la foto: sin destello blanco y con el título legible. */
-    background: #9fc2e6;
+    /* El cielo, mientras llega la foto. Sigue el tema: de noche es tinta, no el azul viejo. */
+    background: var(--color-papel);
   }
 
   .casa {
@@ -266,7 +342,8 @@
     --fx: 0.5;
     --fy: 1;
     --techo: var(--techo-centro);
-    --hundido: 0.035em;
+    /* Un pelo arriba del techo: se sigue viendo la base de BOLÍVAR detrás de la casa. */
+    --hundido: -0.08em;
   }
   /* Las medidas usan unidades del contenedor (.casa): se resuelven en los hijos. */
   .casa > * {
@@ -288,6 +365,16 @@
     width: 100%;
     height: 100%;
   }
+  .casa-foto .casa-noche {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1.1s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity;
+  }
+  html.dark .casa-foto .casa-noche {
+    opacity: 1;
+  }
 
   .vivi-titulo {
     position: absolute;
@@ -297,8 +384,8 @@
     color: var(--color-tinta);
     line-height: 0.8;
     text-align: center;
-    /* Lo que mide "BOLÍVAR" en em: el título ocupa el ancho sin pasarse. */
-    --em-bolivar: 5.1;
+    /* Ancho de "BOLÍVAR" en Archivo Black con tracking -0.02em, medido en el navegador. */
+    --em-bolivar: 4.8;
     font-size: clamp(2.75rem, min(calc((100cqw - 2rem) / var(--em-bolivar)), 18cqh), 7.5rem);
   }
   .vivi-titulo > span {
@@ -332,15 +419,8 @@
         18rem
       );
     }
-  }
-
-  /* De noche (el modo del celular): la foto la elige el <picture>; acá, el título y el cielo. */
-  @media (prefers-color-scheme: dark) {
-    .vivi-marco {
-      background: #0c2560;
-    }
-    .vivi-titulo {
-      color: var(--color-blanco);
+    .vivi-titulo .bolivar {
+      translate: 0 -0.07em;
     }
   }
 
@@ -480,7 +560,6 @@
       display: block;
       position: fixed;
       inset: 0 0 auto;
-      animation-name: barra-entra;
       animation-duration: auto;
       animation-timing-function: linear;
       animation-fill-mode: both;
@@ -496,6 +575,11 @@
       animation-timeline: scroll(root block);
       animation-range-start: calc(100svh - 3.5rem);
       animation-range-end: calc(100svh - 3.4rem);
+    }
+  }
+  @media (min-height: 37rem) and (prefers-reduced-motion: no-preference) {
+    .barra-del-inicio {
+      animation-name: barra-entra;
     }
   }
   @media (min-height: 37rem) and (prefers-reduced-motion: reduce) {

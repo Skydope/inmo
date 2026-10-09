@@ -1,6 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
-import { Bath, BedDouble, CarFront, ChevronRight, Ruler } from "lucide-react"
+import { Bathtub, Bed, CarFront, CaretRight, Ruler } from "@/components/iconos"
 import { FotoPropiedad } from "@/components/busqueda/foto-propiedad"
 import { EtiquetaOperacion } from "@/components/ui/etiqueta-operacion"
 import { etiquetaOperacion, etiquetaTipo, nombreZona } from "@/lib/busqueda"
@@ -27,8 +27,8 @@ function Precio({ t, className }: { t: Tarjeta; className?: string }) {
 function Datos({ t, maximo = 4 }: { t: Tarjeta; maximo?: number }) {
   const datos = [
     t.superficie ? { Icono: Ruler, texto: t.superficie, nombre: "Superficie" } : null,
-    t.beds ? { Icono: BedDouble, texto: `${t.beds} dorm.`, nombre: "Dormitorios" } : null,
-    t.baths ? { Icono: Bath, texto: `${t.baths} ${t.baths === 1 ? "baño" : "baños"}`, nombre: "Baños" } : null,
+    t.beds ? { Icono: Bed, texto: `${t.beds} dorm.`, nombre: "Dormitorios" } : null,
+    t.baths ? { Icono: Bathtub, texto: `${t.baths} ${t.baths === 1 ? "baño" : "baños"}`, nombre: "Baños" } : null,
     t.garages ? { Icono: CarFront, texto: `${t.garages} coch.`, nombre: "Cocheras" } : null,
   ]
     .filter((d) => d !== null)
@@ -46,12 +46,22 @@ function Datos({ t, maximo = 4 }: { t: Tarjeta; maximo?: number }) {
   )
 }
 
-/** El link que cubre toda la tarjeta (las flechas de foto quedan encima, con z-10). */
-function VerDetalles({ t, className, children }: { t: Tarjeta; className?: string; children: React.ReactNode }) {
+/** El link a la ficha. `cubre` lo estira sobre toda la tarjeta (las flechas de foto quedan encima). */
+function VerDetalles({
+  t,
+  cubre = true,
+  className,
+  children,
+}: {
+  t: Tarjeta
+  cubre?: boolean
+  className?: string
+  children: React.ReactNode
+}) {
   return (
     <Link
       href={`/propiedades/${t.id}`}
-      className={cn("after:absolute after:inset-0 after:content-['']", className)}
+      className={cn(cubre && "after:absolute after:inset-0 after:content-['']", className)}
     >
       {children}
       <span className="sr-only">
@@ -71,6 +81,7 @@ export function TarjetaPropiedad({
   variante = "grande",
   prioridad = false,
   diferirFotos = false,
+  elegida = false,
   className,
 }: {
   t: Tarjeta
@@ -78,6 +89,8 @@ export function TarjetaPropiedad({
   prioridad?: boolean
   /** `grande` en el carrusel: lejos de la que se mira, las fotos se piden después. */
   diferirFotos?: boolean
+  /** `flotante`: la foto única ocupa un poco más. */
+  elegida?: boolean
   className?: string
 }) {
   if (variante === "flotante") {
@@ -88,9 +101,9 @@ export function TarjetaPropiedad({
           className
         )}
       >
-        <div className="relative w-[40%] shrink-0 bg-papel">
+        <div className={cn("relative shrink-0 self-stretch bg-papel", elegida ? "w-[55%]" : "w-[40%]")}>
           <FotoPropiedad src={t.fotos[0]} tipo={t.type} alt="" className="absolute inset-0 size-full" />
-          <EtiquetaOperacion className="pointer-events-none absolute top-2 left-2">
+          <EtiquetaOperacion className="pointer-events-none absolute top-2 left-2 z-10">
             {etiquetaOperacion(t.operation)}
           </EtiquetaOperacion>
         </div>
@@ -101,9 +114,10 @@ export function TarjetaPropiedad({
           <Datos t={t} maximo={2} />
           <VerDetalles
             t={t}
-            className="mt-auto inline-flex min-h-11 items-center justify-center gap-1 rounded-control bg-plano-700 px-3 text-sm font-semibold text-blanco"
+            cubre={false}
+            className="relative z-10 mt-auto inline-flex min-h-11 items-center justify-center gap-1 rounded-control bg-plano-700 px-3 text-sm font-semibold text-blanco"
           >
-            Ver detalles <ChevronRight className="size-4" aria-hidden="true" />
+            Ver detalles <CaretRight className="size-4" aria-hidden="true" />
           </VerDetalles>
         </div>
       </article>
@@ -160,7 +174,7 @@ export function TarjetaPropiedad({
         <div className="mt-auto flex items-center justify-between gap-3 border-t border-linea pt-2">
           <span className="truncate text-sm text-tinta-suave">{t.agencia.nombre}</span>
           <VerDetalles t={t} className="inline-flex min-h-11 shrink-0 items-center gap-1 font-semibold text-plano-700">
-            Ver detalles <ChevronRight className="size-4" aria-hidden="true" />
+            Ver detalles <CaretRight className="size-4" aria-hidden="true" />
           </VerDetalles>
         </div>
       </div>

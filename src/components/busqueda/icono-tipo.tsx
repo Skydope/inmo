@@ -1,33 +1,33 @@
 import {
-  BriefcaseBusiness,
+  Briefcase,
   Building,
   Building2,
   CarFront,
   House,
   LandPlot,
-  Store,
+  Storefront,
   Tractor,
   Trees,
   Warehouse,
-  type LucideProps,
-} from "lucide-react"
+  type IconProps,
+} from "@/components/iconos"
 import { iconoTipo, type IconoTipo, type TipoPropiedad } from "@/lib/busqueda/taxonomia"
 
 // La taxonomía guarda el nombre del ícono (src/lib no importa React); acá se resuelve.
-const ICONOS: Record<IconoTipo, React.ComponentType<LucideProps>> = {
+const ICONOS: Record<IconoTipo, React.ComponentType<IconProps>> = {
   House,
   Building2,
   Building,
   Trees,
   LandPlot,
   Tractor,
-  Store,
-  BriefcaseBusiness,
+  Store: Storefront,
+  BriefcaseBusiness: Briefcase,
   Warehouse,
   CarFront,
 }
 
-export function IconoTipo({ tipo, ...props }: { tipo: TipoPropiedad } & LucideProps) {
+export function IconoTipo({ tipo, ...props }: { tipo: TipoPropiedad } & IconProps) {
   const Icono = ICONOS[iconoTipo(tipo)]
-  return <Icono aria-hidden="true" strokeWidth={1.75} {...props} />
+  return <Icono aria-hidden="true" weight="fill" {...props} />
 }

@@ -2,8 +2,8 @@ import { cn } from "@/lib/utils"
 
 /**
  * El "cartel": VENTA / ALQUILER / TEMPORARIO como el cartel que la inmobiliaria clava
- * en el frente. Fondo tinta, letra blanca, condensada y en mayúsculas. Es el único
- * lugar de la interfaz con mayúsculas.
+ * en el frente. Fondo `noche`, letra `sobre-noche`: el par no se invierte de noche.
+ * Condensada y en mayúsculas.
  */
 export function EtiquetaOperacion({
   children,
@@ -15,7 +15,7 @@ export function EtiquetaOperacion({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-[4px] bg-tinta px-2 py-1 font-encode text-xs leading-none font-bold tracking-[0.06em] text-blanco uppercase [font-stretch:75%]",
+        "inline-flex items-center rounded-[4px] bg-noche px-2 py-1 font-encode text-xs leading-none font-bold tracking-[0.06em] text-sobre-noche uppercase [font-stretch:75%]",
         className
       )}
     >

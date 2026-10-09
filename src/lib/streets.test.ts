@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest"
 import {
   filterBolivarStreets,
   linesFromNominatim,
+  direccionDesdeReverso,
+  lugarDesdeNominatim,
   streetNamesFromPhoton,
 } from "@/lib/streets"
 import { BOLIVAR_CENTER } from "@/lib/brand"
@@ -66,5 +68,54 @@ describe("filterBolivarStreets", () => {
   it("returns empty array on empty query", () => {
     expect(filterBolivarStreets("")).toEqual([])
     expect(filterBolivarStreets("   ")).toEqual([])
+  })
+})
+
+describe("lugarDesdeNominatim", () => {
+  it("toma el primer punto dentro de Bolívar", () => {
+    const lugar = lugarDesdeNominatim([
+      { lat: "-34.6", lon: "-58.4", display_name: "Buenos Aires" },
+      { lat: String(BOLIVAR_CENTER.lat), lon: String(BOLIVAR_CENTER.lng), display_name: "San Martín 840" },
+    ])
+    expect(lugar?.nombre).toBe("San Martín 840")
+    expect(lugar?.lat).toBeCloseTo(BOLIVAR_CENTER.lat)
+  })
+
+  it("sin puntos cerca devuelve null", () => {
+    expect(lugarDesdeNominatim([{ lat: "-34.6", lon: "-58.4" }])).toBeNull()
+    expect(lugarDesdeNominatim(null)).toBeNull()
+  })
+})
+
+describe("direccionDesdeReverso", () => {
+  it("separa calle y altura si el punto está en Bolívar", () => {
+    expect(
+      direccionDesdeReverso({
+        lat: String(BOLIVAR_CENTER.lat),
+        lon: String(BOLIVAR_CENTER.lng),
+        address: { road: "Avenida San Martín", house_number: "840" },
+      }),
+    ).toEqual({ calle: "Avenida San Martín", altura: "840" })
+  })
+
+  it("deja la altura vacía cuando no hay número", () => {
+    expect(
+      direccionDesdeReverso({
+        lat: String(BOLIVAR_CENTER.lat),
+        lon: String(BOLIVAR_CENTER.lng),
+        address: { road: "Belgrano" },
+      }),
+    ).toEqual({ calle: "Belgrano", altura: "" })
+  })
+
+  it("ignora un punto lejos o sin calle", () => {
+    expect(
+      direccionDesdeReverso({
+        lat: "-34.6",
+        lon: "-58.4",
+        address: { road: "Corrientes", house_number: "100" },
+      }),
+    ).toBeNull()
+    expect(direccionDesdeReverso({ error: "Unable to geocode" })).toBeNull()
   })
 })

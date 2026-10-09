@@ -16,10 +16,13 @@ export function BotonTodoBolivar({ activo, total }: { activo: boolean; total: nu
       }}
       className={cn(
         "inline-flex min-h-11 w-fit items-center gap-2 rounded-full border px-4 font-semibold",
-        activo ? "border-plano-700 bg-plano-50 ring-1 ring-plano-700" : "border-linea bg-blanco hover:border-tinta-suave"
+        activo ? "border-plano-700 bg-plano-700 text-blanco" : "border-linea bg-blanco hover:border-tinta-suave"
       )}
     >
-      Todo Bolívar <span className="text-sm font-normal text-tinta-suave tabular-nums">{total}</span>
+      Todo Bolívar{" "}
+      <span className={cn("text-sm font-normal tabular-nums", activo ? "text-blanco" : "text-tinta-suave")}>
+        {total}
+      </span>
     </button>
   )
 }

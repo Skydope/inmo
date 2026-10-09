@@ -1,4 +1,4 @@
-import { Check } from "lucide-react"
+import { Check } from "@/components/iconos"
 import { cn } from "@/lib/utils"
 
 type OpcionProps = {
@@ -22,7 +22,8 @@ type OpcionProps = {
 /**
  * La opción que se toca en los pasos del buscador y en la hoja de filtros. Es un
  * `<input>` nativo dentro de un `<label>`, cubriéndola entera e invisible: anda sin
- * JavaScript dentro de un formulario GET y el toque cae en el input. Elegida = borde y fondo azul plano y un ✓ (no solo color).
+ * JavaScript dentro de un formulario GET y el toque cae en el input. La tarjeta grande
+ * marca la elegida con un ✓. El chip deja el fondo y marca la elegida con un punto.
  */
 export function Opcion({
   tipo = "checkbox",
@@ -44,7 +45,9 @@ export function Opcion({
     <label
       className={cn(
         "group relative flex cursor-pointer border border-linea bg-blanco text-tinta transition-colors select-none",
-        "has-checked:border-plano-700 has-checked:bg-plano-50 has-checked:ring-1 has-checked:ring-plano-700",
+        tarjeta
+          ? "has-checked:border-plano-700 has-checked:bg-plano-50 has-checked:ring-1 has-checked:ring-plano-700"
+          : "has-checked:border-plano-700",
         "has-focus-visible:ring-3 has-focus-visible:ring-ring/40",
         "has-disabled:cursor-not-allowed has-disabled:opacity-45",
         tarjeta
@@ -67,7 +70,13 @@ export function Opcion({
       {tarjeta && icono ? (
         <span className="text-tinta [&_svg]:size-6 [&_svg]:stroke-[1.75]">{icono}</span>
       ) : null}
-      <span className={cn("flex items-end gap-2", tarjeta ? "justify-between" : "")}>
+      {tarjeta ? null : (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute top-1/2 left-2 size-2 -translate-y-1/2 rounded-full bg-plano-700 opacity-0 group-has-checked:opacity-100"
+        />
+      )}
+      <span className={cn("flex items-end gap-2", tarjeta ? "justify-between" : "group-has-checked:pl-3")}>
         <span className="flex flex-col">
           <span className={cn("font-semibold", tarjeta ? "text-[1.0625rem] leading-tight" : "text-base")}>
             {etiqueta}
@@ -78,15 +87,14 @@ export function Opcion({
           <span className="text-sm text-tinta-suave tabular-nums">{conteo}</span>
         ) : null}
       </span>
-      <span
-        aria-hidden="true"
-        className={cn(
-          "hidden items-center justify-center rounded-full bg-plano-700 text-blanco group-has-checked:flex",
-          tarjeta ? "absolute top-2.5 right-2.5 size-5" : "size-4"
-        )}
-      >
-        <Check className="size-3.5" strokeWidth={3} />
-      </span>
+      {tarjeta ? (
+        <span
+          aria-hidden="true"
+          className="absolute top-2.5 right-2.5 hidden size-5 items-center justify-center rounded-full bg-plano-700 text-blanco group-has-checked:flex"
+        >
+          <Check className="size-3.5" />
+        </span>
+      ) : null}
     </label>
   )
 }

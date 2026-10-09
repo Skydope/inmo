@@ -4,8 +4,7 @@ const VENTA = "/propiedades?operacion=venta"
 
 // Los tiles no se piden (el e2e no depende de la red para dibujar calles); el índice de la
 // fuente sí, porque de ahí sale el texto de la atribución. Los pines son HTML: se tocan igual.
-test.beforeEach(async ({ page }, info) => {
-  test.skip(info.project.name === "escritorio", "en escritorio mapa y lista van juntos (ver resultados.spec.ts)")
+test.beforeEach(async ({ page }) => {
   await page.route(/tiles\.openfreemap\.org\/(planet|natural_earth)\/.+/, (ruta) => ruta.abort())
 })
 
@@ -23,47 +22,33 @@ async function pinALaVista(page: Page) {
   return id!
 }
 
-const activaEnLaTira = (page: Page) => page.locator("ul[aria-label='Propiedad elegida en el mapa'] [data-activo='true']")
+const elegida = (page: Page) => page.locator("[data-elegida='true']")
 
-test("de la lista al mapa: abre con la misma propiedad elegida", async ({ page }) => {
+test("tocar un pin abre su pastilla con Ver detalles", async ({ page }) => {
   await page.goto(VENTA)
-  await page.getByRole("button", { name: "Propiedad siguiente" }).click()
-  await page.getByRole("button", { name: "Propiedad siguiente" }).click()
-  await expect(page.getByText(/^3 de 22$/)).toBeVisible()
-  const id = await page.locator("[data-slide][data-activo='true']").getAttribute("data-id")
-  await page.getByRole("link", { name: "Mapa", exact: true }).click()
-  await expect(activaEnLaTira(page)).toHaveAttribute("data-id", id!)
-  await expect(page.locator(`.map-pin[data-id="${id}"]`)).toHaveClass(/is-selected/)
-})
-
-test("tocar un pin abre su tarjeta flotante con Ver detalles", async ({ page }) => {
-  await page.goto(`${VENTA}&vista=mapa`)
   const id = await pinALaVista(page)
   await page.locator(`.map-pin[data-id="${id}"]`).click()
-  await expect(activaEnLaTira(page)).toHaveAttribute("data-id", id)
-  await expect(activaEnLaTira(page).getByRole("link", { name: /Ver detalles/ })).toBeVisible()
+  await expect(elegida(page)).toHaveAttribute("data-id", id)
+  await expect(elegida(page).getByRole("link", { name: /Ver detalles/ })).toBeVisible()
   await expect(page).toHaveURL(new RegExp(`sel=${id}`))
 })
 
-test("deslizar la tarjeta flotante elige la siguiente y el mapa la sigue", async ({ page }) => {
-  await page.goto(`${VENTA}&vista=mapa`)
-  await page.locator(`.map-pin[data-id="${await pinALaVista(page)}"]`).click()
-  const tira = page.locator("ul[aria-label='Propiedad elegida en el mapa']")
-  const actual = Number(await activaEnLaTira(page).getAttribute("data-slide"))
-  const siguiente = actual + 1 < (await tira.locator("[data-slide]").count()) ? actual + 1 : actual - 1
-  const idSiguiente = await tira.locator(`[data-slide="${siguiente}"]`).getAttribute("data-id")
-  await tira.evaluate((ul, i) => {
-    const slide = ul.querySelector<HTMLElement>(`[data-slide="${i}"]`)!
-    ul.scrollTo({ left: slide.offsetLeft - (ul.clientWidth - slide.clientWidth) / 2, behavior: "instant" })
-  }, siguiente)
-  await expect(page.locator(`.map-pin[data-id="${idSiguiente}"]`)).toHaveClass(/is-selected/)
-  await expect(page).toHaveURL(new RegExp(`sel=${idSiguiente}`))
+test("deslizar la tira no cambia la propiedad elegida", async ({ page }) => {
+  await page.goto(VENTA)
+  const id = await pinALaVista(page)
+  await page.locator(`.map-pin[data-id="${id}"]`).click()
+  const tira = page.getByRole("list", { name: "Propiedades" })
+  await tira.evaluate((ul) => {
+    ul.scrollLeft = ul.scrollWidth
+  })
+  await expect(elegida(page)).toHaveAttribute("data-id", id)
+  await expect(page.locator(`.map-pin[data-id="${id}"]`)).toHaveClass(/is-selected/)
 })
 
-test("tocar el mapa vacío cierra la tarjeta flotante", async ({ page }) => {
-  await page.goto(`${VENTA}&vista=mapa`)
+test("tocar el mapa vacío cierra la pastilla abierta", async ({ page }) => {
+  await page.goto(VENTA)
   await page.locator(`.map-pin[data-id="${await pinALaVista(page)}"]`).click()
-  await expect(activaEnLaTira(page)).toBeVisible()
+  await expect(elegida(page)).toBeVisible()
   // El mapa se mueve hasta el pin elegido (easeTo de 400 ms): se busca el lugar vacío cuando
   // quedó quieto, si no el lugar cambia entre que se elige y se toca.
   await page.waitForFunction(() => {
@@ -81,21 +66,22 @@ test("tocar el mapa vacío cierra la tarjeta flotante", async ({ page }) => {
     }
   })
   await page.mouse.click(lugar!.x, lugar!.y)
-  await expect(activaEnLaTira(page)).toHaveCount(0)
+  await expect(elegida(page)).toHaveCount(0)
+  await expect(page.getByRole("list", { name: "Propiedades" })).toBeVisible()
 })
 
 test("la atribución se ve y no hay pedidos a Carto", async ({ page }) => {
   const pedidos: string[] = []
   page.on("request", (r) => pedidos.push(r.url()))
-  await page.goto(`${VENTA}&vista=mapa`)
+  await page.goto(VENTA)
   await expect(page.locator(".maplibregl-ctrl-attrib")).toContainText("OpenStreetMap")
   expect(pedidos.filter((u) => u.includes("cartocdn"))).toEqual([])
 })
 
-test("en la lista el mapa no se crea (el worker de MapLibre no se pide)", async ({ page }) => {
+test("la página pide el worker de MapLibre", async ({ page }) => {
   const pedidos: string[] = []
   page.on("request", (r) => pedidos.push(r.url()))
   await page.goto(VENTA)
-  await expect(page.getByText(/^1 de 22$/)).toBeVisible()
-  expect(pedidos.filter((u) => u.includes("maplibre-gl-worker"))).toEqual([])
+  await expect(page.locator(".maplibregl-canvas")).toBeVisible()
+  expect(pedidos.some((u) => u.includes("maplibre-gl-worker"))).toBe(true)
 })

@@ -14,11 +14,11 @@ export const SEED_PROPERTIES: Property[] = [
   {
     id: "bol-01", operation: "venta", type: "casa", zone: "centro",
     title: "Casa de dos plantas sobre Av. San Martín",
-    description: "Casa contemporánea en dos plantas sobre la avenida principal. Living en doble altura con hogar a leña, cocina integrada con isla y ventanales al jardín.\n\nArriba, suite con vestidor y dos dormitorios con placard. En el fondo, quincho con parrilla y pileta.",
+    description: "Casa contemporánea en dos plantas sobre la avenida principal. Living en doble altura con hogar a leña, cocina integrada con isla y ventanales al jardín.\n\nArriba, suite con vestidor y dos dormitorios con placard. En el fondo, quincho con parrilla y pileta. El lote da al oeste y cierra con un cerco de ligustros. La cocina está equipada y los pisos son de porcelanato.",
     price: 185_000, currency: "USD", address: "Av. San Martín 845", showAddress: true,
     lat: -36.2295, lng: -61.1138, areaTotalM2: 300, areaCoveredM2: 210, rooms: 5, beds: 3, baths: 2, garages: 2, ageYears: 6,
     features: ["cochera", "pileta", "patio", "parrilla", "apto-credito"],
-    photos: F("house-1", "house-5", "apt-1"), publishedAt: "2026-10-05", featured: true, agency: A.norte,
+    photos: F("house-1", "house-5", "apt-1", "house-3", "apt-2"), publishedAt: "2026-10-05", featured: true, agency: A.norte,
   },
   {
     id: "bol-02", operation: "venta", type: "casa", zone: "casariego",

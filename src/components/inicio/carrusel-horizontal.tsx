@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { CaretLeft, CaretRight } from "@/components/iconos"
 import { useEffect, useRef, useState } from "react"
 import { cn } from "@/lib/utils"
 
@@ -47,7 +47,7 @@ export function CarruselHorizontal({
 
   const flecha = (sentido: 1 | -1) => {
     const oculta = sentido === -1 ? bordes.inicio : bordes.fin
-    const Icono = sentido === -1 ? ChevronLeft : ChevronRight
+    const Icono = sentido === -1 ? CaretLeft : CaretRight
     return (
       <button
         type="button"

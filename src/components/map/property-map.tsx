@@ -1,12 +1,13 @@
 "use client"
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import { useEffect, useLayoutEffect, useRef } from "react"
 import * as maplibregl from "maplibre-gl"
 
 // Next empaqueta maplibre y la URL del worker (import.meta.url) da 404. Estos dos archivos se
 // copian de maplibre-gl/dist a public/maplibre: recopiarlos al actualizar maplibre.
 maplibregl.setWorkerUrl("/maplibre/maplibre-gl-worker.mjs")
 import type { Map as MapLibreMap, Marker } from "maplibre-gl"
+import { useTheme } from "@/components/theme-provider"
 import { BOLIVAR_CENTER } from "@/lib/brand"
 import { etiquetaTipo, nombreZona } from "@/lib/busqueda"
 import { formatPrice, formatPriceCompact } from "@/lib/format"
@@ -20,7 +21,7 @@ import type { Tarjeta } from "@/lib/properties/tarjeta"
  * se rota y se inclina (pedido de Manuel, 2026-10-08), y la brújula lo vuelve al norte.
  * Spec: docs/hitos/hito-1/resultados.md § Vista mapa.
  */
-const ESTILO = "/mapa/estilo.json"
+const ESTILO = { light: "/mapa/estilo.json", dark: "/mapa/estilo-noche.json" } as const
 const ZOOM_CIUDAD = 13.5
 // Más lejos que esto (por ejemplo, con propiedades en las localidades), los pines no elegidos
 // pasan a puntos: los precios no entran.
@@ -34,7 +35,7 @@ function encuadrar(m: MapLibreMap, tarjetas: readonly Tarjeta[], animar: boolean
   const limites = new maplibregl.LngLatBounds()
   for (const t of tarjetas) limites.extend([t.lng, t.lat])
   m.fitBounds(limites, {
-    padding: { top: 120, bottom: 48, left: 40, right: 40 },
+    padding: { top: 80, bottom: 220, left: 40, right: 40 },
     maxZoom: ZOOM_AL_ELEGIR,
     animate: animar,
   })
@@ -61,20 +62,23 @@ export function PropertyMap({
   sel: string | undefined
   /** Escritorio: el pin de la tarjeta que tiene el mouse encima se destaca. */
   resaltada?: string
-  /** Lo que tapa la tarjeta flotante abajo: el mapa centra los pines por encima. */
+  /** Lo que tapa el panel de abajo: el mapa centra los pines por encima. */
   margenInferior: number
   onSeleccionar: (id: string) => void
   onDeseleccionar: () => void
 }) {
+  const { theme } = useTheme()
+  const tema = useRef(theme)
+  const temaAplicado = useRef(theme)
   const contenedor = useRef<HTMLDivElement>(null)
   const mapa = useRef<MapLibreMap | null>(null)
   const pines = useRef<Map<string, Pin>>(new Map())
   const handlers = useRef({ onSeleccionar, onDeseleccionar })
   const margen = useRef(margenInferior)
   const inicio = useRef({ tarjetas, sel })
-  const [afuera, setAfuera] = useState(0)
   // Las refs se actualizan después del render, no durante (regla de React 19).
   useLayoutEffect(() => {
+    tema.current = theme
     handlers.current = { onSeleccionar, onDeseleccionar }
     margen.current = margenInferior
   })
@@ -87,7 +91,7 @@ export function PropertyMap({
     const elegido = iniciales.find((t) => t.id === selInicial)
     const m = new maplibregl.Map({
       container: contenedor.current,
-      style: ESTILO,
+      style: ESTILO[tema.current],
       center: elegido ? [elegido.lng, elegido.lat] : [BOLIVAR_CENTER.lng, BOLIVAR_CENTER.lat],
       zoom: elegido ? ZOOM_AL_ELEGIR : ZOOM_CIUDAD,
       pitch: 0,
@@ -102,10 +106,9 @@ export function PropertyMap({
     m.addControl(new maplibregl.NavigationControl({ showCompass: true, visualizePitch: true }), "top-right")
 
     if (!elegido && iniciales.length > 0) {
-      // Si la mayoría está en la ciudad, se abre sobre la ciudad y se ofrece "Ver todo".
-      const { ids, afuera: deAfuera } = encuadreInicial(iniciales)
+      // Si la mayoría está en la ciudad, se abre sobre la ciudad.
+      const { ids } = encuadreInicial(iniciales)
       encuadrar(m, iniciales.filter((t) => ids.includes(t.id)), false)
-      setAfuera(deAfuera)
     }
 
     const marcarLejos = () => {
@@ -132,6 +135,13 @@ export function PropertyMap({
       mapa.current = null
     }
   }, [])
+
+  useEffect(() => {
+    const m = mapa.current
+    if (!m || temaAplicado.current === theme) return
+    temaAplicado.current = theme
+    m.setStyle(ESTILO[theme])
+  }, [theme])
 
   // Pines: uno por propiedad, con el precio compacto ("US$120k"); sin precio, "Consultar".
   useEffect(() => {
@@ -193,8 +203,7 @@ export function PropertyMap({
     }
   }, [resaltada])
 
-  // Al elegir una propiedad (desde un pin o deslizando la tarjeta), el mapa la lleva arriba de
-  // la tarjeta flotante.
+  // Al elegir una propiedad (un pin o una pastilla), el mapa la lleva arriba del panel.
   useEffect(() => {
     const m = mapa.current
     const t = tarjetas.find((x) => x.id === sel)
@@ -205,27 +214,13 @@ export function PropertyMap({
       padding: { top: 56, bottom: margen.current + 24, left: 24, right: 24 },
       duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 400,
     })
-  }, [sel, tarjetas])
-
-  const verTodo = () => {
-    if (mapa.current) encuadrar(mapa.current, tarjetas, true)
-    setAfuera(0)
-  }
+  }, [sel, tarjetas, margenInferior])
 
   // El CSS de MapLibre le pone `position: relative` al contenedor y le gana a las utilidades de
   // Tailwind (van en una capa): el envoltorio es el absoluto y el mapa ocupa el 100 % adentro.
   return (
     <div className="absolute inset-0">
       <div ref={contenedor} className="h-full w-full" />
-      {afuera > 0 ? (
-        <button
-          type="button"
-          onClick={verTodo}
-          className="absolute top-16 left-1/2 z-10 inline-flex min-h-11 -translate-x-1/2 items-center rounded-full bg-blanco px-4 text-sm font-semibold whitespace-nowrap text-tinta shadow-[0_2px_8px_rgb(0_0_0/0.15)]"
-        >
-          {afuera} fuera de la ciudad · Ver todo
-        </button>
-      ) : null}
     </div>
   )
 }

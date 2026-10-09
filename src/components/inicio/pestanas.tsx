@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Logo } from "@/components/marca/logo"
 import { Menu } from "@/components/shell/menu"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { BUSQUEDA_VACIA, rutaDePaso, type Operacion } from "@/lib/busqueda"
 
 const buscar = (operacion: Operacion) => rutaDePaso("tipo", { ...BUSQUEDA_VACIA, operacion })
@@ -25,13 +26,16 @@ export function Pestanas() {
   return (
     <div className="pestanas relative z-10">
       <div className="pestana mx-4 flex h-12 items-center justify-between px-1 lg:hidden">
-        <Menu />
+        <Menu lado="izquierda" />
         <Link href="/" aria-label="Bolívar Inmo, ir al inicio" className="inline-flex min-h-11 items-center text-lg">
           <Logo />
         </Link>
-        <Link href="/ingresar" className={ingresar}>
-          Ingresar
-        </Link>
+        <span className="flex items-center gap-1">
+          <ThemeToggle />
+          <Link href="/ingresar" className={ingresar}>
+            Ingresar
+          </Link>
+        </span>
       </div>
 
       <div className="hidden items-start justify-between px-8 lg:flex">
@@ -56,7 +60,8 @@ export function Pestanas() {
             </Link>
           ))}
         </nav>
-        <div className="pestana flex h-14 items-center px-2">
+        <div className="pestana flex h-14 items-center gap-1 px-2">
+          <ThemeToggle />
           <Link href="/ingresar" className={ingresar}>
             Ingresar
           </Link>

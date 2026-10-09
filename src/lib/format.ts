@@ -26,6 +26,12 @@ function trimNum(n: number): string {
   return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1)
 }
 
+/** "2026-09-30" → "30/9/2026". El mes va sin cero. */
+export function formatFecha(iso: string): string {
+  const [anio, mes, dia] = iso.split("-")
+  return `${Number(dia)}/${Number(mes)}/${anio}`
+}
+
 /** La superficie principal: hectáreas en campos; si no, la total o la cubierta. */
 export function formatArea(
   p: Pick<Property, "areaHa" | "areaTotalM2" | "areaCoveredM2">

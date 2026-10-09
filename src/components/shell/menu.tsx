@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { ChevronRight, Menu as MenuIcono, X } from "lucide-react"
+import { CaretRight, List as MenuIcono, X } from "@/components/iconos"
 import { Button } from "@/components/ui/button"
 import {
   Drawer,
@@ -29,15 +29,15 @@ function Fila({ href, texto }: { href: string; texto: string }) {
       }
     >
       {texto}
-      <ChevronRight className="size-5 text-tinta-suave" aria-hidden="true" />
+      <CaretRight className="size-5 text-tinta-suave" aria-hidden="true" />
     </DrawerClose>
   )
 }
 
-/** El menú: una hoja que entra desde la derecha. */
-export function Menu() {
+/** El menú entra desde el mismo lado que el botón que lo abre. */
+export function Menu({ lado = "derecha" }: { lado?: "izquierda" | "derecha" }) {
   return (
-    <Drawer swipeDirection="right">
+    <Drawer swipeDirection={lado === "izquierda" ? "left" : "right"}>
       <DrawerTrigger
         render={<Button variant="ghost" size="icon" aria-label="Abrir menú" />}
       >

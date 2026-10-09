@@ -3,7 +3,7 @@ import { sugerenciasSinResultados } from "./contar"
 import type { Filtrable } from "./filtrar"
 import { BUSQUEDA_VACIA, escribirBusqueda, type Busqueda } from "./parametros"
 import { pasoAccesible, pasoAnterior, pasoSiguiente, rutaDePaso } from "./pasos"
-import { rangosDePrecio, redondearLindo } from "./precios"
+import { indicadorMasCercano, limitesDePrecio, rangosDePrecio, redondearLindo } from "./precios"
 import { chipsDeBusqueda, filtrosActivos, tituloDeBusqueda } from "./resumen"
 
 const buscar = (b: Partial<Busqueda>): Busqueda => ({ ...BUSQUEDA_VACIA, ...b })
@@ -109,6 +109,14 @@ describe("precios", () => {
     const props = [1, 2, 3, 4, 5].map((i) => prop({ price: i * 100_000, currency: "ARS" }))
     expect(rangosDePrecio(props, BUSQUEDA_VACIA, "USD")).toEqual([])
     expect(rangosDePrecio(props, BUSQUEDA_VACIA, "ARS").length).toBeGreaterThan(0)
+    expect(limitesDePrecio(props, BUSQUEDA_VACIA, "ARS")).toEqual({ min: 100_000, max: 500_000 })
+  })
+
+  it("cuando los indicadores coinciden, el lado elige cuál se mueve", () => {
+    expect(indicadorMasCercano(20, 100, 0, 100, 20, 80)).toBe("min")
+    expect(indicadorMasCercano(80, 100, 0, 100, 20, 80)).toBe("max")
+    expect(indicadorMasCercano(39, 100, 0, 100, 40, 40)).toBe("min")
+    expect(indicadorMasCercano(41, 100, 0, 100, 40, 40)).toBe("max")
   })
 })
 

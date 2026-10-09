@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ChevronRight } from "lucide-react"
+import { CaretRight } from "@/components/iconos"
 import { cn } from "@/lib/utils"
 
 /** Una sección del inicio: título, una bajada opcional y "Ver todas ›" a la derecha. */
@@ -32,7 +32,7 @@ export function Seccion({
             href={ver.href}
             className="inline-flex min-h-11 shrink-0 items-center gap-0.5 text-sm font-semibold text-plano-700 hover:underline hover:underline-offset-4"
           >
-            {ver.texto} <ChevronRight className="size-4" aria-hidden="true" />
+            {ver.texto} <CaretRight className="size-4" aria-hidden="true" />
           </Link>
         ) : null}
       </div>

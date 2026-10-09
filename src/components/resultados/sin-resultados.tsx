@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ChevronRight, X } from "lucide-react"
+import { CaretRight, X } from "@/components/iconos"
 import type { Sugerencia } from "@/lib/busqueda"
 
 /** "Casas en venta" → "casas en venta"; "PH en venta" queda igual. */
@@ -44,7 +44,7 @@ export function SinResultados({
       ) : null}
       {todas ? (
         <Link href={todas.href} className="inline-flex min-h-11 w-fit items-center gap-1 font-semibold text-plano-700">
-          {todas.texto} <ChevronRight className="size-4" aria-hidden="true" />
+          {todas.texto} <CaretRight className="size-4" aria-hidden="true" />
         </Link>
       ) : null}
     </div>

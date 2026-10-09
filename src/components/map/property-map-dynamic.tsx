@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic"
 
-/** El mapa no entra en la carga inicial: se pide recién al abrir la vista mapa. */
+/** El mapa de resultados. Aparte del resto de la página: MapLibre no entra en el primer JS. */
 export const PropertyMapDynamic = dynamic(
   () => import("@/components/map/property-map").then((m) => m.PropertyMap),
   {
@@ -14,6 +14,3 @@ export const PropertyMapDynamic = dynamic(
     ),
   }
 )
-
-/** Pedir el código del mapa antes de que haga falta (cuando la lista ya se ve). */
-export const precargarMapa = () => import("@/components/map/property-map")

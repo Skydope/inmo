@@ -2,7 +2,7 @@
 
 import Form from "next/form"
 import Link from "next/link"
-import { X } from "lucide-react"
+import { X } from "@/components/iconos"
 import { useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { datosDe, useBusquedaDelFormulario } from "./use-busqueda-del-formulario"

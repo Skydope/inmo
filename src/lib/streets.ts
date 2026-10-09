@@ -378,3 +378,45 @@ export function getStreetMidpoint(data: StreetLines): { lng: number; lat: number
 
   return { lng: closest[0], lat: closest[1] }
 }
+
+export type Lugar = { lat: number; lng: number; nombre: string }
+
+/** El primer resultado de Nominatim que cae en Bolívar. Si está lejos, no es la oficina. */
+export function lugarDesdeNominatim(hits: unknown): Lugar | null {
+  if (!Array.isArray(hits)) return null
+  for (const hit of hits) {
+    if (!hit || typeof hit !== "object") continue
+    const fila = hit as { lat?: unknown; lon?: unknown; display_name?: unknown }
+    const lat = Number(fila.lat)
+    const lng = Number(fila.lon)
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue
+    if (haversineKm(BOLIVAR_CENTER, { lat, lng }) > MAX_KM) continue
+    return {
+      lat,
+      lng,
+      nombre: typeof fila.display_name === "string" ? fila.display_name : "",
+    }
+  }
+  return null
+}
+
+/** Calle y altura de un reverse de Nominatim, si el punto cae en Bolívar. */
+export function direccionDesdeReverso(hit: unknown): { calle: string; altura: string } | null {
+  if (!hit || typeof hit !== "object") return null
+  const fila = hit as { lat?: unknown; lon?: unknown; address?: unknown; error?: unknown }
+  if (fila.error) return null
+  const lat = Number(fila.lat)
+  const lng = Number(fila.lon)
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null
+  if (haversineKm(BOLIVAR_CENTER, { lat, lng }) > MAX_KM) return null
+  if (!fila.address || typeof fila.address !== "object") return null
+  const address = fila.address as Record<string, unknown>
+  const calle = ["road", "pedestrian", "residential", "street", "footway"]
+    .map((clave) => address[clave])
+    .find((valor) => typeof valor === "string" && valor.trim() !== "")
+  if (typeof calle !== "string") return null
+  const numero = address.house_number
+  const altura =
+    typeof numero === "string" || typeof numero === "number" ? String(numero).replace(/\D/g, "") : ""
+  return { calle: calle.trim(), altura }
+}

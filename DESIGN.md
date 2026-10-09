@@ -1,24 +1,47 @@
 ---
 name: Bolívar Inmo
-description: The sign and the city plan. A clear search tool for one town.
+description: The sign and the city plan. Warm paper, ink, and scarce gold.
 colors:
-  papel: "#f7f8f6"
-  blanco: "#ffffff"
-  tinta: "#17211c"
-  tinta-suave: "#56635c"
-  linea: "#dfe4e0"
-  plano-50: "#eaf0f6"
-  plano-700: "#1f4e79"
-  plano-800: "#183d5f"
-  trigo: "#e3b04b"
+  papel: "#efe8dc"
+  blanco: "#f7f2ea"
+  tinta: "#1a1a1a"
+  tinta-suave: "#6e675e"
+  niebla: "#a8a297"
+  linea: "#e4dcd0"
+  plano-50: "#f3efe6"
+  plano-700: "#1a1a1a"
+  plano-800: "#3a3530"
+  trigo: "#c4a574"
   alerta: "#b4432f"
+  noche: "#1a1a1a"
+  sobre-noche: "#f7f2ea"
 typography:
+  display:
+    fontFamily: "Archivo Black, Impact, sans-serif"
+    fontSize: "clamp(2.75rem, 18cqh, 7.5rem)"
+    fontWeight: 400
+    lineHeight: 0.8
+    letterSpacing: "-0.02em"
+    fontFeature: "uppercase"
   question:
     fontFamily: "Encode Sans, system-ui, sans-serif"
-    fontSize: "2rem"
+    fontSize: "1.375rem"
     fontWeight: 700
     fontStretch: "87.5%"
     lineHeight: 1.1
+    letterSpacing: "-0.01em"
+  title:
+    fontFamily: "Encode Sans, system-ui, sans-serif"
+    fontSize: "1.5rem"
+    fontWeight: 700
+    fontStretch: "87.5%"
+    lineHeight: 1.2
+    letterSpacing: "-0.01em"
+  voice:
+    fontFamily: "Instrument Serif, Georgia, serif"
+    fontSize: "1.75rem"
+    fontWeight: 400
+    lineHeight: 1.2
     letterSpacing: "-0.01em"
   price:
     fontFamily: "Encode Sans, system-ui, sans-serif"
@@ -26,20 +49,7 @@ typography:
     fontWeight: 700
     fontStretch: "87.5%"
     lineHeight: 1
-    fontVariantNumeric: "tabular-nums"
-  title:
-    fontFamily: "Encode Sans, system-ui, sans-serif"
-    fontSize: "1.25rem"
-    fontWeight: 700
-    fontStretch: "87.5%"
-    lineHeight: 1.2
-  sign:
-    fontFamily: "Encode Sans, system-ui, sans-serif"
-    fontSize: "0.75rem"
-    fontWeight: 700
-    fontStretch: "75%"
-    letterSpacing: "0.06em"
-    textTransform: "uppercase"
+    fontFeature: "tabular-nums"
   body:
     fontFamily: "Encode Sans, system-ui, sans-serif"
     fontSize: "1rem"
@@ -50,6 +60,13 @@ typography:
     fontSize: "1rem"
     fontWeight: 600
     lineHeight: 1.3
+  sign:
+    fontFamily: "Encode Sans, system-ui, sans-serif"
+    fontSize: "0.75rem"
+    fontWeight: 700
+    fontStretch: "75%"
+    letterSpacing: "0.06em"
+    fontFeature: "uppercase"
 rounded:
   control: "0.75rem"
   tarjeta: "1rem"
@@ -80,155 +97,164 @@ components:
   button-outline:
     backgroundColor: "{colors.blanco}"
     textColor: "{colors.tinta}"
-    border: "1px solid {colors.linea}"
     rounded: "{rounded.control}"
     height: "44px"
   option:
-    backgroundColor: "{colors.blanco}"
+    backgroundColor: "{colors.papel}"
     textColor: "{colors.tinta}"
-    border: "1px solid {colors.linea}"
     rounded: "{rounded.control}"
-    minHeight: "80px"
-  option-selected:
-    backgroundColor: "{colors.plano-50}"
-    border: "1px solid {colors.plano-700}"
-    indicator: "check in {colors.plano-700}"
+    height: "64px"
   chip:
     backgroundColor: "{colors.blanco}"
-    border: "1px solid {colors.linea}"
+    textColor: "{colors.tinta}"
     rounded: "{rounded.full}"
-    minHeight: "44px"
+    height: "44px"
   sign:
-    backgroundColor: "{colors.tinta}"
-    textColor: "{colors.blanco}"
+    backgroundColor: "{colors.noche}"
+    textColor: "{colors.sobre-noche}"
     typography: "{typography.sign}"
     rounded: "4px"
   card:
     backgroundColor: "{colors.blanco}"
-    border: "1px solid {colors.linea}"
+    textColor: "{colors.tinta}"
     rounded: "{rounded.tarjeta}"
-  header:
-    backgroundColor: "{colors.blanco}"
-    borderBottom: "1px solid {colors.linea}"
-    height: "56px"
+  footer:
+    backgroundColor: "{colors.noche}"
+    textColor: "{colors.sobre-noche}"
+    typography: "{typography.body}"
 ---
 
 # Design System: Bolívar Inmo
 
 ## Overview
 
-A search tool for one town, San Carlos de Bolívar. Mobile first, verified at 360 px. The
-identity comes from two objects of small-town real estate: **the "VENDE" sign** nailed to the
-front of a house (compact heavy letters, flat color, full contrast) and **the city plan**
-(white paper, thin lines, the blue of blueprint copies). Mode: **Operate**. The visitor
-completes a task: find a property and contact the agency.
+**Creative North Star: "El cartel y el plano"**
 
-The full rationale, in Spanish, lives in the local skill `identidad-visual`
-(`.claude/skills/identidad-visual/SKILL.md`). Tokens live in `src/app/globals.css` with
-measured contrasts.
+Bolívar Inmo is a search tool for one town. The page sits on warm paper. Type is ink. Gold is scarce by day and becomes the action at night. The two objects are the "VENDE" sign nailed to a house and the city plan drawn in the footer.
+
+Mode: Operate. The visitor finds a property and contacts the agency. Mobile first, checked at 360 px. Motion is short, except the home: the sheet climbs over the house, the sentence lights word by word, and the plan draws itself. Those effects are CSS only, behind `animation-timeline` and `prefers-reduced-motion: no-preference`.
+
+**Key Characteristics:**
+
+- Warm paper, ink, and gold. Day action is ink. Night action is gold.
+- Archivo Black only for "VIVÍ BOLÍVAR". Encode Sans for the interface. Instrument Serif, upright, only for the sheet sentence and the footer line.
+- The footer, the operation sign, and the scrims stay dark in both themes.
+- 44 px touch targets. One question per step. Counts come from the data.
 
 ## Colors
 
+Warm paper for the ground, ink for type and for the day action, gold for the night action and for "Destacada".
+
 ### Primary
 
-`plano-700` (#1f4e79) is the only flat color in the interface and it means "move forward":
-continue, see properties, contact, the selected option, the active map pin. White on it
-measures 8.7. Hover and pressed: `plano-800`. Selected backgrounds: `plano-50`.
+- **Tinta de acción** (`plano-700`, #1a1a1a): continue, the selected option, the map pin, the logo square. By day it is the same ink as the text. Hover is `plano-800` (#3a3530).
+- **Oro** (`trigo`, #c4a574): "Destacada" by day, with ink on top. At night `plano-700`, `primary`, and the focus ring remap to this gold, and the label on it is ink (#1a1a1a).
 
 ### Neutral
 
-`papel` page background (a barely green-tinted white, never cream), `blanco` surfaces,
-`tinta` text (15.5 on papel), `tinta-suave` secondary text (5.9 on papel), `linea` borders
-only (never text).
+- **Papel** (`papel`, #efe8dc): the page.
+- **Papel alto** (`blanco`, #f7f2ea): cards, the filter sheet, bars.
+- **Tinta** (`tinta`, #1a1a1a): text and icons. On paper it measures 14.29.
+- **Piedra** (`tinta-suave`, #6e675e): secondary text. On paper it measures 4.58, just over 4.5. Do not lighten it.
+- **Niebla** (`niebla`, #a8a297): secondary text on the dark footer only. On `noche` it measures 6.86. It does not flip at night.
+- **Línea** (`linea`, #e4dcd0): borders. Never text.
+- **Noche** (`noche`, #1a1a1a) and **Sobre noche** (`sobre-noche`, #f7f2ea): the pair that does not follow the theme. Footer, operation sign, photo badges, dialog and drawer scrims.
 
 ### Named Rules
 
-- **Blue means forward.** Anything blue that does not advance the task is wrong.
-- **Trigo is rare.** Only the "Destacada" label. Never a button.
-- **No cream, no gold, no glass, no gradients, no colored shadows.**
+**The Fixed Night Rule.** Anything that must stay dark uses `noche` and `sobre-noche`. Do not paint it with `tinta` and `blanco`: those two swap at night, and the footer would turn into paper.
+
+**The Day Ink Rule.** By day, blue is not an action color. Forward motion is ink.
+
+**The Scarce Gold Rule.** By day, gold is only "Destacada". At night it is the action, not a wash behind the page.
 
 ## Typography
 
-One family for everything functional, **Encode Sans** (Impallari Type, Argentina), variable in
-weight and width. Two scoped exceptions on the home page only (spec `vivi-bolivar`): the
-**display** "VIVÍ BOLÍVAR" (Encode Sans at 125 % width, 900, uppercase) and **the voice**,
-Instrument Serif 400 upright, for the sheet's statement and the home footer line only (never
-below 24 px, never italic).
+**Display:** Archivo Black (Impact)
+**Interface:** Encode Sans (system-ui)
+**Voice:** Instrument Serif, roman (Georgia)
 
 ### Hierarchy
 
-Question 32 px, ficha price 30 px, card price 24 px, section title 20 px (all 700 at 87.5 %
-width, utility `font-titulo`); body 16 px; secondary 14 px; the operation sign 12 px at 75 %
-width in uppercase.
+- **Display** (400, clamp from 2.75rem, tracking −0.02em, uppercase): "VIVÍ BOLÍVAR" on the hero and in the footer. The word "BOLÍVAR" is 4.8 em wide in this face. Do not put Archivo Black on section titles.
+- **Question** (700, 1.375rem, 1.75rem from `lg`, stretch 87.5%): "¿Qué estás buscando?" and the other step questions.
+- **Title** (700, 1.5rem, stretch 87.5%): section headings on the home sheet.
+- **Voice** (400, from 1.75rem, never italic, never under 24px): the sheet sentence and the footer invitation.
+- **Price** (700, tabular numerals, stretch 87.5%): listing prices. On a card, `text-xl` or `text-lg`. On the map pin, 0.875rem, the same step as `text-sm`.
+- **Body** (400, 1rem): reading copy.
+- **Sign** (700, 0.75rem, stretch 75%, uppercase, tracking 0.06em): VENTA / ALQUILER / TEMPORARIO.
 
 ### Named Rules
 
-- **The sign is the only uppercase** (plus the "VIVÍ BOLÍVAR" display).
-- **Prices use tabular numerals.**
-- **Never below 14 px for reading; inputs at 16 px** (iOS zooms below that).
+**The Three Voices Rule.** Archivo Black is the sign on the roof. Encode Sans is everything you read and tap. Instrument Serif, upright, is one sentence on the home. Do not italicize it and do not add a fourth face.
+
+**The Width Rule.** `--em-bolivar` is 4.8 because that is the measured width of "BOLÍVAR" in Archivo Black at −0.02em. It was 5.1 for stretched Encode Sans. Do not reuse that number.
 
 ## Layout
 
-Single column at 360 px with a 16 px gutter. One question or one task per screen, one
-primary button, fixed at the bottom when it is the main action. Desktop adapts (two columns
-for results), it is not the design target.
+Single column at 360 px with a 16 px gutter. One question or one task per screen. The home hero fills the first screen: house, title, tabs, and the three options. The map link sits above the question. Results are the map at every width. The property cards sit in a strip on the map. The count is a pill on the left and Filtros sits on the right. On a wide screen the filter sheet enters from the right, the same way as the menu.
 
 ## Elevation & Depth
 
+Flat paper, with a soft shadow only on what floats: the filter card, the sheet over the photo, map pins, carousel arrows.
+
 ### Shadow Vocabulary
 
-Neutral, soft shadows only on floating things: the map card, fixed bars, sheets.
+- **Filtro** (`0 2px 6px rgb(0 0 0 / 0.08), 0 16px 40px rgb(0 0 0 / 0.18)`): the question card on the photo.
+- **Hoja** (`0 -28px 70px rgb(23 33 28 / 0.16)`): the sheet climbing over the hero.
+- **Flecha** (`0 2px 8px rgb(0 0 0 / 0.12)`): carousel arrows.
 
 ### Named Rules
 
-- Separate with `linea` before reaching for a shadow.
+**The Line First Rule.** Separate with `linea` before reaching for a shadow.
 
 ## Shapes
 
-12 px controls, 16 px cards, 24 px sheet tops, pills only for chips and map pins.
+12 px controls, 16 px cards, 24 px sheet tops. Pills only for chips, the map link, and the footer actions. The operation sign is a 4 px rectangle.
 
 ## Components
 
 ### Buttons
 
-Primary blue, 44 px (56 px for the main action of a screen); outline white with border;
-ghost; link. Focus ring in `plano-700`.
+Primary is ink by day and gold by night, 44 px (56 px for the main action of a screen). Text on it is `blanco`, which flips to ink when the fill is gold. Outline is raised paper with a `linea` border. Focus is a 2 px ring in `plano-700`.
 
 ### Chips
 
-44 px tall pills for zones and features; selected = blue border, `plano-50` background and
-a check.
+44 px pills. Zones and features. Selected state is a check, not color alone.
 
 ### Cards / Containers
 
-White, 1 px `linea` border, 16 px radius, no shadow unless floating.
+Raised paper, 1 px `linea`, 16 px radius. No shadow unless the card floats.
 
 ### Inputs / Fields
 
-44 px tall, 16 px text, white, `linea` border, 12 px radius.
+44 px tall, 16 px text, raised paper, `linea` border, 12 px radius.
 
 ### Navigation
 
-White 56 px header with logo and menu (a sheet from the right). Search steps replace the
-header with a step bar.
+The home tabs sit on the photo. The menu opens from the same side as the button: left on the home tabs, right on the header. The header bar is hidden until the sheet covers the tabs, then it pins. With reduced motion it appears without sliding.
 
-### Login photograph
+### The sign
 
-`/ingresar` keeps its reference composition: access on the left, a photo of Bolívar on the
-right.
+`noche` fill, `sobre-noche` type, condensed uppercase. It stays a dark sign in both themes.
+
+### Footer
+
+Always `noche`, type `sobre-noche`, secondary links in `niebla`. The plan of the city draws in on the home only.
 
 ## Do's and Don'ts
 
 ### Do:
 
-- Measure contrast with `node scripts/contraste.mjs` before adding a color.
-- Keep every touch target at 44 px or more.
-- Make the selected state visible without color (a check).
-- Keep motion to transitions of 200 ms or less with `transform` and `opacity`.
+- **Do** measure a new pair with `node scripts/contraste.mjs` before shipping it. Body text stays at or above 4.5.
+- **Do** keep touch targets at 44 px.
+- **Do** let the day/night button drive the hero photo, the title, and the map. The title at night is ink-light (`tinta`, #f3efe6), not the surface token.
+- **Do** keep reduced motion as less travel. Color and state changes stay. The pinned bar still appears.
 
 ### Don't:
 
-- Animate entrances or counters, or animate with JS libraries. The only scroll effects are the home's CSS-only ones (the sheet over the hero, the statement lighting up by color, the footer plan drawing, the pinned bar), behind `@supports` and `prefers-reduced-motion`.
-- Put photos or gradients behind controls, except the home hero: the country house by day or by night (following `prefers-color-scheme`), "VIVÍ BOLÍVAR" behind the roof, and the search options on a solid white card.
-- Use blue for decoration.
-- Add dark mode styles without the decision recorded in the skill (the hero photo and title are the only exception).
+- **Don't** bring back blueprint blue (#1f4e79, #0c2560) as the action or the night sky.
+- **Don't** set the hero title from `prefers-color-scheme`. The button owns the theme.
+- **Don't** paint the footer or the operation sign with `bg-tinta text-blanco`.
+- **Don't** put Archivo Black on every heading, or italicize Instrument Serif.
+- **Don't** kill every animation with `animation-duration: 0.01ms`. That breaks scroll-driven timelines.

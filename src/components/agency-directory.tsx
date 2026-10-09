@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { ArrowUpRight, Mail, MessageCircle, Phone, Search } from "lucide-react"
+import { ArrowUpRight, Envelope, ChatCircle, Phone, MagnifyingGlass } from "@/components/iconos"
 import { CoverImage } from "@/components/cover-image"
 import { formatPrice } from "@/lib/format"
 import type { Currency } from "@/lib/properties/types"
@@ -49,7 +49,7 @@ export function AgencyDirectory({ agencies }: { agencies: AgencyRow[] }) {
           aria-label="Buscar inmobiliaria"
           className="min-w-0 flex-1 appearance-none rounded-full border-0 bg-transparent text-base text-tinta outline-none placeholder:text-tinta-suave focus-visible:outline-none!"
         />
-        <Search className="size-4 shrink-0 text-tinta-suave" aria-hidden="true" />
+        <MagnifyingGlass className="size-4 shrink-0 text-tinta-suave" aria-hidden="true" />
       </label>
 
       {list.length === 0 ? (
@@ -73,10 +73,10 @@ export function AgencyDirectory({ agencies }: { agencies: AgencyRow[] }) {
 function AgencyBand({ agency }: { agency: AgencyRow }) {
   const ContactIcon =
     agency.contactKind === "whatsapp"
-      ? MessageCircle
+      ? ChatCircle
       : agency.contactKind === "tel"
         ? Phone
-        : Mail
+        : Envelope
   const catalogHref = `/propiedades?agencia=${encodeURIComponent(agency.name)}`
 
   return (
@@ -218,7 +218,7 @@ function ListingPhoto({ listing, className }: { listing: AgencyListing; classNam
         alt={listing.title}
         className="absolute inset-0 h-full w-full object-cover"
       />
-      <span className="absolute bottom-3 left-3 rounded-full bg-tinta/85 px-3 py-1 text-sm font-semibold text-blanco tabular-nums">
+      <span className="absolute bottom-3 left-3 rounded-full bg-noche/85 px-3 py-1 text-sm font-semibold text-sobre-noche tabular-nums">
         {formatPrice(listing.price, listing.currency)}
       </span>
     </Link>

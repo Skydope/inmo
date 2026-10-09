@@ -8,60 +8,82 @@ import { writeFileSync, mkdirSync } from "node:fs"
 
 const ORIGEN = "https://tiles.openfreemap.org/styles/positron"
 
-// La paleta (src/app/globals.css). El mapa es gris claro: lo único con color son los pines.
-const P = {
-  papel: "#f7f8f6",
-  manzana: "#eff1ee",
-  edificio: "#e6e9e5",
-  parque: "#e3ebe2",
-  agua: "#d4dee7",
-  linea: "#dfe4e0",
-  calle: "#ffffff",
-  calleMenor: "#e9ece9",
-  tintaSuave: "#56635c",
-  tinta: "#17211c",
-  aguaTexto: "#4c6a86",
+// Día: papel, tinta y agua lavada. De noche el acento de los nombres (hints) es oro.
+const DIA = {
+  papel: "#efe8dc",
+  manzana: "#e7dfd2",
+  edificio: "#ddd4c6",
+  parque: "#d7e0d4",
+  agua: "#d5ddd8",
+  linea: "#e4dcd0",
+  calle: "#f7f2ea",
+  calleMenor: "#ebe3d6",
+  tintaSuave: "#6e675e",
+  tinta: "#1a1a1a",
+  aguaTexto: "#6e675e",
+  hint: "#6e675e",
 }
 
-const COLORES = {
-  background: { "background-color": P.papel },
-  park: { "fill-color": P.parque },
-  water: { "fill-color": P.agua },
-  landuse_residential: { "fill-color": P.manzana },
-  landcover_wood: { "fill-color": P.parque },
-  building: { "fill-color": P.edificio },
-  waterway: { "line-color": P.agua },
-  highway_minor: { "line-color": P.calleMenor },
-  highway_major_casing: { "line-color": P.linea },
-  highway_major_inner: { "line-color": P.calle },
-  highway_motorway_casing: { "line-color": P.linea },
-  "highway-name-minor": { "text-color": P.tintaSuave },
-  "highway-name-major": { "text-color": P.tintaSuave },
-  "highway-name-path": { "text-color": P.tintaSuave },
-  water_name_point_label: { "text-color": P.aguaTexto },
-  water_name_line_label: { "text-color": P.aguaTexto },
-  label_other: { "text-color": P.tintaSuave },
-  label_village: { "text-color": P.tinta },
-  label_town: { "text-color": P.tinta },
-  label_city: { "text-color": P.tinta },
-  label_city_capital: { "text-color": P.tinta },
+const NOCHE = {
+  papel: "#1a1a1a",
+  manzana: "#22201c",
+  edificio: "#2a2723",
+  parque: "#1c2420",
+  agua: "#1a2224",
+  linea: "#3a3530",
+  calle: "#2e2a26",
+  calleMenor: "#26221e",
+  tintaSuave: "#a8a297",
+  tinta: "#f3efe6",
+  aguaTexto: "#c4a574",
+  hint: "#c4a574",
 }
+
+const coloresDe = (p) => ({
+  background: { "background-color": p.papel },
+  park: { "fill-color": p.parque },
+  water: { "fill-color": p.agua },
+  landuse_residential: { "fill-color": p.manzana },
+  landcover_wood: { "fill-color": p.parque },
+  building: { "fill-color": p.edificio },
+  waterway: { "line-color": p.agua },
+  highway_minor: { "line-color": p.calleMenor },
+  highway_major_casing: { "line-color": p.linea },
+  highway_major_inner: { "line-color": p.calle },
+  highway_motorway_casing: { "line-color": p.linea },
+  "highway-name-minor": { "text-color": p.hint },
+  "highway-name-major": { "text-color": p.hint },
+  "highway-name-path": { "text-color": p.hint },
+  water_name_point_label: { "text-color": p.aguaTexto },
+  water_name_line_label: { "text-color": p.aguaTexto },
+  label_other: { "text-color": p.tintaSuave },
+  label_village: { "text-color": p.tinta },
+  label_town: { "text-color": p.tinta },
+  label_city: { "text-color": p.tinta },
+  label_city_capital: { "text-color": p.tinta },
+})
 
 const respuesta = await fetch(ORIGEN)
 if (!respuesta.ok) throw new Error(`No se pudo bajar ${ORIGEN}: ${respuesta.status}`)
 const estilo = await respuesta.json()
 
-let cambiadas = 0
-for (const capa of estilo.layers) {
-  const cambios = COLORES[capa.id]
-  if (!cambios) continue
-  capa.paint = { ...capa.paint, ...cambios }
-  cambiadas++
+function pintar(base, paleta, nombre, archivo) {
+  const estilo = structuredClone(base)
+  let cambiadas = 0
+  const colores = coloresDe(paleta)
+  for (const capa of estilo.layers) {
+    const cambios = colores[capa.id]
+    if (!cambios) continue
+    capa.paint = { ...capa.paint, ...cambios }
+    cambiadas++
+  }
+  estilo.name = nombre
+  writeFileSync(archivo, JSON.stringify(estilo))
+  console.log(`${archivo}: ${estilo.layers.length} capas, ${cambiadas} recoloreadas`)
 }
 
-estilo.name = "Bolívar Inmo (positron de OpenFreeMap)"
 // Las fuentes de OpenFreeMap no traen atribución: va en el control del mapa
 // (src/components/map/property-map.tsx).
 mkdirSync("public/mapa", { recursive: true })
-writeFileSync("public/mapa/estilo.json", JSON.stringify(estilo))
-console.log(`public/mapa/estilo.json: ${estilo.layers.length} capas, ${cambiadas} recoloreadas`)
+pintar(estilo, DIA, "Bolívar Inmo (positron de OpenFreeMap)", "public/mapa/estilo.json")
+pintar(estilo, NOCHE, "Bolívar Inmo noche", "public/mapa/estilo-noche.json")
