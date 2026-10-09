@@ -109,7 +109,7 @@ function Formulario({
   // Se compara sin la propiedad elegida: abrir la hoja no tiene que sacarla de la URL.
   useEffect(() => {
     const filtrosDe = (b: Busqueda) =>
-      hrefDeBusqueda("/propiedades", { ...b, vista: "lista", sel: undefined })
+      hrefDeBusqueda("/propiedades", { ...b, vista: "mapa", sel: undefined })
     const ahora = filtrosDe(leerBusqueda(new URLSearchParams(window.location.search), { conVista: true }))
     if (filtrosDe(actual) === ahora) return
     const espera = window.setTimeout(() => {

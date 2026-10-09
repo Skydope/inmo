@@ -76,10 +76,10 @@ sección. Si algo azul no avanza, está mal.
   vidrio, dorado) se retiró: el detector de Impeccable marca el fondo crema como superficie
   "por defecto" de diseño hecho por IA.
 - **2026-10-08 (más tarde)**: Manuel pidió volver al hero de esa versión (la casa, VIVÍ
-  BOLÍVAR). Vuelve **la composición**, no el sistema: sin crema ni dorado, Instrument Serif
-  solo en dos frases y derecha, VIVÍ BOLÍVAR en Encode Sans ancha. Las secciones y la
-  tipografía de todo lo demás quedan como estaban ("grande, negrita, que cualquier gente de
-  cualquier edad lo puede ver").
+  BOLÍVAR). Vuelve **la composición**, no el sistema: sin crema ni dorado. VIVÍ BOLÍVAR y la
+  frase de la hoja van en Archivo Black (la frase, en oración); Instrument Serif queda solo
+  en la línea del pie, derecha. Las secciones y la tipografía de todo lo demás quedan como
+  estaban ("grande, negrita, que cualquier gente de cualquier edad lo puede ver").
 
 ## Tipografía
 
@@ -96,13 +96,15 @@ sección. Si algo azul no avanza, está mal.
 - **Números que cambian** (precios, conteos): `tabular-nums`. Encode Sans trae cifras
   tabulares (verificado).
 - **Logotipo**: "**bolívar** inmo" en minúscula, como el dominio; en textos, "Bolívar Inmo".
-- **Display** (utilidad `font-display`): Encode Sans, ancho 125 %, 900, mayúsculas, tracking
-  −0,02 em. **Solo** "VIVÍ BOLÍVAR" (el hero del inicio y el cierre del pie). Es la otra
-  excepción a la regla de las mayúsculas.
+- **Display** (utilidad `font-display`): **Archivo Black**, mayúsculas, tracking −0,02 em.
+  **Solo** "VIVÍ BOLÍVAR" (el hero del inicio y el cierre del pie). Encode Sans estirada
+  redondeaba la B. Es la otra excepción a la regla de las mayúsculas.
+- **La frase de la hoja**: la misma Archivo Black, en oración y desde 24 px. No va en
+  mayúsculas (un párrafo en cartel no se lee) y los números quedan en tinta: el azul es
+  para avanzar, no para decorar una cifra.
 - **La voz** (utilidad `font-voz`): **Instrument Serif** 400, derecha (Rodrigo Fuenzalida y
-  Jordan Egstad, OFL; `preload: false`). **Solo** la frase de la hoja del inicio y la línea del
-  pie del inicio. Nunca menos de 24 px, nunca en itálica, nunca en controles, títulos de
-  sección, precios ni datos.
+  Jordan Egstad, OFL; `preload: false`). **Solo** la línea del pie del inicio. Nunca menos
+  de 24 px, nunca en itálica, nunca en controles, títulos de sección, precios ni datos.
 
 ## Forma y espacio
 

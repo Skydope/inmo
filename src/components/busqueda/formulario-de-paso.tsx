@@ -98,7 +98,7 @@ export function FormularioDePaso({
         <input key={`${clave}=${valor}`} type="hidden" name={clave} value={valor} />
       ))}
 
-      <fieldset aria-labelledby={idTitulo} className="mx-auto w-full max-w-xl flex-1 px-4 pt-6 pb-8">
+      <fieldset aria-labelledby={idTitulo} className="mx-auto w-full max-w-xl flex-1 px-4 pb-8">
         {children}
       </fieldset>
 

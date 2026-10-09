@@ -291,6 +291,19 @@ html.dark {
   border-radius: 999px;
 }
 
+/* La columna de resultados: solo ella se baja, con la barra fina a la derecha. */
+.lista-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-tinta-suave) transparent;
+}
+.lista-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.lista-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-tinta-suave);
+  border-radius: 999px;
+}
+
 .is-lejos .map-pin:not(.is-selected, .is-resaltado) .map-pin-precio {
   width: 0.75rem;
   height: 0.75rem;
@@ -458,8 +471,12 @@ html.dark {
     );
   }
 
-  /* La frase de la hoja: se enciende palabra por palabra al pasar (abajo, en @supports). */
+  /* La frase de la hoja: la misma letra que VIVÍ BOLÍVAR, en oración (no en mayúsculas).
+     Se enciende palabra por palabra al pasar (abajo, en @supports). */
   .frase {
+    font-family: var(--font-archivo), Impact, sans-serif;
+    font-weight: 400;
+    letter-spacing: -0.02em;
     text-wrap: pretty;
   }
 

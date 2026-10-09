@@ -4,29 +4,31 @@ const URL_VENTA = "/propiedades?operacion=venta"
 
 const tira = (page: import("@playwright/test").Page) => page.getByRole("list", { name: "Propiedades" })
 
-test.describe("resultados: el mapa y la tira", () => {
-  test("a 360×640 el mapa ocupa la página y asoma la tarjeta siguiente", async ({ page }, info) => {
+test.describe("resultados: el mapa y la lista", () => {
+  test("a 360×640 el mapa es una tarjeta y las propiedades van debajo", async ({ page }, info) => {
     test.skip(info.project.name !== "android-chico", "el pliegue se mide en el Android chico")
     await page.goto(URL_VENTA)
-    await expect(page.locator(".maplibregl-canvas")).toBeVisible()
-    await expect(page.getByRole("link", { name: "Mapa", exact: true })).toHaveCount(0)
+    const mapa = await page.locator(".maplibregl-canvas").boundingBox()
+    expect(mapa!.y).toBeGreaterThan(40)
+    expect(mapa!.height).toBeLessThan(400)
     const lista = tira(page)
     const primera = lista.locator("[data-id]").nth(0)
     const segunda = lista.locator("[data-id]").nth(1)
-    await expect(primera.getByRole("link", { name: /Ver detalles/ })).toBeVisible()
+    await expect(primera.getByRole("link")).toBeVisible()
     const [a, b] = await Promise.all([primera.boundingBox(), segunda.boundingBox()])
-    expect(a!.y + a!.height).toBeLessThanOrEqual(640)
-    expect(Math.abs(a!.y + a!.height - (b!.y + b!.height))).toBeLessThan(2)
-    expect(b!.x).toBeGreaterThan(a!.x)
-    expect(b!.x).toBeLessThan(360)
+    expect(a!.y).toBeGreaterThan(mapa!.y + mapa!.height - 2)
+    expect(b!.y).toBeGreaterThan(a!.y + 8)
+    expect(Math.abs(a!.x - b!.x)).toBeLessThan(2)
   })
 
-  test("deslizar la tira no elige una propiedad", async ({ page }) => {
+  test("bajar la lista no elige una propiedad", async ({ page }) => {
     await page.goto(URL_VENTA)
     const lista = tira(page)
-    await expect(lista.locator("[data-id]").nth(0).getByRole("link", { name: /Ver detalles/ })).toBeVisible()
-    await lista.evaluate((ul) => {
-      ul.scrollLeft = ul.scrollWidth
+    await expect(lista.locator("[data-id]").nth(0).getByRole("link")).toBeVisible()
+    await page.locator("[data-resultados]").evaluate((el) => {
+      const caja = el.querySelector("[aria-label='Propiedades']")?.parentElement
+      const sc = caja && getComputedStyle(caja).overflowY === "auto" ? caja : el
+      sc.scrollTop = sc.scrollHeight
     })
     await expect(lista.locator("[data-elegida='true']")).toHaveCount(0)
     await expect(page).not.toHaveURL(/sel=/)
@@ -48,7 +50,7 @@ test.describe("resultados: la propiedad elegida vive en la URL", () => {
     const lista = tira(page)
     const tercera = lista.locator("[data-id]").nth(2)
     const id = await tercera.getAttribute("data-id")
-    await tercera.getByRole("link", { name: /Ver detalles/ }).click()
+    await tercera.getByRole("link").click()
     await expect(page).toHaveURL(/\/propiedades\/bol-/)
     await page.goBack()
     await expect(lista.locator("[data-elegida='true']")).toHaveAttribute("data-id", id!)
@@ -62,10 +64,28 @@ test.describe("resultados: la propiedad elegida vive en la URL", () => {
     await expect(page.locator(`.map-pin[data-id="${id}"]`)).toHaveClass(/is-selected/)
   })
 
-  test("no hay un botón para salir del mapa", async ({ page }) => {
+  test("tocar el mapa lo agranda y bajar vuelve a la lista", async ({ page }, info) => {
+    test.skip(info.project.name === "escritorio", "en escritorio el mapa ya está al lado de la lista")
     await page.goto(URL_VENTA)
-    await expect(page.getByRole("link", { name: "Mapa", exact: true })).toHaveCount(0)
+    const canvas = page.locator(".maplibregl-canvas")
+    const chico = await canvas.boundingBox()
+    expect(chico!.height).toBeLessThan(400)
+    await canvas.click({ position: { x: 30, y: chico!.height / 2 } })
+    await expect.poll(async () => (await canvas.boundingBox())!.height).toBeGreaterThan(450)
+    await page.locator("[data-resultados]").evaluate((el) => {
+      el.scrollTop = 120
+    })
+    await expect.poll(async () => (await canvas.boundingBox())!.height).toBeLessThan(400)
+    await expect(tira(page).locator("[data-id]").first()).toBeVisible()
+  })
+
+  test("en el celular el mapa y la lista están en la misma página", async ({ page }, info) => {
+    test.skip(info.project.name === "escritorio", "en escritorio no hay que elegir vista")
+    await page.goto(URL_VENTA)
     await expect(page.locator(".maplibregl-canvas")).toBeVisible()
+    await expect(tira(page).locator("[data-id]").first()).toBeAttached()
+    await expect(page.getByRole("link", { name: "Lista", exact: true })).toHaveCount(0)
+    await expect(page.getByRole("link", { name: "Mapa", exact: true })).toHaveCount(0)
   })
 })
 
@@ -156,19 +176,25 @@ test.describe("resultados: escritorio", () => {
     test.skip(info.project.name !== "escritorio", "el carrusel horizontal en ancho de escritorio")
   })
 
-  test("el mapa está y la tira se desliza con la barra visible", async ({ page }) => {
+  test("la grilla queda a la izquierda y el mapa a la derecha", async ({ page }) => {
     await page.goto(URL_VENTA)
     await expect(page.locator(".maplibregl-canvas")).toBeVisible()
+    await expect(page.getByRole("link", { name: "Lista", exact: true })).toHaveCount(0)
+    await expect(page.getByRole("link", { name: "Mapa", exact: true })).toHaveCount(0)
     const lista = tira(page)
     const [a, b] = await Promise.all([0, 1].map((i) => lista.locator("[data-id]").nth(i).boundingBox()))
-    expect(Math.abs(a!.y - b!.y)).toBeLessThan(2)
-    expect(b!.x).toBeGreaterThan(a!.x)
-    const barra = await lista.evaluate((ul) => ({
-      desborda: ul.scrollWidth > ul.clientWidth,
-      barra: getComputedStyle(ul).scrollbarWidth,
-    }))
-    expect(barra.desborda).toBe(true)
-    expect(barra.barra).not.toBe("none")
+    expect(Math.abs(a!.y - b!.y)).toBeLessThan(8)
+    expect(b!.x).toBeGreaterThan(a!.x + a!.width - 2)
+    const mapa = await page.locator(".maplibregl-canvas").boundingBox()
+    expect(mapa!.x).toBeGreaterThanOrEqual(b!.x + b!.width - 2)
+  })
+
+  test("ampliar el mapa tapa la lista y se puede volver", async ({ page }) => {
+    await page.goto(URL_VENTA)
+    await page.getByRole("button", { name: "Ampliar el mapa" }).click()
+    await expect(tira(page)).toBeHidden()
+    await page.getByRole("button", { name: "Ver la lista" }).click()
+    await expect(tira(page)).toBeVisible()
   })
 
   test("la hoja de filtros entra desde la derecha", async ({ page }) => {

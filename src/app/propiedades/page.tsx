@@ -17,12 +17,13 @@ import { getProperties } from "@/lib/properties/adapter"
 import { aTarjeta } from "@/lib/properties/tarjeta"
 
 /*
- * Resultados: el mapa, con las propiedades en una tira abajo. Spec: docs/hitos/hito-1/resultados.md.
+ * Resultados: en escritorio, grilla y mapa juntos; en el celular, el mapa arriba y la lista al bajar.
+ * Spec: docs/hitos/hito-1/resultados.md.
  */
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> }
 
-const canonica = (b: Busqueda) => hrefDeBusqueda("/propiedades", { ...b, vista: "lista", sel: undefined })
+const canonica = (b: Busqueda) => hrefDeBusqueda("/propiedades", { ...b, vista: "mapa", sel: undefined })
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const busqueda = leerBusqueda(await searchParams)
@@ -48,9 +49,9 @@ export default async function PropiedadesPage({ searchParams }: Props) {
   const titulo = tituloDeBusqueda(busqueda)
 
   return (
-    <div className="flex min-h-dvh flex-col bg-papel">
+    <div className="flex h-dvh flex-col overflow-hidden bg-papel">
       <Header />
-      <main className="flex flex-1 flex-col">
+      <main className="flex min-h-0 flex-1 flex-col">
         {/* Sin key: la hoja de filtros sigue abierta cuando un ajuste cambia la URL. */}
         <ResultadosCliente
           titulo={titulo}

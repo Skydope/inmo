@@ -94,13 +94,18 @@ con JavaScript apagado y el botón atrás vuelve un paso.
 
 ### Pasos 2 a 4 · la barra de paso y el pie fijo
 
+El cascarón es el del alta de la inmobiliaria (2026-10-09). En escritorio, hoja clara y riel
+con los cuatro pasos (operación, tipo, zona, detalles): el hecho se llena de negro y el
+siguiente no se abre hasta llegar. En el celu, esos íconos van centrados arriba, con el
+nombre del paso debajo. ‹ sigue volviendo al paso anterior con lo elegido.
+
 ```
 ┌────────────────────────────────────┐
-│ ‹  Comprar · Casa, Quinta     3/4  │ barra de paso (56): volver, lo elegido, progreso
-│ ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬░░░░░░░░░ │ barra de progreso (4 px, plano-700)
+│ ‹                                  │ volver (44)
+│        (•)——(•)——( )——( )         │ íconos centrados
+│         ¿En qué zona?              │ nombre del paso
 │                                    │
 │  (contenido del paso)              │
-│                                    │
 ├────────────────────────────────────┤ pie fijo, blanco, sombra arriba, safe-area
 │     Ver las 12 propiedades ahora   │ link (44)
 │ ┌────────────────────────────────┐ │

@@ -73,8 +73,8 @@ function VerDetalles({
 }
 
 /**
- * La tarjeta de una propiedad. `grande`: el carrusel de resultados. `flotante`: la del mapa.
- * `chica`: filas de "Recién publicadas" y "Parecidas".
+ * La tarjeta de una propiedad. `grilla`: resultados (foto, precio, nombre, dirección).
+ * `chica`: filas de "Recién publicadas" y "Parecidas". `grande` y `flotante` quedan del carrusel anterior.
  */
 export function TarjetaPropiedad({
   t,
@@ -85,7 +85,7 @@ export function TarjetaPropiedad({
   className,
 }: {
   t: Tarjeta
-  variante?: "grande" | "flotante" | "chica"
+  variante?: "grande" | "flotante" | "chica" | "grilla"
   prioridad?: boolean
   /** `grande` en el carrusel: lejos de la que se mira, las fotos se piden después. */
   diferirFotos?: boolean
@@ -119,6 +119,32 @@ export function TarjetaPropiedad({
           >
             Ver detalles <CaretRight className="size-4" aria-hidden="true" />
           </VerDetalles>
+        </div>
+      </article>
+    )
+  }
+
+  if (variante === "grilla") {
+    return (
+      <article className={cn("relative flex flex-col overflow-hidden rounded-tarjeta border border-linea bg-blanco", className)}>
+        <FotosDeTarjeta
+          fotos={t.fotos}
+          alt={queEsYDonde(t)}
+          tipo={t.type}
+          sizes="(min-width: 1024px) 18rem, 100vw"
+          prioridad={prioridad}
+          className="aspect-[4/3] w-full"
+        />
+        <EtiquetaOperacion className="pointer-events-none absolute top-2 left-2 z-10">
+          {etiquetaOperacion(t.operation)}
+        </EtiquetaOperacion>
+        <div className="flex flex-col gap-1 p-3">
+          <Precio t={t} className="text-lg" />
+          <VerDetalles t={t} className="line-clamp-2 font-semibold">
+            {queEsYDonde(t)}
+          </VerDetalles>
+          {t.direccion ? <p className="truncate text-sm text-tinta-suave">{t.direccion}</p> : null}
+          <Datos t={t} />
         </div>
       </article>
     )

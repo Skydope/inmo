@@ -102,7 +102,7 @@ test.describe("ficha", () => {
     const lista = page.getByRole("list", { name: "Propiedades" })
     const tercera = lista.locator("[data-id]").nth(2)
     const id = await tercera.getAttribute("data-id")
-    await tercera.getByRole("link", { name: /Ver detalles/ }).click()
+    await tercera.getByRole("link").click()
     await page.getByRole("link", { name: "Volver" }).click()
     await expect(lista.locator("[data-elegida='true']")).toHaveAttribute("data-id", id!)
   })

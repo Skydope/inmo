@@ -66,6 +66,8 @@ export type LinksDeContacto = {
   principal: ContactLink
   /** Solo si el principal es WhatsApp y además hay un teléfono. */
   llamar?: ContactLink
+  /** Cada medio que la inmobiliaria tiene de verdad. El mail del portal entra solo si no hay otro. */
+  medios: ContactLink[]
 }
 
 /** WhatsApp con el mensaje armado, si no llamar, si no un mail. Nunca un botón muerto. */
@@ -74,23 +76,25 @@ export function linksDeContacto(agency: Agency, mensaje: string): LinksDeContact
   const phone = agency.phone?.replace(/[^\d+]/g, "")
   const llamar = phone ? { href: `tel:${phone}`, label: "Llamar", kind: "tel" as const } : undefined
 
+  const mail = (direccion: string): ContactLink => ({
+    href: `mailto:${direccion}?subject=${encodeURIComponent("Consulta por propiedad")}&body=${encodeURIComponent(mensaje)}`,
+    label: "Escribir un mail",
+    kind: "mailto",
+  })
+  const medios: ContactLink[] = []
   if (whatsapp) {
-    return {
-      principal: {
-        href: `https://wa.me/${whatsapp}?text=${encodeURIComponent(mensaje)}`,
-        label: "Consultar por WhatsApp",
-        kind: "whatsapp",
-      },
-      llamar,
-    }
+    medios.push({
+      href: `https://wa.me/${whatsapp}?text=${encodeURIComponent(mensaje)}`,
+      label: "Consultar por WhatsApp",
+      kind: "whatsapp",
+    })
   }
-  if (llamar) return { principal: llamar }
-  const email = agency.email ?? "hola@bolivarinmo.com.ar"
-  return {
-    principal: {
-      href: `mailto:${email}?subject=${encodeURIComponent("Consulta por propiedad")}&body=${encodeURIComponent(mensaje)}`,
-      label: "Escribir un mail",
-      kind: "mailto",
-    },
+  if (llamar) medios.push(llamar)
+  if (agency.email) medios.push(mail(agency.email))
+
+  if (medios.length > 0) {
+    return { principal: medios[0], llamar: whatsapp ? llamar : undefined, medios }
   }
+  const respaldo = mail("hola@bolivarinmo.com.ar")
+  return { principal: respaldo, medios: [respaldo] }
 }

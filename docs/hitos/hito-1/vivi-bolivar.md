@@ -281,6 +281,11 @@ letra es la misma en todos los anchos. El scroll se resuelve con `sticky` y `ani
 
 ## Lo que se encontró al implementar
 
+- **2026-10-09**: la frase de la hoja pasó de Instrument Serif a Archivo Black en oración
+  (la misma del hero). La serif a 28 px quedaba fina, con cifras antiguas, debajo de
+  "BOLÍVAR". La línea del pie sigue en Instrument Serif. Los números no van en color de
+  acento.
+
 - **El techo tapa igual en todos los tamaños** (medido con Playwright de 360 × 640 a
   1920 × 1080, de día y de noche): R 33–35 %, A 21–24 %, V 10–12 %, B, O y L nada. El título se
   apoya en el techo (`techoEn`), no en un % del marco.

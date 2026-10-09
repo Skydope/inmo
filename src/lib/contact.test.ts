@@ -91,6 +91,7 @@ describe("linksDeContacto", () => {
     expect(links.principal.href).toBe(`https://wa.me/5492314123456?text=${encodeURIComponent(mensaje)}`)
     expect(links.principal.label).toBe("Consultar por WhatsApp")
     expect(links.llamar?.href).toBe("tel:02314421101")
+    expect(links.medios.map((m) => m.kind)).toEqual(["whatsapp", "tel"])
   })
 
   it("sin WhatsApp, el principal es llamar y no hay botón extra", () => {

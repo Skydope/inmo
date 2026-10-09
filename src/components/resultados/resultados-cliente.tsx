@@ -1,6 +1,8 @@
 "use client"
 
-import { useCallback, useState } from "react"
+import { useCallback, useRef, useState } from "react"
+import { ArrowsOut, List } from "@/components/iconos"
+import { useEsEscritorio } from "@/hooks/use-es-escritorio"
 import {
   BUSQUEDA_VACIA,
   filtrosActivos,
@@ -11,14 +13,17 @@ import {
   type Busqueda,
   type Filtrable,
   type Sugerencia,
+  type Vista,
 } from "@/lib/busqueda"
 import type { Tarjeta } from "@/lib/properties/tarjeta"
+import { cn } from "@/lib/utils"
+import { ColumnaDeLista } from "./columna-de-lista"
 import { HojaDeFiltros } from "./hoja-de-filtros"
-import { PanelDelMapa } from "./panel-del-mapa"
 import { SinResultados } from "./sin-resultados"
+import { TarjetaEnElMapa } from "./tarjeta-en-el-mapa"
 import { VistaMapa } from "./vista-mapa"
 
-const sinVista = (b: Busqueda) => hrefDeBusqueda("/propiedades", { ...b, vista: "lista", sel: undefined })
+const sinVista = (b: Busqueda) => hrefDeBusqueda("/propiedades", { ...b, vista: "mapa", sel: undefined })
 
 /**
  * Vista y sel de la URL actual: al volver de la ficha, Next reconstruye la página desde su
@@ -31,8 +36,8 @@ function desdeLaUrl(busqueda: Busqueda): Busqueda {
 }
 
 /**
- * Los resultados son el mapa. La tira de abajo muestra las tarjetas de siempre; deslizarla
- * no cambia la elegida. El mouse sobre una tarjeta resalta su pin.
+ * Escritorio: grilla de dos columnas a la izquierda, mapa fijo a la derecha. El celular es una
+ * sola página: el mapa es una tarjeta arriba y las propiedades aparecen al bajar.
  */
 export function ResultadosCliente({
   tarjetas,
@@ -53,15 +58,30 @@ export function ResultadosCliente({
     const id = desdeLaUrl(busqueda).sel
     return tarjetas.some((t) => t.id === id) ? id : undefined
   })
+  // Un pin no marca la lista: la pastilla es el preview. La lista sí se marca si se eligió ahí o vino en la URL.
+  const [enLaLista, setEnLaLista] = useState(true)
+  const [vista, setVista] = useState<Vista>(() => desdeLaUrl(busqueda).vista)
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false)
   const [resaltada, setResaltada] = useState<string | undefined>()
+  const [cubre, setCubre] = useState(false)
+  const [abierto, setAbierto] = useState(false)
+  const escritorio = useEsEscritorio()
+  const sc = useRef<HTMLDivElement>(null)
+  const abriendo = useRef(false)
   const selVisible = sel !== undefined && tarjetas.some((t) => t.id === sel) ? sel : undefined
+  const clave = sinVista(busqueda)
+  // Al cambiar los filtros, la vista sale de la búsqueda nueva. El modo (lista/mapa) no la cambia.
+  const [claveVista, setClaveVista] = useState(clave)
+  if (clave !== claveVista) {
+    setClaveVista(clave)
+    setVista(desdeLaUrl(busqueda).vista)
+  }
 
   const publicar = useCallback(
-    (id: string | undefined) => {
+    (id: string | undefined, modo: Vista) => {
       const href = hrefDeBusqueda(window.location.pathname, {
         ...busqueda,
-        vista: busqueda.vista,
+        vista: modo,
         sel: id,
       })
       if (href !== window.location.pathname + window.location.search) {
@@ -73,14 +93,51 @@ export function ResultadosCliente({
   const elegir = useCallback(
     (id: string) => {
       setSel(id)
-      publicar(id)
+      publicar(id, vista)
     },
-    [publicar]
+    [publicar, vista]
   )
   const deseleccionar = useCallback(() => {
     setSel(undefined)
-    publicar(undefined)
-  }, [publicar])
+    publicar(undefined, vista)
+  }, [publicar, vista])
+
+  const abrir = useCallback(() => {
+    abriendo.current = true
+    setAbierto(true)
+    sc.current?.scrollTo({ top: 0 })
+    requestAnimationFrame(() => {
+      abriendo.current = false
+    })
+  }, [])
+
+  const alPin = (id: string) => {
+    elegir(id)
+    if (!escritorio) abrir()
+  }
+  const alVacio = () => {
+    if (!escritorio && !abierto) abrir()
+    else deseleccionar()
+  }
+
+  const hrefDe = (b: Busqueda) => hrefDeBusqueda("/propiedades", { ...b, vista, sel: undefined })
+  const vacio =
+    tarjetas.length === 0 ? (
+      <SinResultados
+        titulo={titulo}
+        sugerencias={ampliar}
+        hrefDe={(s) => hrefDe(s.sin)}
+        todas={
+          filtrosActivos(busqueda) > 0
+            ? {
+                href: hrefDe({ ...BUSQUEDA_VACIA, operacion: busqueda.operacion }),
+                texto: `Ver todas las propiedades${busqueda.operacion ? ` ${operacionEnFrase(busqueda.operacion)}` : ""}`,
+              }
+            : undefined
+        }
+      />
+    ) : undefined
+  const elegida = tarjetas.find((t) => t.id === selVisible)
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -89,16 +146,59 @@ export function ResultadosCliente({
         onAbiertaChange={setFiltrosAbiertos}
         busqueda={busqueda}
         indice={indice}
-        vista={busqueda.vista}
+        vista={vista}
       />
-      <VistaMapa
-        tarjetas={tarjetas}
-        sel={selVisible}
-        resaltada={resaltada}
-        onSeleccionar={elegir}
-        onDeseleccionar={deseleccionar}
+      <div
+        ref={sc}
+        data-resultados
+        onScroll={() => {
+          const el = sc.current
+          if (!el || abriendo.current || !abierto) return
+          if (el.scrollTop > 48) {
+            setAbierto(false)
+            el.scrollTop = 0
+          }
+        }}
+        className="lista-scroll flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain lg:flex-row lg:overflow-hidden"
       >
-        <PanelDelMapa
+        <div
+          className={cn(
+            "flex shrink-0",
+            abierto ? "h-[calc(100%-4.5rem)]" : "sticky top-0 z-0 h-[42dvh]",
+            "lg:static lg:order-2 lg:z-auto lg:h-auto lg:min-h-0 lg:flex-1"
+          )}
+        >
+          <VistaMapa
+            className="min-h-0 flex-1"
+            tarjetas={tarjetas}
+            sel={selVisible}
+            resaltada={resaltada}
+            onSeleccionar={alPin}
+            onDeseleccionar={alVacio}
+            overlay={
+              <>
+                <button
+                  type="button"
+                  aria-label={cubre ? "Ver la lista" : "Ampliar el mapa"}
+                  onClick={() => setCubre((v) => !v)}
+                  className="pointer-events-auto absolute top-1/2 left-3 z-30 hidden size-11 -translate-y-1/2 place-items-center rounded-full border border-linea bg-blanco text-tinta lg:grid"
+                >
+                  {cubre ? <List className="size-5" aria-hidden="true" /> : <ArrowsOut className="size-5" aria-hidden="true" />}
+                </button>
+                {elegida && (escritorio || abierto) ? (
+                  <TarjetaEnElMapa t={elegida} onCerrar={deseleccionar} />
+                ) : null}
+              </>
+            }
+          />
+        </div>
+        <ColumnaDeLista
+          className={cn(
+            "z-10 lg:order-1 lg:w-[clamp(34rem,54%,48rem)] lg:shrink-0 lg:border-r lg:border-linea",
+            !abierto &&
+              "max-lg:-mt-6 max-lg:rounded-t-[1.5rem] max-lg:shadow-[0_-28px_70px_rgb(23_33_28/0.16)]",
+            cubre && "lg:hidden"
+          )}
           titulo={titulo}
           total={tarjetas.length}
           tarjetas={tarjetas}
@@ -109,42 +209,25 @@ export function ResultadosCliente({
           hrefFiltros={rutaDePaso("tipo", busqueda)}
           onFiltros={() => setFiltrosAbiertos(true)}
           filtros={filtrosActivos(busqueda)}
-          vacio={
-            tarjetas.length === 0 ? (
-              <SinResultados
-                titulo={titulo}
-                sugerencias={ampliar}
-                hrefDe={(s) => hrefDeBusqueda("/propiedades", { ...s.sin, vista: busqueda.vista, sel: undefined })}
-                todas={
-                  filtrosActivos(busqueda) > 0
-                    ? {
-                        href: hrefDeBusqueda("/propiedades", {
-                          ...BUSQUEDA_VACIA,
-                          operacion: busqueda.operacion,
-                          vista: busqueda.vista,
-                        }),
-                        texto: `Ver todas las propiedades${busqueda.operacion ? ` ${operacionEnFrase(busqueda.operacion)}` : ""}`,
-                      }
-                    : undefined
-                }
-              />
-            ) : undefined
-          }
+          vacio={vacio}
+          seguir={!abierto}
         />
-      </VistaMapa>
-      <noscript>
-        <ul>
-          {tarjetas.map((t, i) => (
-            <li key={t.id} data-slide={i}>
-              {t.fotos[0] ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={t.fotos[0]} alt="" />
-              ) : null}
-              <a href={`/propiedades/${t.id}`}>Ver detalles</a>
-            </li>
-          ))}
-        </ul>
-      </noscript>
+      </div>
+      <div className="hidden">
+        <noscript>
+          <ul>
+            {tarjetas.map((t, i) => (
+              <li key={t.id} data-slide={i}>
+                {t.fotos[0] ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={t.fotos[0]} alt="" />
+                ) : null}
+                <a href={`/propiedades/${t.id}`}>Ver detalles</a>
+              </li>
+            ))}
+          </ul>
+        </noscript>
+      </div>
     </div>
   )
 }

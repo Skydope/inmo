@@ -58,7 +58,12 @@ export default async function PropertyDetailPage({
   const url = `${siteUrl}/propiedades/${property.id}`
   const mensaje = mensajeDeConsulta(property, url)
   const links = linksDeContacto(property.agency, mensaje)
-  const parecidas = similares(property, await getProperties())
+  const todas = await getProperties()
+  const parecidas = similares(property, todas)
+  const otras = todas
+    .filter((p) => p.agency.id === property.agency.id && p.id !== property.id && p.photos[0])
+    .slice(0, 4)
+    .map((p) => ({ id: p.id, foto: p.photos[0], alt: p.title }))
   const volverHref = hrefDeBusqueda("/propiedades", {
     ...BUSQUEDA_VACIA,
     operacion: property.operation,
@@ -101,7 +106,7 @@ export default async function PropertyDetailPage({
               Publicada el {formatFecha(property.publishedAt)} · Código {property.id}
             </p>
           </div>
-          <TarjetaDeContacto propiedad={property} links={links} />
+          <TarjetaDeContacto propiedad={property} links={links} otras={otras} />
         </div>
       </main>
       <Pie />

@@ -13,6 +13,7 @@ export function VistaMapa({
   onSeleccionar,
   onDeseleccionar,
   children,
+  overlay,
   className,
 }: {
   tarjetas: Tarjeta[]
@@ -20,7 +21,9 @@ export function VistaMapa({
   resaltada?: string
   onSeleccionar: (id: string) => void
   onDeseleccionar: () => void
-  children: ReactNode
+  children?: ReactNode
+  /** Encima del mapa, sin entrar en el margen de los pines (la pastilla, ampliar). */
+  overlay?: ReactNode
   className?: string
 }) {
   const panel = useRef<HTMLDivElement>(null)
@@ -39,7 +42,7 @@ export function VistaMapa({
   const elegida = tarjetas.some((t) => t.id === sel) ? sel : undefined
 
   return (
-    <div className={cn("relative isolate min-h-0 flex-1 overflow-hidden bg-papel", className)}>
+    <div data-vista-mapa className={cn("relative isolate min-h-0 flex-1 overflow-hidden bg-papel", className)}>
       <PropertyMapDynamic
         tarjetas={tarjetas}
         sel={elegida}
@@ -48,9 +51,12 @@ export function VistaMapa({
         onSeleccionar={onSeleccionar}
         onDeseleccionar={onDeseleccionar}
       />
-      <div ref={panel} className="absolute inset-x-0 bottom-0 z-10">
-        {children}
-      </div>
+      {overlay ? <div className="pointer-events-none absolute inset-0 z-10">{overlay}</div> : null}
+      {children ? (
+        <div ref={panel} className="absolute inset-x-0 bottom-0 z-10">
+          {children}
+        </div>
+      ) : null}
       <noscript>
         <p className="sr-only">El mapa necesita JavaScript.</p>
       </noscript>

@@ -30,12 +30,12 @@ const ZOOM_AL_ELEGIR = 15
 
 type Pin = { marker: Marker; el: HTMLDivElement; elegido: boolean }
 
-function encuadrar(m: MapLibreMap, tarjetas: readonly Tarjeta[], animar: boolean) {
+function encuadrar(m: MapLibreMap, tarjetas: readonly Tarjeta[], animar: boolean, abajo: number) {
   if (tarjetas.length === 0) return
   const limites = new maplibregl.LngLatBounds()
   for (const t of tarjetas) limites.extend([t.lng, t.lat])
   m.fitBounds(limites, {
-    padding: { top: 80, bottom: 220, left: 40, right: 40 },
+    padding: { top: 64, bottom: Math.max(48, abajo), left: 40, right: 40 },
     maxZoom: ZOOM_AL_ELEGIR,
     animate: animar,
   })
@@ -76,11 +76,15 @@ export function PropertyMap({
   const handlers = useRef({ onSeleccionar, onDeseleccionar })
   const margen = useRef(margenInferior)
   const inicio = useRef({ tarjetas, sel })
+  const puntos = useRef(tarjetas)
+  const hayElegida = useRef(sel !== undefined)
   // Las refs se actualizan después del render, no durante (regla de React 19).
   useLayoutEffect(() => {
     tema.current = theme
     handlers.current = { onSeleccionar, onDeseleccionar }
     margen.current = margenInferior
+    puntos.current = tarjetas
+    hayElegida.current = sel !== undefined
   })
 
   // Crear el mapa una sola vez, encuadrando los resultados (o la propiedad elegida). Los
@@ -108,7 +112,7 @@ export function PropertyMap({
     if (!elegido && iniciales.length > 0) {
       // Si la mayoría está en la ciudad, se abre sobre la ciudad.
       const { ids } = encuadreInicial(iniciales)
-      encuadrar(m, iniciales.filter((t) => ids.includes(t.id)), false)
+      encuadrar(m, iniciales.filter((t) => ids.includes(t.id)), false, margen.current + 16)
     }
 
     const marcarLejos = () => {
@@ -203,18 +207,15 @@ export function PropertyMap({
     }
   }, [resaltada])
 
-  // Al elegir una propiedad (un pin o una pastilla), el mapa la lleva arriba del panel.
+  // El panel de abajo (celular) cambia de alto al medirse: se vuelve a encuadrar si no hay
+  // una propiedad elegida. En escritorio el margen es 0 y el mapa usa todo el alto.
   useEffect(() => {
     const m = mapa.current
-    const t = tarjetas.find((x) => x.id === sel)
-    if (!m || !t) return
-    m.easeTo({
-      center: [t.lng, t.lat],
-      zoom: Math.max(m.getZoom(), ZOOM_PUNTOS),
-      padding: { top: 56, bottom: margen.current + 24, left: 24, right: 24 },
-      duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 400,
-    })
-  }, [sel, tarjetas, margenInferior])
+    if (!m || hayElegida.current) return
+    const { ids } = encuadreInicial(puntos.current)
+    const cuales = puntos.current.filter((t) => ids.includes(t.id))
+    encuadrar(m, cuales, false, margen.current + 16)
+  }, [margenInferior])
 
   // El CSS de MapLibre le pone `position: relative` al contenedor y le gana a las utilidades de
   // Tailwind (van en una capa): el envoltorio es el absoluto y el mapa ocupa el 100 % adentro.

@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test"
 
-// La voz del inicio (Instrument Serif) tiene un rol acotado: la frase de la hoja y la línea del
-// pie. Nunca menos de 24 px, nunca en itálica, y en ninguna otra pantalla (spec vivi-bolivar).
+// La voz del inicio (Instrument Serif) queda solo en la línea del pie. Nunca menos de 24 px,
+// nunca en itálica, y en ninguna otra pantalla. La frase de la hoja va en Archivo Black.
 const conLaVoz = (page: Page) =>
   page.evaluate(() =>
     [...document.querySelectorAll("body *")]

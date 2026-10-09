@@ -98,7 +98,7 @@ describe("leerBusqueda", () => {
   })
 
   it("vista y propiedad elegida se leen solo si se piden, y sel se valida", () => {
-    expect(leer("vista=mapa&sel=bol-07").vista).toBe("lista")
+    expect(leer("vista=mapa&sel=bol-07").vista).toBe("mapa")
     expect(leer("vista=mapa&sel=bol-07").sel).toBeUndefined()
     expect(leer("vista=mapa&sel=bol-07", { conVista: true })).toMatchObject({ vista: "mapa", sel: "bol-07" })
     expect(leer("sel=<script>", { conVista: true }).sel).toBeUndefined()
@@ -122,6 +122,7 @@ describe("escribirBusqueda", () => {
       { ...BUSQUEDA_VACIA, operacion: "venta", tipos: ["casa", "quinta"], zonas: ["centro"], dorm: 2 },
       { ...BUSQUEDA_VACIA, operacion: "alquiler", moneda: "ARS", hasta: 500000, con: ["mascotas"] },
       { ...BUSQUEDA_VACIA, operacion: "venta", moneda: "USD", desde: 50000, hasta: 120000, orden: "precio-desc", vista: "mapa", sel: "bol-03" },
+      { ...BUSQUEDA_VACIA, operacion: "venta", vista: "lista" },
     ]
     for (const b of busquedas) {
       expect(leerBusqueda(new URLSearchParams(escribirBusqueda(b)), { conVista: true })).toEqual(b)

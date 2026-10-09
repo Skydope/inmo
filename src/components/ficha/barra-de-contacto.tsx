@@ -1,5 +1,4 @@
 import { ChatCircle, Envelope, Phone } from "@/components/iconos"
-import { Inmobiliaria } from "@/components/ficha/inmobiliaria"
 import { buttonVariants } from "@/components/ui/button"
 import type { LinksDeContacto } from "@/lib/contact"
 import { formatPrice } from "@/lib/format"
@@ -43,22 +42,67 @@ export function BarraDeContacto({ links }: { links: LinksDeContacto }) {
   )
 }
 
-/** En escritorio queda fija al bajar: precio, inmobiliaria y contacto. */
-export function TarjetaDeContacto({ propiedad, links }: { propiedad: Property; links: LinksDeContacto }) {
+/** En escritorio queda fija al bajar: precio, inmobiliaria, otras fotos y cada medio de contacto. */
+export function TarjetaDeContacto({
+  propiedad,
+  links,
+  otras,
+}: {
+  propiedad: Property
+  links: LinksDeContacto
+  otras: { id: string; foto: string; alt: string }[]
+}) {
+  const agencia = propiedad.agency
   return (
-    <aside aria-label="Contacto" className="sticky top-20 hidden flex-col gap-4 rounded-tarjeta border border-linea bg-blanco p-4 lg:flex">
+    <aside
+      aria-label="Contacto"
+      className="sticky top-20 hidden flex-col gap-4 rounded-tarjeta border border-linea bg-blanco p-4 shadow-[0_8px_28px_rgb(0_0_0/0.08)] lg:flex"
+    >
       <p className="text-2xl leading-none font-titulo tabular-nums">
         {formatPrice(propiedad.price, propiedad.currency)}
       </p>
-      <Inmobiliaria agencia={propiedad.agency} className="[&_h2]:sr-only" />
-      <div className="flex flex-col gap-2">
-        <BotonPrincipal links={links} className="w-full" />
-        {links.llamar ? (
-          <a href={links.llamar.href} className={buttonVariants({ variant: "outline", size: "lg", className: "w-full" })}>
-            <Phone aria-hidden="true" />
-            Llamar
-          </a>
+      <div className="flex items-center gap-3">
+        {agencia.logoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={agencia.logoUrl} alt="" className="size-14 rounded-full bg-papel object-contain" />
         ) : null}
+        <div className="min-w-0">
+          <p className="font-titulo text-xl leading-tight">{agencia.name}</p>
+          {agencia.license ? <p className="text-sm text-tinta-suave">Matrícula {agencia.license}</p> : null}
+        </div>
+      </div>
+      {otras.length > 0 ? (
+        <ul aria-label="Otras propiedades" className="grid grid-cols-4 gap-1.5">
+          {otras.map((o) => (
+            <li key={o.id}>
+              <a href={`/propiedades/${o.id}`} aria-label={o.alt} className="block overflow-hidden rounded-control">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={o.foto} alt={o.alt} className="aspect-square w-full object-cover" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      <div className="flex flex-col gap-2">
+        {links.medios.map((medio, i) => {
+          const Icono = ICONO[medio.kind]
+          return (
+            <a
+              key={medio.kind}
+              href={medio.href}
+              target={medio.kind === "whatsapp" ? "_blank" : undefined}
+              rel={medio.kind === "whatsapp" ? "noopener noreferrer" : undefined}
+              className={buttonVariants({
+                variant: i === 0 ? "default" : "outline",
+                size: "lg",
+                className: "w-full",
+              })}
+            >
+              <Icono aria-hidden="true" />
+              {medio.label}
+            </a>
+          )
+        })}
       </div>
     </aside>
   )

@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { FotoPropiedad } from "@/components/busqueda/foto-propiedad"
 import { ArrowsOut, MapPin, MapTrifold, Path } from "@/components/iconos"
 import { EtiquetaOperacion } from "@/components/ui/etiqueta-operacion"
@@ -39,6 +39,11 @@ export function Galeria({
     setActual(Math.round(el.scrollLeft / el.clientWidth))
   }
 
+  // Un scrollTo de afuera puede llegar antes del listener. Al montar se lee la posición real.
+  useEffect(() => {
+    alDesplazar()
+  }, [])
+
   if (total === 0) {
     return (
       <div className="overflow-hidden rounded-tarjeta">
@@ -65,7 +70,7 @@ export function Galeria({
           <div
             key={`${src}-${i}`}
             className={cn(
-              "relative aspect-[4/3] w-full min-w-0 shrink-0 snap-center overflow-hidden bg-papel lg:aspect-auto lg:h-full lg:w-auto lg:shrink lg:rounded-lg",
+              "group relative aspect-[4/3] w-full min-w-0 shrink-0 snap-center overflow-hidden bg-papel lg:aspect-auto lg:h-full lg:w-auto lg:shrink lg:rounded-lg",
               claseDeCelda(i, total)
             )}
           >
@@ -79,7 +84,12 @@ export function Galeria({
               }
               className="absolute inset-0"
             >
-              <FotoPropiedad src={src} tipo={tipo} alt="" className="size-full object-cover" />
+              <FotoPropiedad
+                src={src}
+                tipo={tipo}
+                alt=""
+                className="size-full object-cover motion-safe:transition-transform motion-safe:duration-200 motion-safe:group-hover:scale-105"
+              />
               {i === 3 && deMas > 0 ? (
                 <span className="absolute inset-0 hidden flex-col items-center justify-center bg-noche/55 text-sobre-noche lg:flex">
                   <span className="font-titulo text-2xl">
@@ -139,7 +149,6 @@ export function Galeria({
         abierta={abierta !== null}
         indice={abierta ?? 0}
         fotos={fotos}
-        tipo={tipo}
         alt={alt}
         onCerrar={() => setAbierta(null)}
       />

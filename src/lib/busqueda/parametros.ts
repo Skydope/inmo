@@ -51,7 +51,7 @@ export const BUSQUEDA_VACIA: Busqueda = {
   zonas: [],
   con: [],
   orden: "recientes",
-  vista: "lista",
+  vista: "mapa",
 }
 
 type Entrada = URLSearchParams | Record<string, string | string[] | undefined>
@@ -143,7 +143,7 @@ export function leerBusqueda(entrada: Entrada, opciones: { conVista?: boolean } 
     hasta: monto(primero(entrada, "hasta")),
     con: valores(entrada, "con").filter(esCaracteristica),
     orden: leerCon(ESQUEMA.orden, primero(entrada, "orden")) ?? "recientes",
-    vista: (opciones.conVista && leerCon(ESQUEMA.vista, primero(entrada, "vista"))) || "lista",
+    vista: (opciones.conVista && leerCon(ESQUEMA.vista, primero(entrada, "vista"))) || "mapa",
     sel: opciones.conVista ? leerCon(ESQUEMA.sel, primero(entrada, "sel")) : undefined,
   }
   return normalizarBusqueda(b)
@@ -166,7 +166,7 @@ export function escribirBusqueda(entrada: Busqueda): string {
     ["hasta", b.hasta],
     ["con", b.con.join(",") || undefined],
     ["orden", b.orden === "recientes" ? undefined : b.orden],
-    ["vista", b.vista === "lista" ? undefined : b.vista],
+    ["vista", b.vista === "mapa" ? undefined : b.vista],
     ["sel", b.sel],
   ]
   return partes

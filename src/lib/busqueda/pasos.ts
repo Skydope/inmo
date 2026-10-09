@@ -26,8 +26,8 @@ export const numeroDePaso = (paso: Paso) => PASOS.indexOf(paso) + 1
 
 export function rutaDePaso(paso: Paso | "resultados", b: Busqueda): string {
   if (paso === "operacion") return "/"
-  if (paso === "resultados") return hrefDeBusqueda("/propiedades", { ...b, vista: "lista", sel: undefined })
-  return hrefDeBusqueda(`/buscar/${paso}`, { ...b, vista: "lista", sel: undefined })
+  if (paso === "resultados") return hrefDeBusqueda("/propiedades", { ...b, vista: "mapa", sel: undefined })
+  return hrefDeBusqueda(`/buscar/${paso}`, { ...b, vista: "mapa", sel: undefined })
 }
 
 /** Sin operación elegida, solo se puede estar en el primer paso. */

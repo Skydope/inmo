@@ -1,6 +1,9 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
-import { BarraDePaso } from "@/components/busqueda/barra-de-paso"
+import { BarraDePaso, PasosDeBusqueda } from "@/components/busqueda/barra-de-paso"
+import { Logo } from "@/components/marca/logo"
+import { brandName } from "@/lib/brand"
 import { CampoAmbientes } from "@/components/busqueda/campos/campo-ambientes"
 import { CampoCaracteristicas } from "@/components/busqueda/campos/campo-caracteristicas"
 import { CampoPrecio } from "@/components/busqueda/campos/campo-precio"
@@ -128,24 +131,36 @@ export default async function PasoPage({ params, searchParams }: Props) {
   }
 
   return (
-    <div className="flex min-h-dvh flex-col bg-papel">
-      <BarraDePaso paso={paso} busqueda={busqueda} />
-      <FormularioDePaso
-        key={`${paso}?${escribirBusqueda(busqueda)}`}
-        paso={paso}
-        busqueda={busqueda}
-        indice={indice}
-        accion={accion}
-        ocultos={ocultos(busqueda, paso)}
-        idTitulo={idTitulo}
-        ultimo={siguiente === "resultados"}
-      >
-        <h1 id={idTitulo} className="text-[2rem] leading-[1.1] font-titulo">
-          {PREGUNTA[paso].titulo}
-        </h1>
-        <p className="mt-1 mb-6 text-tinta-suave">{PREGUNTA[paso].ayuda}</p>
-        {campo}
-      </FormularioDePaso>
+    <div className="min-h-dvh bg-papel lg:p-4">
+      <div className="flex min-h-dvh flex-col lg:grid lg:min-h-[calc(100dvh-2rem)] lg:grid-cols-[16rem_1fr] lg:rounded-hoja lg:border lg:border-linea lg:bg-blanco">
+        <aside className="hidden border-r border-linea px-5 py-6 lg:flex lg:flex-col">
+          <Link href="/" aria-label={`${brandName}, ir al inicio`} className="inline-flex min-h-11 items-center">
+            <Logo />
+          </Link>
+          <PasosDeBusqueda paso={paso} busqueda={busqueda} className="mt-10" />
+        </aside>
+
+        <div className="flex min-h-dvh flex-col lg:min-h-full">
+          <BarraDePaso paso={paso} busqueda={busqueda} />
+          <PasosDeBusqueda paso={paso} busqueda={busqueda} compacto className="lg:hidden" />
+          <h1 id={idTitulo} className="mx-auto mt-3 w-full max-w-xl px-4 text-center text-[2rem] leading-[1.1] font-titulo lg:text-left">
+            {PREGUNTA[paso].titulo}
+          </h1>
+          <p className="mx-auto mt-1 mb-6 w-full max-w-xl px-4 text-center text-tinta-suave lg:text-left">{PREGUNTA[paso].ayuda}</p>
+          <FormularioDePaso
+            key={`${paso}?${escribirBusqueda(busqueda)}`}
+            paso={paso}
+            busqueda={busqueda}
+            indice={indice}
+            accion={accion}
+            ocultos={ocultos(busqueda, paso)}
+            idTitulo={idTitulo}
+            ultimo={siguiente === "resultados"}
+          >
+            {campo}
+          </FormularioDePaso>
+        </div>
+      </div>
     </div>
   )
 }

@@ -24,22 +24,25 @@ async function pinALaVista(page: Page) {
 
 const elegida = (page: Page) => page.locator("[data-elegida='true']")
 
-test("tocar un pin abre su pastilla con Ver detalles", async ({ page }) => {
+test("tocar un pin abre su tarjeta en el mapa", async ({ page }) => {
   await page.goto(VENTA)
   const id = await pinALaVista(page)
   await page.locator(`.map-pin[data-id="${id}"]`).click()
   await expect(elegida(page)).toHaveAttribute("data-id", id)
-  await expect(elegida(page).getByRole("link", { name: /Ver detalles/ })).toBeVisible()
+  const tarjeta = page.locator("[data-tarjeta-mapa]")
+  await expect(tarjeta).toBeVisible()
+  await expect(tarjeta.getByRole("link")).toBeVisible()
   await expect(page).toHaveURL(new RegExp(`sel=${id}`))
 })
 
-test("deslizar la tira no cambia la propiedad elegida", async ({ page }) => {
+test("bajar la lista no cambia la propiedad elegida", async ({ page }) => {
   await page.goto(VENTA)
   const id = await pinALaVista(page)
   await page.locator(`.map-pin[data-id="${id}"]`).click()
-  const tira = page.getByRole("list", { name: "Propiedades" })
-  await tira.evaluate((ul) => {
-    ul.scrollLeft = ul.scrollWidth
+  await page.locator("[data-resultados]").evaluate((el) => {
+    const caja = el.querySelector("[aria-label='Propiedades']")?.parentElement
+    const sc = caja && getComputedStyle(caja).overflowY === "auto" ? caja : el
+    sc.scrollTop = sc.scrollHeight
   })
   await expect(elegida(page)).toHaveAttribute("data-id", id)
   await expect(page.locator(`.map-pin[data-id="${id}"]`)).toHaveClass(/is-selected/)

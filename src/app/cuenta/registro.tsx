@@ -222,12 +222,12 @@ export function Registro({ modo }: { modo: "alta" | "datos" }) {
 
         <Pasos modo={modo} paso={paso} onElegir={ir} className="mt-4 lg:hidden" compacto />
 
-        <div className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center py-8">
-          <p className="text-sm text-tinta-suave">
+        <div className="mx-auto flex w-full max-w-xl flex-1 flex-col pt-3 lg:justify-center lg:py-8">
+          <h1 className="text-center text-3xl font-titulo lg:mt-2 lg:text-left lg:text-4xl">{actual.titulo}</h1>
+          <p className="mt-1 text-center text-sm text-tinta-suave lg:text-left">
             Paso {paso + 1} de {PASOS.length}
           </p>
-          <h1 className="mt-2 text-4xl font-titulo">{actual.titulo}</h1>
-          <p className="mt-3 max-w-[46ch] text-base leading-relaxed text-tinta-suave">{actual.ayuda}</p>
+          <p className="mt-3 text-center text-base leading-relaxed text-tinta-suave lg:max-w-[46ch] lg:text-left">{actual.ayuda}</p>
 
           <div className="mt-6 rounded-control border border-linea bg-blanco p-5">
             <div key={paso} className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-200">
@@ -480,7 +480,7 @@ function Pasos({
 }) {
   return (
     <nav aria-label="Pasos del registro" className={className}>
-      <ol className={cn(compacto ? "flex items-center" : "flex flex-col")}>
+      <ol className={cn(compacto ? "flex items-center justify-center" : "flex flex-col")}>
         {PASOS.map((item, indice) => {
           const hecho = modo === "datos" ? indice !== paso : indice < paso
           const bloqueado = modo === "alta" && indice > paso

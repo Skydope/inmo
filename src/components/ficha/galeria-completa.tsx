@@ -2,24 +2,21 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
-import { FotoPropiedad } from "@/components/busqueda/foto-propiedad"
+import { CoverImage } from "@/components/cover-image"
 import { CaretLeft, CaretRight, X } from "@/components/iconos"
 import { Dialog, DialogPortal, DialogTitle } from "@/components/ui/dialog"
-import type { TipoPropiedad } from "@/lib/busqueda/taxonomia"
 
-/** Galería a pantalla completa: flechas, deslizar, pellizcar para ampliar, Esc o ✕ para cerrar. */
+/** La foto entra en el monitor: marco oscuro, fondo borroso, flechas y cerrar. */
 export function GaleriaCompleta({
   abierta,
   indice,
   fotos,
-  tipo,
   alt,
   onCerrar,
 }: {
   abierta: boolean
   indice: number
   fotos: string[]
-  tipo: TipoPropiedad
   alt: string
   onCerrar: () => void
 }) {
@@ -92,29 +89,29 @@ export function GaleriaCompleta({
   return (
     <Dialog open={abierta} onOpenChange={(abiertaAhora) => { if (!abiertaAhora) onCerrar() }}>
       <DialogPortal>
-        <DialogPrimitive.Popup className="fixed inset-0 z-50 flex flex-col bg-tinta text-sobre-noche outline-none">
+        <DialogPrimitive.Popup className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 text-sobre-noche backdrop-blur-md outline-none">
           <DialogTitle className="sr-only">Fotos de {alt}</DialogTitle>
-          <div className="flex h-14 shrink-0 items-center justify-between px-4">
-            <span className="text-sm tabular-nums">
-              {actual + 1}/{fotos.length}
-            </span>
-            <DialogPrimitive.Close className="inline-flex size-11 items-center justify-center rounded-control hover:bg-white/10" aria-label="Cerrar">
-              <X className="size-5" />
-            </DialogPrimitive.Close>
-          </div>
-          <div className="relative min-h-0 flex-1">
+          <span className="absolute top-4 left-4 text-sm tabular-nums">
+            {actual + 1}/{fotos.length}
+          </span>
+          <DialogPrimitive.Close
+            className="absolute top-3 right-3 inline-flex size-11 items-center justify-center rounded-full bg-blanco text-tinta"
+            aria-label="Cerrar"
+          >
+            <X className="size-5" />
+          </DialogPrimitive.Close>
+          <div className="relative h-full w-full">
             <div
               ref={tira}
               onScroll={alDesplazar}
-              className="flex h-full snap-x snap-mandatory overflow-x-auto"
+              className="flex h-full snap-x snap-mandatory overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             >
               {fotos.map((src, i) => (
-                <div key={`${src}-${i}`} className="flex h-full w-full shrink-0 snap-center items-center justify-center">
-                  <FotoPropiedad
+                <div key={`${src}-${i}`} className="flex h-full w-full shrink-0 snap-center items-center justify-center p-6">
+                  <CoverImage
                     src={src}
-                    tipo={tipo}
                     alt={`${alt}, foto ${i + 1} de ${fotos.length}`}
-                    className="max-h-full w-full object-contain [touch-action:pan-x_pinch-zoom]"
+                    className="max-h-[min(80dvh,100%)] max-w-[min(80vw,100%)] border-[6px] border-black object-contain shadow-[0_16px_48px_rgb(0_0_0/0.45)] [touch-action:pan-x_pinch-zoom]"
                   />
                 </div>
               ))}

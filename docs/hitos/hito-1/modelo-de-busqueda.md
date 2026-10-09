@@ -121,14 +121,14 @@ al otro). **Los valores son los slugs de la taxonomía.** Multivalor = separado 
 | `desde`, `hasta` | entero ≥ 0 | | sin tope | En la moneda de `moneda`. Si `desde > hasta`, se invierten |
 | `con` | slugs de características | ✔ | — | Todas a la vez (Y). Se descartan las que no aplican a la operación |
 | `orden` | `recientes` · `precio-asc` · `precio-desc` | | `recientes` | |
-| `vista` | `lista` · `mapa` | | `lista` | Solo `/propiedades` |
+| `vista` | `lista` · `mapa` | | `mapa` | Solo `/propiedades`. La página muestra mapa y lista juntos (`vista` no cambia el modo) |
 | `sel` | id de propiedad | | — | Solo `/propiedades`. Se ignora si no está en los resultados |
 
 **Reglas del contrato** (cada una es un test):
 
 1. **Un valor desconocido se ignora**, no rompe nada: `?tipo=casa,castillo` = `?tipo=casa`.
 2. **Forma canónica**: multivalores sin repetir y en el orden de la taxonomía; los valores por
-   defecto **no se escriben** (`orden=recientes`, `vista=lista`). Así una misma búsqueda tiene
+   defecto **no se escriben** (`orden=recientes`, `vista=mapa`). Así una misma búsqueda tiene
    una sola URL.
 3. **Ida y vuelta**: `leerBusqueda(escribirBusqueda(b))` es igual a `b` para toda búsqueda
    normalizada; y `escribirBusqueda(leerBusqueda(x))` es idempotente.

@@ -375,6 +375,26 @@ Ninguno nuevo. Al cliente viajan solo las tarjetas (no la descripción ni todas 
 
 ## Lo que se encontró al implementar
 
+- **2026-10-09, pedido de Manuel (hoja y lote)**: en el celular el mapa queda fijo y la lista
+  sube por encima, como la hoja del inicio. Tocar el mapa lo sigue abriendo entero. La grilla
+  muestra superficie, dormitorios, baños y cocheras cuando existen, y puntitos en vez del
+  contador de fotos. Se pintan de a 10; al llegar abajo entran otras. «Ir arriba» aparece
+  cuando ya se bajó. El mapa muestra todos los pines.
+- **2026-10-09, pedido de Manuel (grilla)**: en escritorio la lista es una grilla de dos
+  tarjetas (foto con flechas, precio, nombre y dirección; la tarjeta entera va a la ficha).
+  El mapa queda a la derecha. Tocar un pin abre una pastilla sobre el mapa; se cierra con la
+  X o tocando el mapa vacío. Un botón agranda el mapa hasta tapar la lista, y otro la
+  devuelve. Solo se baja la columna, con la barra fina a la derecha. En el celular no se
+  elige modo: el mapa es una tarjeta arriba y las propiedades aparecen al bajar. Tocar el
+  mapa lo abre a pantalla completa; bajar de nuevo lo achica y deja ver la lista.
+- **2026-10-09, pedido de Manuel**: en escritorio la lista y el mapa se ven juntos (columna que
+  se baja a la izquierda, mapa fijo a la derecha, filtros en la barra de la columna). No hay
+  botón para elegir vista. En el celular sigue el mapa, con la tira abajo, y un botón Lista
+  abre las mismas propiedades en una lista vertical; ahí el botón dice Mapa. La propiedad
+  elegida se mantiene al pasar. `vista=mapa` es el valor por defecto y no se escribe; `vista=lista`
+  sí, para que un link del celular abra el listado. Tocar el mapa vacío sigue sacando la
+  elegida. Pasar el mouse por una tarjeta de la columna resalta su pin; tocar un pin la trae
+  a la vista.
 - **2026-10-08, pedido de Manuel**: los resultados son siempre el mapa. No hay lista ni botón
   Mapa. La tira de abajo es la tarjeta flotante de siempre; deslizarla no cambia la elegida.
   El conteo queda a la izquierda y Filtros a la derecha. En escritorio la hoja entra desde la
