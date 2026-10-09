@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next"
-import { Archivo_Black, Encode_Sans, Instrument_Serif } from "next/font/google"
+import { Archivo_Black, Encode_Sans } from "next/font/google"
 import { MarcaDeHistorial } from "@/components/shell/marca-de-historial"
 import { brandName } from "@/lib/brand"
 import { siteUrl } from "@/lib/site"
@@ -16,25 +16,11 @@ const encode = Encode_Sans({
   axes: ["wdth"],
 })
 
-/*
- * La voz del inicio: Instrument Serif derecha, solo para la frase de la hoja y la línea del pie
- * (spec vivi-bolivar). Sin precarga: el navegador la baja recién cuando algo la usa, abajo del
- * pliegue, y no compite con la foto del hero.
- */
-/** VIVÍ BOLÍVAR: la B cerrada de cartel. No se usa en el resto de la interfaz. */
+/** VIVÍ BOLÍVAR (hero y pie): la B cerrada de cartel. No se usa en el resto de la interfaz. */
 const archivo = Archivo_Black({
   variable: "--font-archivo",
   weight: "400",
   subsets: ["latin"],
-  preload: false,
-})
-
-const voz = Instrument_Serif({
-  variable: "--font-instrument",
-  weight: "400",
-  style: "normal",
-  subsets: ["latin"],
-  display: "swap",
   preload: false,
 })
 
@@ -80,7 +66,7 @@ export default function RootLayout({
     <html
       lang="es-AR"
       suppressHydrationWarning
-      className={`${encode.variable} ${archivo.variable} ${voz.variable} h-full antialiased`}
+      className={`${encode.variable} ${archivo.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <script

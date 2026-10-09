@@ -1,29 +1,34 @@
 import { expect, test, type Page } from "@playwright/test"
 
-// La voz del inicio (Instrument Serif) queda solo en la línea del pie. Nunca menos de 24 px,
-// nunca en itálica, y en ninguna otra pantalla. La frase de la hoja va en Archivo Black.
-const conLaVoz = (page: Page) =>
+// Dos letras en todo el sitio: Encode Sans (la interfaz) y Archivo Black (solo VIVÍ BOLÍVAR,
+// en el hero y en el pie). Instrument Serif se retiró en inicio-v2 (2026-10-09).
+const familias = (page: Page) =>
   page.evaluate(() =>
-    [...document.querySelectorAll("body *")]
-      .filter((el) => [...el.childNodes].some((n) => n.nodeType === Node.TEXT_NODE && n.textContent?.trim()))
-      .map((el) => getComputedStyle(el))
-      .filter((cs) => /Instrument[ _]Serif/i.test(cs.fontFamily))
-      .map((cs) => ({ tamano: parseFloat(cs.fontSize), estilo: cs.fontStyle }))
+    [
+      ...new Set(
+        [...document.querySelectorAll("body *")]
+          .filter((el) => [...el.childNodes].some((n) => n.nodeType === Node.TEXT_NODE && n.textContent?.trim()))
+          .map((el) => getComputedStyle(el).fontFamily.split(",")[0].replace(/["']/g, "").trim())
+      ),
+    ].sort()
   )
 
-test("en el inicio, la serif va grande y derecha", async ({ page }) => {
-  await page.goto("/")
-  const usos = await conLaVoz(page)
-  expect(usos.length).toBeGreaterThan(0)
-  for (const u of usos) {
-    expect(u.tamano).toBeGreaterThanOrEqual(24)
-    expect(u.estilo).toBe("normal")
-  }
-})
-
-for (const ruta of ["/inmobiliarias", "/propiedades?operacion=venta", "/buscar/tipo?operacion=venta"]) {
-  test(`en ${ruta} no hay serif: sigue nuestra letra`, async ({ page }) => {
+for (const ruta of ["/", "/inmobiliarias", "/propiedades?operacion=venta", "/buscar/tipo?operacion=venta"]) {
+  test(`en ${ruta} solo hay Encode Sans y, como mucho, Archivo Black`, async ({ page }) => {
     await page.goto(ruta)
-    expect(await conLaVoz(page)).toEqual([])
+    const usadas = await familias(page)
+    for (const f of usadas) expect(f).toMatch(/^(Encode Sans|Archivo Black)/)
   })
 }
+
+test("Archivo Black va solo en VIVÍ BOLÍVAR", async ({ page }) => {
+  await page.goto("/")
+  const conArchivo = await page.evaluate(() =>
+    [...document.querySelectorAll("body *")]
+      .filter((el) => [...el.childNodes].some((n) => n.nodeType === Node.TEXT_NODE && n.textContent?.trim()))
+      .filter((el) => /Archivo Black/i.test(getComputedStyle(el).fontFamily))
+      .map((el) => el.textContent?.trim())
+  )
+  expect(conArchivo.length).toBeGreaterThan(0)
+  for (const t of conArchivo) expect(t).toMatch(/^(Viví|Bolívar)$/)
+})

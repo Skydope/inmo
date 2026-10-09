@@ -52,10 +52,10 @@ const COLUMNAS = [
 export function Pie({ inicio = false }: { inicio?: boolean }) {
   return (
     <footer className="mt-auto bg-noche text-sobre-noche">
-      {/* Solo en el inicio: la invitación, en la voz del inicio. */}
+      {/* Solo en el inicio: la invitación. */}
       {inicio ? (
         <div className="mx-auto max-w-6xl px-4 pt-12 md:pt-16">
-          <p className="max-w-2xl font-voz text-[2rem] leading-[1.1] text-balance md:text-5xl">
+          <p className="max-w-2xl font-titulo text-[1.75rem] leading-[1.1] text-balance md:text-4xl">
             ¿Buscás casa en Bolívar? Empezá por acá.
           </p>
           <div className="mt-5 flex flex-wrap gap-2">

@@ -1,6 +1,4 @@
 import Image from "next/image"
-import Link from "next/link"
-import { CaretRight, MapTrifold as MapIcono } from "@/components/iconos"
 import { FOTO_DE_LA_CASA, poligonoEnPorcentaje, techoEn } from "@/lib/casa"
 import { Filtro } from "./filtro"
 
@@ -31,9 +29,9 @@ function Casa({ recorte = false }: { recorte?: boolean }) {
 }
 
 /**
- * El hero del inicio: VIVÍ BOLÍVAR detrás del techo de la casa y el
- * filtro "¿Qué estás buscando?" abajo, todo en la primera pantalla. Sin JS (salvo el menú).
- * Spec: docs/hitos/hito-1/vivi-bolivar.md.
+ * El hero del inicio: VIVÍ BOLÍVAR detrás del techo de la casa y, solapada al borde de abajo
+ * de la foto, la tarjeta "¿Qué estás buscando?", entera en la primera pantalla. Sin JS.
+ * Specs: docs/hitos/hito-1/vivi-bolivar.md (la casa y el título) e inicio-v2.md (la tarjeta).
  */
 export function Hero({ conteo }: { conteo: Record<string, number> }) {
   return (
@@ -56,17 +54,9 @@ export function Hero({ conteo }: { conteo: Record<string, number> }) {
           <Casa recorte />
         </div>
 
-        <div className="relative z-10 mt-auto flex flex-col items-center gap-2 px-2 pb-3 lg:items-start lg:px-8 lg:pb-8">
-          <Link
-            href="/propiedades?vista=mapa"
-            className="inline-flex min-h-12 w-fit items-center gap-2 rounded-full bg-primary px-5 text-[1.0625rem] font-semibold text-primary-foreground shadow-[0_4px_14px_rgb(0_0_0/0.28)] transition-colors hover:bg-plano-800 active:bg-plano-800"
-          >
-            <MapIcono className="size-5" aria-hidden="true" />
-            Ver todas en el mapa
-            <CaretRight className="size-4" aria-hidden="true" />
-          </Link>
-          <Filtro conteo={conteo} />
-        </div>
+      </div>
+      <div className="relative z-10 mx-4 -mt-10 lg:mx-auto lg:-mt-18 lg:max-w-6xl lg:px-6">
+        <Filtro conteo={conteo} />
       </div>
     </section>
   )

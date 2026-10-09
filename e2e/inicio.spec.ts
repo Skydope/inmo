@@ -91,21 +91,44 @@ test.describe("inicio: la casa de día", () => {
   })
 })
 
-test("a 360×640 Viví Bolívar, la pregunta y las tres opciones entran sin scroll", async ({ page }, info) => {
-  test.skip(info.project.name !== "android-chico", "el pliegue se mide en el Android chico")
+for (const alto of [640, 780]) {
+  test(`a 360×${alto} Viví Bolívar y la tarjeta entera entran sin scroll, y la tarjeta arranca arriba`, async ({ page }, info) => {
+    test.skip(info.project.name !== "android-chico", "el pliegue se mide en el Android chico")
+    await page.setViewportSize({ width: 360, height: alto })
+    await page.goto("/")
+    const tarjeta = page.getByRole("navigation", { name: "Qué querés hacer" })
+    for (const elemento of [
+      page.getByRole("heading", { level: 1 }),
+      tarjeta,
+      tarjeta.getByRole("heading", { name: "¿Qué estás buscando?" }),
+      tarjeta.getByRole("link", { name: /^Comprar/ }),
+      tarjeta.getByRole("link", { name: /^Alquilar/ }),
+      tarjeta.getByRole("link", { name: /^Alquiler temporario/ }),
+      tarjeta.getByRole("link", { name: /Ver todas en el mapa/ }),
+    ]) {
+      const caja = await elemento.boundingBox()
+      expect(caja).not.toBeNull()
+      expect(caja!.y + caja!.height).toBeLessThanOrEqual(alto)
+    }
+    // Antes del 45 % del alto (en la versión anterior arrancaba al 74 %).
+    expect((await tarjeta.boundingBox())!.y).toBeLessThan(alto * 0.45)
+  })
+}
+
+test("el hero se va con el scroll: nada es sticky ni se mueve con el scroll, salvo el plano del pie", async ({ page }) => {
   await page.goto("/")
-  for (const elemento of [
-    page.getByRole("heading", { level: 1 }),
-    page.getByRole("heading", { name: "¿Qué estás buscando?" }),
-    page.getByRole("link", { name: /Ver todas en el mapa/ }),
-    page.getByRole("navigation", { name: "Qué querés hacer" }).getByRole("link", { name: /^Comprar/ }),
-    page.getByRole("navigation", { name: "Qué querés hacer" }).getByRole("link", { name: /^Alquilar/ }),
-    page.getByRole("navigation", { name: "Qué querés hacer" }).getByRole("link", { name: /^Alquiler temporario/ }),
-  ]) {
-    const caja = await elemento.boundingBox()
-    expect(caja).not.toBeNull()
-    expect(caja!.y + caja!.height).toBeLessThanOrEqual(640)
-  }
+  await page.evaluate(() => window.scrollTo(0, 600))
+  await expect(page.getByRole("heading", { level: 1 })).not.toBeInViewport()
+  const raros = await page.evaluate(() =>
+    [...document.querySelectorAll("main *, header")]
+      .map((el) => [el, getComputedStyle(el)] as const)
+      .filter(([el, cs]) => {
+        const timeline = cs.getPropertyValue("animation-timeline")
+        return (cs.position === "sticky" && el.tagName !== "HEADER") || (timeline !== "" && timeline !== "auto" && timeline !== "none")
+      })
+      .map(([el]) => `${el.tagName.toLowerCase()}.${el.className}`)
+  )
+  expect(raros).toEqual([])
 })
 
 test.describe("inicio: lo que hay debajo de la foto", () => {
@@ -113,7 +136,7 @@ test.describe("inicio: lo que hay debajo de la foto", () => {
     await page.goto("/")
   })
 
-  test("la hoja empieza con la frase, con los números de los datos, y sigue en orden", async ({ page }) => {
+  test("después del hero viene la frase, con los números de los datos, y las secciones en orden", async ({ page }) => {
     await expect(page.locator(".frase")).toHaveText(
       "En Bolívar, todas las propiedades en un solo lugar. Las publican las inmobiliarias de la ciudad. Hoy hay 36, de 4 inmobiliarias, en 14 zonas."
     )
@@ -176,25 +199,6 @@ test.describe("inicio: lo que hay debajo de la foto", () => {
     await expect.poll(() => lista.evaluate((ul) => ul.scrollLeft)).toBeGreaterThan(100)
     await expect(page.getByRole("button", { name: "Recién publicadas: anteriores" })).toBeVisible()
   })
-})
-
-test("la frase se enciende al bajar sin que ninguna palabra baje de 4,5 de contraste", async ({ page }) => {
-  await page.goto("/")
-  const peor = async () =>
-    page.locator(".frase > span").evaluateAll((spans) => {
-      const lum = (rgb: string) => {
-        const [r, g, b] = (rgb.match(/\d+/g) ?? []).slice(0, 3).map(Number).map((v) => v / 255)
-        const c = [r, g, b].map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4))
-        return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]
-      }
-      const papel = lum("rgb(247, 248, 246)")
-      return Math.min(...spans.map((s) => (papel + 0.05) / (lum(getComputedStyle(s).color) + 0.05)))
-    })
-  for (const y of [0, 200, 400, 800]) {
-    await page.evaluate((y) => window.scrollTo(0, y), y)
-    await page.waitForTimeout(100)
-    expect(await peor()).toBeGreaterThanOrEqual(4.5)
-  }
 })
 
 test("el navbar es uno solo y no cambia al scrollear", async ({ page }) => {

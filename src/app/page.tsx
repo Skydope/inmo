@@ -26,8 +26,8 @@ import { aTarjeta } from "@/lib/properties/tarjeta"
  * paso 1 del buscador guiado, "¿Qué estás buscando?", en la primera pantalla.
  * Spec: docs/hitos/hito-1/vivi-bolivar.md (y buscador-guiado.md § Paso 1).
  *
- * Debajo, la hoja que sube por encima de la foto con el contenido del portal, todo contado de
- * los datos, y el pie. Spec: docs/hitos/hito-1/inicio-y-pie.md.
+ * Debajo, el contenido del portal, todo contado de los datos, y el pie. Specs:
+ * docs/hitos/hito-1/inicio-y-pie.md e inicio-v2.md (scroll normal, sin hoja).
  */
 export default async function HomePage() {
   const propiedades = await getProperties()
@@ -36,18 +36,15 @@ export default async function HomePage() {
   return (
     <>
       <Header />
-      {/* Bloque, no flex: tiene que contener al hero quieto (sticky) y a la hoja que sube. */}
       <main className="flex-1">
         <Hero conteo={conteo} />
-        <div className="hoja">
-          <Frase texto={fraseDelPortal(numerosDelPortal(propiedades))} />
-          <RecienPublicadas tarjetas={recientes(propiedades, 8).map(aTarjeta)} />
-          <PorTipo categorias={categoriasDelInicio(propiedades)} />
-          <Destacadas tarjetas={destacadas(propiedades).map(aTarjeta)} />
-          <PorZona zonas={zonasConPropiedades(propiedades)} />
-          <Inmobiliarias inmobiliarias={inmobiliariasDelInicio(propiedades)} />
-          <SosInmobiliaria />
-        </div>
+        <Frase texto={fraseDelPortal(numerosDelPortal(propiedades))} />
+        <RecienPublicadas tarjetas={recientes(propiedades, 8).map(aTarjeta)} />
+        <PorTipo categorias={categoriasDelInicio(propiedades)} />
+        <Destacadas tarjetas={destacadas(propiedades).map(aTarjeta)} />
+        <PorZona zonas={zonasConPropiedades(propiedades)} />
+        <Inmobiliarias inmobiliarias={inmobiliariasDelInicio(propiedades)} />
+        <SosInmobiliaria />
       </main>
       <Pie inicio />
     </>

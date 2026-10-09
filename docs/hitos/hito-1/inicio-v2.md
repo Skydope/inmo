@@ -506,4 +506,15 @@ server components y CSS: no entra ningún `"use client"` nuevo (el carrusel ya l
 
 ## Lo que se encontró al implementar
 
-_(se completa al ejecutar)_
+- **Bloque 1 (2026-10-09)**: Manuel eligió el fondo **C** en `/muestra`. El mapa también se
+  repintó (`scripts/estilo-mapa.mjs`): con el crema desentonaba. Las seis rutas a 360 px, sin
+  nada roto. Tres e2e de `resultados` en escritorio ya fallaban antes (un pin con
+  `data-id="undefined"` y conteos de la grilla, de d5deaf9): no son de esta spec.
+- **Bloque 2 (2026-10-09)**: la foto quedó en `clamp(16rem, 42svh, 18.75rem)` con la tarjeta
+  solapada 40 px: a 360 × 640 arranca en el px 285 (44,5 %), a 360 × 780 en 316 (40,5 %);
+  entera en las dos. El techo sigue tapando la R como antes (el título se mide en `cqh`).
+  **La tarjeta terminó azul**: Manuel vio la blanca ("quedó súper bien, pero que impacte más,
+  que sea donde va la vista") y pidió color de fondo; eligió el azul plano con las filas
+  blancas adentro sobre la blanca con botón azul. En escritorio las tres opciones en fila
+  truncaban a 45 rem: la tarjeta mide 52 rem y la tercera columna es un 15 % más ancha.
+  Instrument Serif se fue (solo la usaba la línea del pie, ahora en Encode 700): −20 KB.

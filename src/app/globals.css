@@ -52,6 +52,9 @@
   --radius-tarjeta: 1rem;
   --radius-hoja: 1.5rem;
 
+  /* La única sombra del inicio: la tarjeta del buscador, que flota sobre la foto. */
+  --shadow-flota: 0 1px 2px rgb(0 0 0 / 0.06), 0 12px 32px rgb(0 0 0 / 0.12);
+
   /* El navbar (shell/header.tsx): el hero del inicio se ubica debajo. */
   --alto-navbar: 3.5rem;
 
@@ -94,16 +97,6 @@
   font-family: var(--font-encode);
   font-weight: 700;
   font-stretch: 87.5%;
-  letter-spacing: -0.01em;
-}
-
-/* La voz del inicio: Instrument Serif derecha. Solo la frase de la hoja y la línea del pie;
-   nunca menos de 24 px ni en itálica (spec vivi-bolivar). */
-@utility font-voz {
-  font-family: var(--font-instrument), Georgia, serif;
-  font-weight: 400;
-  font-style: normal;
-  font-synthesis: none;
   letter-spacing: -0.01em;
 }
 
@@ -297,35 +290,32 @@
 }
 
 /*
- * El hero del inicio (spec vivi-bolivar): la casa de día o de noche, VIVÍ BOLÍVAR detrás del
- * techo y el filtro. La foto vive en un "escenario" con su proporción (1672:941) que cubre el
- * marco; la copia recortada del techo usa el mismo escenario, así el polígono en % siempre
- * calza. El título se apoya en el techo (`--techo`, en px de la foto), no en un % del marco:
- * así cada letra queda tapada en la misma proporción en cualquier pantalla.
+ * El hero del inicio (specs vivi-bolivar e inicio-v2): la casa de día, VIVÍ BOLÍVAR detrás
+ * del techo y, solapada abajo, la tarjeta del buscador. La foto es una franja fija (300 px;
+ * 440 en escritorio), a sangre, que se va con el scroll como cualquier sección: sin sticky ni
+ * hoja (Manuel, 2026-10-09). La foto vive en un "escenario" con su proporción (1672:941) que
+ * cubre el marco; la copia recortada del techo usa el mismo escenario, así el polígono en %
+ * siempre calza. El título se apoya en el techo (`--techo`, en px de la foto), no en un % del
+ * marco: así cada letra queda tapada en la misma proporción en cualquier pantalla.
  */
 @layer components {
   .vivi-hero {
     position: relative;
     z-index: 0;
-    padding: 0.5rem;
-  }
-  /* Quieto mientras la hoja sube encima. En pantallas bajas (celular acostado) no: la hoja
-     taparía el filtro antes de poder tocarlo. */
-  @media (min-height: 37rem) {
-    .vivi-hero {
-      position: sticky;
-      top: var(--alto-navbar);
-    }
   }
   .vivi-marco {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    height: max(calc(100svh - var(--alto-navbar) - 1rem), 36rem);
+    /* El 42 % de la pantalla, entre 16 y 18,75 rem: con la tarjeta solapada 40 px, a 360 × 640
+       la tarjeta arranca antes del 45 % del alto (criterio de inicio-v2). */
+    height: clamp(16rem, 42svh, 18.75rem);
     overflow: clip;
-    border-radius: var(--radius-hoja);
-    /* El cielo, mientras llega la foto. Sigue el tema: de noche es tinta, no el azul viejo. */
-    background: var(--color-papel);
+    /* El cielo, mientras llega la foto. */
+    background: var(--color-plano-50);
+  }
+  @media (min-width: 64rem) {
+    .vivi-marco {
+      height: 27.5rem;
+    }
   }
 
   .casa {
@@ -408,15 +398,6 @@
     }
   }
 
-  /* La frase de la hoja: la misma letra que VIVÍ BOLÍVAR, en oración (no en mayúsculas).
-     Se enciende palabra por palabra al pasar (abajo, en @supports). */
-  .frase {
-    font-family: var(--font-archivo), Impact, sans-serif;
-    font-weight: 400;
-    letter-spacing: -0.02em;
-    text-wrap: pretty;
-  }
-
   /* El plano de Bolívar en el pie del inicio: líneas finas, que se apagan hacia los bordes. */
   .plano {
     color: color-mix(in oklab, var(--color-niebla) 30%, var(--color-tinta));
@@ -444,40 +425,15 @@
       stroke-width: 2.6;
     }
   }
-
-  /* La hoja: el resto del inicio sube por encima de la foto al scrollear. */
-  .hoja {
-    position: relative;
-    z-index: 10;
-    background: var(--color-papel);
-    border-radius: var(--radius-hoja) var(--radius-hoja) 0 0;
-    box-shadow: 0 -28px 70px rgb(23 33 28 / 0.16);
-  }
 }
 
 /*
- * Lo que se mueve con el scroll en el inicio (excepción acordada, spec vivi-bolivar): solo con
- * soporte de animation-timeline y sin pedido de movimiento reducido. Siempre propiedades
- * sueltas: el atajo `animation` borra `animation-timeline`.
+ * Lo único que se mueve con el scroll en el inicio: el plano del pie, que se dibuja al entrar
+ * (lo demás se retiró en inicio-v2). Solo con soporte de animation-timeline y sin pedido de
+ * movimiento reducido. Siempre propiedades sueltas: el atajo `animation` borra
+ * `animation-timeline`.
  */
 @supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    /* La frase pasa de tinta-suave a tinta palabra por palabra: nunca baja de 4,5. */
-    .frase {
-      view-timeline-name: --frase;
-      view-timeline-axis: block;
-    }
-    .frase > span {
-      animation-name: frase-encender;
-      animation-duration: auto;
-      animation-timing-function: linear;
-      animation-fill-mode: both;
-      animation-timeline: --frase;
-      animation-range-start: cover calc(8% + var(--i) / var(--n) * 34%);
-      animation-range-end: cover calc(14% + var(--i) / var(--n) * 34%);
-    }
-  }
-
   /* El plano del pie se dibuja mientras entra en pantalla: primero las avenidas, después las
      calles. Con rangos de "entry": está al fondo de la página y no llega a cruzarla. */
   @media (prefers-reduced-motion: no-preference) {
@@ -508,13 +464,5 @@
   }
   to {
     stroke-dashoffset: 0;
-  }
-}
-@keyframes frase-encender {
-  from {
-    color: var(--color-tinta-suave);
-  }
-  to {
-    color: var(--color-tinta);
   }
 }
