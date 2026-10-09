@@ -45,12 +45,18 @@ test.describe("resultados: el mapa y la lista", () => {
 })
 
 test.describe("resultados: la propiedad elegida vive en la URL", () => {
-  test("ir a la ficha y volver deja la misma tarjeta", async ({ page }) => {
+  test("ir a la ficha y volver deja la misma tarjeta", async ({ page }, info) => {
     await page.goto(URL_VENTA)
     const lista = tira(page)
     const tercera = lista.locator("[data-id]").nth(2)
     const id = await tercera.getAttribute("data-id")
-    await tercera.getByRole("link").click()
+    if (info.project.name === "escritorio") {
+      await tercera.getByRole("link").click()
+      await expect(page.locator("[data-tarjeta-mapa]")).toBeVisible()
+      await page.locator("[data-tarjeta-mapa]").getByRole("link").click()
+    } else {
+      await tercera.getByRole("link").click()
+    }
     await expect(page).toHaveURL(/\/propiedades\/bol-/)
     await page.goBack()
     await expect(lista.locator("[data-elegida='true']")).toHaveAttribute("data-id", id!)
@@ -195,6 +201,40 @@ test.describe("resultados: escritorio", () => {
     await expect(tira(page)).toBeHidden()
     await page.getByRole("button", { name: "Ver la lista" }).click()
     await expect(tira(page)).toBeVisible()
+  })
+
+  test("un pin no corre la lista y una tarjeta abre la pastilla sin mover el mapa", async ({ page }) => {
+    await page.goto(URL_VENTA)
+    const lista = tira(page)
+    const scroller = lista.locator("xpath=..")
+    await scroller.evaluate((el) => {
+      el.scrollTop = 240
+    })
+    const id = await page.evaluate(() => {
+      for (const el of document.querySelectorAll<HTMLElement>(".map-pin")) {
+        const r = el.getBoundingClientRect()
+        const encima = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)
+        if (encima && el.contains(encima)) return el.dataset.id
+      }
+    })
+    const pin = page.locator(`.map-pin[data-id="${id}"]`)
+    const antes = await pin.boundingBox()
+    await pin.click()
+    await expect(page.locator("[data-tarjeta-mapa]")).toBeVisible()
+    await expect(lista.locator("[data-elegida='true']")).toHaveCount(0)
+    expect(await scroller.evaluate((el) => el.scrollTop)).toBe(240)
+    const despues = await pin.boundingBox()
+    expect(Math.abs(despues!.x - antes!.x)).toBeLessThan(2)
+    expect(Math.abs(despues!.y - antes!.y)).toBeLessThan(2)
+    await page.locator("[data-tarjeta-mapa]").getByRole("button", { name: "Cerrar" }).click()
+    const tarjeta = lista.locator("[data-id]").nth(0)
+    const pinAntes = await page.locator(".map-pin").first().boundingBox()
+    await tarjeta.getByRole("link").click()
+    await expect(page.locator("[data-tarjeta-mapa]")).toBeVisible()
+    await expect(page).toHaveURL(/\/propiedades\?/)
+    const pinDespues = await page.locator(".map-pin").first().boundingBox()
+    expect(Math.abs(pinDespues!.x - pinAntes!.x)).toBeLessThan(2)
+    expect(Math.abs(pinDespues!.y - pinAntes!.y)).toBeLessThan(2)
   })
 
   test("la hoja de filtros entra desde la derecha", async ({ page }) => {

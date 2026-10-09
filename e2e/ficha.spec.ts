@@ -97,12 +97,15 @@ test.describe("ficha", () => {
     await expect(page.getByRole("link", { name: "Ver propiedades parecidas" })).toHaveAttribute("href", "/propiedades")
   })
 
-  test("volver desde resultados deja la misma tarjeta", async ({ page }) => {
+  test("volver desde resultados deja la misma tarjeta", async ({ page }, info) => {
     await page.goto("/propiedades?operacion=venta")
     const lista = page.getByRole("list", { name: "Propiedades" })
     const tercera = lista.locator("[data-id]").nth(2)
     const id = await tercera.getAttribute("data-id")
     await tercera.getByRole("link").click()
+    if (info.project.name === "escritorio") {
+      await page.locator("[data-tarjeta-mapa]").getByRole("link").click()
+    }
     await page.getByRole("link", { name: "Volver" }).click()
     await expect(lista.locator("[data-elegida='true']")).toHaveAttribute("data-id", id!)
   })

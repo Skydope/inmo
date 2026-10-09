@@ -22,20 +22,21 @@ async function pinALaVista(page: Page) {
   return id!
 }
 
-const elegida = (page: Page) => page.locator("[data-elegida='true']")
+const pastilla = (page: Page) => page.locator("[data-tarjeta-mapa]")
 
 test("tocar un pin abre su tarjeta en el mapa", async ({ page }) => {
   await page.goto(VENTA)
   const id = await pinALaVista(page)
   await page.locator(`.map-pin[data-id="${id}"]`).click()
-  await expect(elegida(page)).toHaveAttribute("data-id", id)
-  const tarjeta = page.locator("[data-tarjeta-mapa]")
+  await expect(page.locator("[data-elegida='true']")).toHaveCount(0)
+  const tarjeta = pastilla(page)
   await expect(tarjeta).toBeVisible()
   await expect(tarjeta.getByRole("link")).toBeVisible()
+  await expect(page.locator(`.map-pin[data-id="${id}"]`)).toHaveClass(/is-selected/)
   await expect(page).toHaveURL(new RegExp(`sel=${id}`))
 })
 
-test("bajar la lista no cambia la propiedad elegida", async ({ page }) => {
+test("bajar la lista no cambia la propiedad elegida", async ({ page }, info) => {
   await page.goto(VENTA)
   const id = await pinALaVista(page)
   await page.locator(`.map-pin[data-id="${id}"]`).click()
@@ -44,22 +45,15 @@ test("bajar la lista no cambia la propiedad elegida", async ({ page }) => {
     const sc = caja && getComputedStyle(caja).overflowY === "auto" ? caja : el
     sc.scrollTop = sc.scrollHeight
   })
-  await expect(elegida(page)).toHaveAttribute("data-id", id)
   await expect(page.locator(`.map-pin[data-id="${id}"]`)).toHaveClass(/is-selected/)
+  await expect(page).toHaveURL(new RegExp(`sel=${id}`))
+  if (info.project.name === "escritorio") await expect(pastilla(page)).toBeVisible()
 })
 
 test("tocar el mapa vacío cierra la pastilla abierta", async ({ page }) => {
   await page.goto(VENTA)
   await page.locator(`.map-pin[data-id="${await pinALaVista(page)}"]`).click()
-  await expect(elegida(page)).toBeVisible()
-  // El mapa se mueve hasta el pin elegido (easeTo de 400 ms): se busca el lugar vacío cuando
-  // quedó quieto, si no el lugar cambia entre que se elige y se toca.
-  await page.waitForFunction(() => {
-    const pin = document.querySelector(".map-pin.is-selected")
-    if (!pin) return false
-    const antes = pin.getBoundingClientRect().left
-    return new Promise((ok) => setTimeout(() => ok(pin.getBoundingClientRect().left === antes), 150))
-  })
+  await expect(pastilla(page)).toBeVisible()
   const lugar = await page.evaluate(() => {
     const mapa = document.querySelector(".maplibregl-canvas")!.getBoundingClientRect()
     for (let y = mapa.top + 150; y < mapa.bottom - 220; y += 20) {
@@ -69,7 +63,7 @@ test("tocar el mapa vacío cierra la pastilla abierta", async ({ page }) => {
     }
   })
   await page.mouse.click(lugar!.x, lugar!.y)
-  await expect(elegida(page)).toHaveCount(0)
+  await expect(pastilla(page)).toHaveCount(0)
   await expect(page.getByRole("list", { name: "Propiedades" })).toBeVisible()
 })
 

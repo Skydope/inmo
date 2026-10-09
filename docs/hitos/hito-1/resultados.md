@@ -375,6 +375,9 @@ Ninguno nuevo. Al cliente viajan solo las tarjetas (no la descripción ni todas 
 
 ## Lo que se encontró al implementar
 
+- **2026-10-09, pedido de Manuel (preview)**: tocar un pin abre la pastilla y no corre la
+  lista hasta esa tarjeta. Tocar una tarjeta en escritorio abre la misma pastilla y no mueve
+  el mapa. En el celular la tarjeta sigue yendo a la ficha.
 - **2026-10-09, pedido de Manuel (hoja y lote)**: en el celular el mapa queda fijo y la lista
   sube por encima, como la hoja del inicio. Tocar el mapa lo sigue abriendo entero. La grilla
   muestra superficie, dormitorios, baños y cocheras cuando existen, y puntitos en vez del

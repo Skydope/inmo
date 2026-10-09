@@ -91,7 +91,8 @@ export function ResultadosCliente({
     [busqueda]
   )
   const elegir = useCallback(
-    (id: string) => {
+    (id: string, desde: "mapa" | "lista") => {
+      setEnLaLista(desde === "lista")
       setSel(id)
       publicar(id, vista)
     },
@@ -112,7 +113,7 @@ export function ResultadosCliente({
   }, [])
 
   const alPin = (id: string) => {
-    elegir(id)
+    elegir(id, "mapa")
     if (!escritorio) abrir()
   }
   const alVacio = () => {
@@ -202,15 +203,15 @@ export function ResultadosCliente({
           titulo={titulo}
           total={tarjetas.length}
           tarjetas={tarjetas}
-          sel={selVisible}
+          sel={enLaLista ? selVisible : undefined}
           resaltada={resaltada}
-          onElegir={elegir}
+          onElegir={(id) => elegir(id, "lista")}
           onResaltar={setResaltada}
           hrefFiltros={rutaDePaso("tipo", busqueda)}
           onFiltros={() => setFiltrosAbiertos(true)}
           filtros={filtrosActivos(busqueda)}
           vacio={vacio}
-          seguir={!abierto}
+          preview={escritorio}
         />
       </div>
       <div className="hidden">
