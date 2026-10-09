@@ -23,15 +23,15 @@ export function Inmobiliarias({ inmobiliarias }: { inmobiliarias: ResumenDeInmob
     >
       <CarruselHorizontal etiqueta="Inmobiliarias">
         {inmobiliarias.map((r) => (
-          <ItemDeCarrusel key={r.id} className="w-64">
+          <ItemDeCarrusel key={r.id} className="w-48">
             <Link
               href={`/inmobiliarias#${r.id}`}
-              className="flex w-full flex-col gap-3 rounded-tarjeta border border-linea bg-blanco p-4 transition-colors hover:border-tinta-suave"
+              className="flex w-full flex-col gap-2 rounded-control border border-linea bg-blanco p-3 transition-colors hover:border-tinta-suave"
             >
               {/* eslint-disable-next-line @next/next/no-img-element -- logos SVG chicos */}
               <img src={r.logo} alt="" width={48} height={48} loading="lazy" className="size-12 rounded-full border border-linea object-cover" />
               <span className="flex flex-col gap-0.5">
-                <span className="leading-tight font-semibold">{r.nombre}</span>
+                <span className="truncate leading-tight font-semibold">{r.nombre}</span>
                 <span className="truncate text-sm text-tinta-suave">{r.direccion}</span>
               </span>
               <Conteo r={r} />

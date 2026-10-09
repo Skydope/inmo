@@ -1,8 +1,8 @@
+import { Bento } from "@/components/inicio/bento"
 import { Destacadas } from "@/components/inicio/destacadas"
 import { Frase } from "@/components/inicio/frase"
 import { Hero } from "@/components/inicio/hero"
 import { Inmobiliarias } from "@/components/inicio/inmobiliarias"
-import { PorTipo } from "@/components/inicio/por-tipo"
 import { PorZona } from "@/components/inicio/por-zona"
 import { RecienPublicadas } from "@/components/inicio/recien-publicadas"
 import { SosInmobiliaria } from "@/components/inicio/sos-inmobiliaria"
@@ -12,6 +12,7 @@ import { BUSQUEDA_VACIA, contarPorOpcion } from "@/lib/busqueda"
 import {
   categoriasDelInicio,
   destacadas,
+  formaDelBento,
   fraseDelPortal,
   inmobiliariasDelInicio,
   numerosDelPortal,
@@ -32,6 +33,7 @@ import { aTarjeta } from "@/lib/properties/tarjeta"
 export default async function HomePage() {
   const propiedades = await getProperties()
   const conteo = contarPorOpcion(propiedades, BUSQUEDA_VACIA, "operacion")
+  const elegidas = destacadas(propiedades)
 
   return (
     <>
@@ -39,9 +41,9 @@ export default async function HomePage() {
       <main className="flex-1">
         <Hero conteo={conteo} />
         <Frase texto={fraseDelPortal(numerosDelPortal(propiedades))} />
-        <RecienPublicadas tarjetas={recientes(propiedades, 8).map(aTarjeta)} />
-        <PorTipo categorias={categoriasDelInicio(propiedades)} />
-        <Destacadas tarjetas={destacadas(propiedades).map(aTarjeta)} />
+        <RecienPublicadas tarjetas={recientes(propiedades, 8, new Set(elegidas.map((p) => p.id))).map(aTarjeta)} />
+        <Bento bento={formaDelBento(categoriasDelInicio(propiedades))} />
+        <Destacadas tarjetas={elegidas.map(aTarjeta)} />
         <PorZona zonas={zonasConPropiedades(propiedades)} />
         <Inmobiliarias inmobiliarias={inmobiliariasDelInicio(propiedades)} />
         <SosInmobiliaria />

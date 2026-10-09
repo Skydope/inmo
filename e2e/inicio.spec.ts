@@ -155,7 +155,8 @@ test.describe("inicio: lo que hay debajo de la foto", () => {
   test("una categoría lleva a su búsqueda con el mismo conteo", async ({ page }) => {
     const tipos = page.getByRole("list", { name: "Tipos de propiedad" })
     const primera = tipos.getByRole("link").first()
-    const texto = (await primera.textContent())!
+    // La celda del bento dice "Casas en venta, 6 propiedades" en su nombre accesible.
+    const texto = (await primera.getAttribute("aria-label"))!
     await expect(primera).toHaveAttribute("href", /^\/propiedades\?operacion=[a-z]+&tipo=[a-z-]+$/)
     await primera.click()
     await expect(page).toHaveURL(/\/propiedades\?operacion=/)

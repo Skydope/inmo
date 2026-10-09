@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 /** La invitación a las inmobiliarias. Cuando haya WhatsApp del portal, suma "Escribinos". */
 export function SosInmobiliaria() {
   return (
-    <section aria-labelledby="sos-inmobiliaria" className="border-t border-linea bg-plano-50">
+    <section aria-labelledby="sos-inmobiliaria" className="mt-8 border-t border-linea bg-plano-50 md:mt-14">
       <div className="mx-auto flex max-w-6xl flex-col gap-5 px-4 py-10 md:flex-row md:items-center md:justify-between">
         <div className="max-w-lg">
           <h2 id="sos-inmobiliaria" className="text-2xl leading-tight font-titulo">

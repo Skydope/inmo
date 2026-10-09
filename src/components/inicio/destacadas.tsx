@@ -10,8 +10,8 @@ export function Destacadas({ tarjetas }: { tarjetas: Tarjeta[] }) {
     <Seccion id="destacadas" titulo="Destacadas" bajada="Elegidas por las inmobiliarias.">
       <CarruselHorizontal etiqueta="Destacadas">
         {tarjetas.map((t) => (
-          <ItemDeCarrusel key={t.id} className="w-[85%] max-w-sm">
-            <TarjetaPropiedad t={t} className="w-full" />
+          <ItemDeCarrusel key={t.id}>
+            <TarjetaPropiedad t={t} variante="destacada" />
           </ItemDeCarrusel>
         ))}
       </CarruselHorizontal>

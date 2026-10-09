@@ -108,7 +108,7 @@ export function Pie({ inicio = false }: { inicio?: boolean }) {
         ))}
       </div>
       {/* El cierre: VIVÍ BOLÍVAR en todas las páginas; en el inicio, sobre el plano de la ciudad. */}
-      <div className={cn("relative overflow-hidden", inicio ? "pt-40 md:pt-56" : "pt-4")}>
+      <div className={cn("relative overflow-hidden", inicio ? "pt-24 md:pt-40" : "pt-4")}>
         {inicio ? <PlanoDeBolivar className="absolute inset-0" /> : null}
         <p
           aria-hidden="true"

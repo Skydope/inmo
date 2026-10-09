@@ -19,10 +19,10 @@ export function Seccion({
   className?: string
 }) {
   return (
-    <section aria-labelledby={id} className={cn("mx-auto w-full max-w-6xl py-6 md:py-10", className)}>
+    <section aria-labelledby={id} className={cn("mx-auto w-full max-w-6xl pt-8 md:pt-14", className)}>
       <div className="flex items-center justify-between gap-4 px-4 pb-3">
         <div className="min-w-0">
-          <h2 id={id} className="text-2xl leading-tight font-titulo">
+          <h2 id={id} className="text-[1.375rem] leading-tight font-titulo md:text-2xl">
             {titulo}
           </h2>
           {bajada ? <p className="mt-1 text-sm text-tinta-suave">{bajada}</p> : null}

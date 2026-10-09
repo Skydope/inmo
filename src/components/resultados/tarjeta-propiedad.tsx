@@ -74,7 +74,9 @@ function VerDetalles({
 
 /**
  * La tarjeta de una propiedad. `grilla`: resultados (foto, precio, nombre, dirección).
- * `chica`: filas de "Recién publicadas" y "Parecidas". `grande` y `flotante` quedan del carrusel anterior.
+ * `chica`: filas de "Recién publicadas" y "Parecidas" (160 px: dos enteras a 360). `destacada`: la
+ * fila de Destacadas del inicio (224 px, chip trigo, una línea de datos). `grande` y `flotante`
+ * quedan del carrusel anterior.
  */
 export function TarjetaPropiedad({
   t,
@@ -85,7 +87,7 @@ export function TarjetaPropiedad({
   className,
 }: {
   t: Tarjeta
-  variante?: "grande" | "flotante" | "chica" | "grilla"
+  variante?: "grande" | "flotante" | "chica" | "grilla" | "destacada"
   prioridad?: boolean
   /** `grande` en el carrusel: lejos de la que se mira, las fotos se piden después. */
   diferirFotos?: boolean
@@ -152,22 +154,47 @@ export function TarjetaPropiedad({
 
   if (variante === "chica") {
     return (
-      <article className={cn("relative flex w-60 shrink-0 flex-col overflow-hidden rounded-tarjeta border border-linea bg-blanco", className)}>
+      <article className={cn("relative flex w-40 shrink-0 flex-col overflow-hidden rounded-control border border-linea bg-blanco", className)}>
         <div className="relative aspect-[4/3] w-full bg-papel">
           {t.fotos[0] ? (
-            <Image src={t.fotos[0]} alt="" fill sizes="240px" className="object-cover" />
+            <Image src={t.fotos[0]} alt="" fill sizes="160px" className="object-cover" />
           ) : (
             <FotoPropiedad src={undefined} tipo={t.type} alt="" className="size-full" />
           )}
-          <EtiquetaOperacion className="pointer-events-none absolute top-2 left-2">
+          <EtiquetaOperacion className="pointer-events-none absolute top-1.5 left-1.5 text-[0.6875rem]">
             {etiquetaOperacion(t.operation)}
           </EtiquetaOperacion>
         </div>
-        <div className="flex flex-col gap-1 p-3">
-          <Precio t={t} className="text-lg" />
+        <div className="flex flex-col gap-0.5 p-2.5">
+          <Precio t={t} className="text-[1.0625rem]" />
           <VerDetalles t={t} className="truncate text-sm font-semibold">
             {queEsYDonde(t)}
           </VerDetalles>
+        </div>
+      </article>
+    )
+  }
+
+  if (variante === "destacada") {
+    return (
+      <article className={cn("relative flex w-56 shrink-0 flex-col overflow-hidden rounded-control border border-linea bg-blanco", className)}>
+        <div className="relative aspect-[4/3] w-full bg-papel">
+          {t.fotos[0] ? (
+            <Image src={t.fotos[0]} alt="" fill sizes="224px" className="object-cover" />
+          ) : (
+            <FotoPropiedad src={undefined} tipo={t.type} alt="" className="size-full" />
+          )}
+          <div className="pointer-events-none absolute top-2 left-2 flex gap-1.5">
+            <span className="rounded-[4px] bg-trigo px-2 py-1 text-xs leading-none font-bold text-noche">Destacada</span>
+            <EtiquetaOperacion>{etiquetaOperacion(t.operation)}</EtiquetaOperacion>
+          </div>
+        </div>
+        <div className="flex flex-col gap-1 p-3">
+          <Precio t={t} className="text-lg" />
+          <VerDetalles t={t} className="truncate font-semibold">
+            {queEsYDonde(t)}
+          </VerDetalles>
+          <Datos t={t} maximo={3} />
         </div>
       </article>
     )
