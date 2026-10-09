@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next"
 import { Archivo_Black, Encode_Sans, Instrument_Serif } from "next/font/google"
 import { MarcaDeHistorial } from "@/components/shell/marca-de-historial"
-import { ThemeProvider } from "@/components/theme-provider"
 import { brandName } from "@/lib/brand"
 import { siteUrl } from "@/lib/site"
 import "./globals.css"
@@ -69,7 +68,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#ffffff",
+  themeColor: "#f4f6f8",
 }
 
 export default function RootLayout({
@@ -86,18 +85,11 @@ export default function RootLayout({
       <body className="flex min-h-full flex-col">
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem("tema");var o=t==="dark"||(t!=="light"&&matchMedia("(prefers-color-scheme: dark)").matches);if(o)document.documentElement.classList.add("dark");document.documentElement.style.colorScheme=o?"dark":"light"}catch(e){}`,
-          }}
-        />
-        <script
-          dangerouslySetInnerHTML={{
             __html: `try{var f=/^\\/propiedades\\/[^/]+$/.test(location.pathname);if(f)sessionStorage.removeItem("inmo-volver");else sessionStorage.setItem("inmo-volver","1")}catch(e){}`,
           }}
         />
-        <ThemeProvider>
-          <MarcaDeHistorial />
-          {children}
-        </ThemeProvider>
+        <MarcaDeHistorial />
+        {children}
       </body>
     </html>
   )

@@ -181,9 +181,7 @@ Vos, directo, sin signos de exclamación, sin promesas. Dice qué pasa al tocar.
 
 ## Modo oscuro
 
-No hay en el hito 1 (decisión del 2026-10-08). Las clases `dark:` de shadcn quedan atadas a
-una clase `.dark` que nunca se pone. Si se suma, se remapean los mismos tokens.
-
-**Única excepción**: la foto y el título del hero del inicio siguen
-`@media (prefers-color-scheme: dark)` (la casa de noche, el título en blanco). No usar
-`dark:` para eso: va con la media query, acotada al hero.
+**No hay, y no se suma** (Manuel, 2026-10-09; antes "no en el hito 1"). Ningún portal grande
+(Zonaprop, Argenprop, ML Inmuebles, Airbnb, Idealista) lo tiene en la web: las fotos son el
+producto y sobre fondo oscuro pierden. Una sola paleta, de día. Sin clases `dark:`, sin
+`.dark`, sin `prefers-color-scheme` (el hero ya no tiene foto de noche).

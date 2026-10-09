@@ -2,11 +2,10 @@
 
 import { useEffect, useRef } from "react"
 import * as maplibregl from "maplibre-gl"
-import { useTheme } from "@/components/theme-provider"
 
 maplibregl.setWorkerUrl("/maplibre/maplibre-gl-worker.mjs")
 
-const ESTILO = { light: "/mapa/estilo.json", dark: "/mapa/estilo-noche.json" } as const
+const ESTILO = "/mapa/estilo.json"
 
 /** Polígono aproximado de `metros` alrededor del punto. */
 function circulo(lng: number, lat: number, metros: number, pasos = 64): [number, number][] {
@@ -34,7 +33,6 @@ export function MapaChico({
   lng: number
   pin: boolean
 }) {
-  const { theme } = useTheme()
   const contenedor = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -42,7 +40,7 @@ export function MapaChico({
     if (!el) return
     const mapa = new maplibregl.Map({
       container: el,
-      style: ESTILO[theme],
+      style: ESTILO,
       center: [lng, lat],
       zoom: pin ? 15 : 14,
       interactive: false,
@@ -78,7 +76,7 @@ export function MapaChico({
       mapa.fitBounds(limites, { padding: 24, animate: false })
     })
     return () => mapa.remove()
-  }, [lat, lng, pin, theme])
+  }, [lat, lng, pin])
 
   return <div ref={contenedor} className="size-full" />
 }

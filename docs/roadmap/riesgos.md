@@ -61,9 +61,10 @@ Fuente: [CARTO Basemaps Terms](https://carto.com/legal/basemap-terms/) (actualiz
 - **El CLI de shadcn (4.21) puede escribir `import { cn } from "cn"`** en vez del alias
   `@/lib/utils` e instalar un paquete npm llamado `cn`. **Cada vez que se agregue un
   componente con el CLI**: `grep -rn 'from "cn"' src` vacío y `cn` fuera de `package.json`.
-- **`dark:` en Tailwind 4 es `prefers-color-scheme` por defecto**: los componentes de shadcn
-  traen clases `dark:`. `globals.css` las ata a una clase `.dark` que nunca se pone; no sacar
-  ese `@custom-variant` mientras no haya modo oscuro.
+- **No hay modo oscuro** (Manuel, 2026-10-09): se sacaron el `@custom-variant dark`, las
+  clases `dark:` y los tokens `.dark`. Si un componente nuevo de shadcn trae `dark:`, se le
+  borran: en Tailwind 4 sin la variante declarada, `dark:` seguiría a `prefers-color-scheme`
+  del sistema y pintaría cosas de noche sin que nadie lo pida.
 - **Inputs a 16 px como mínimo**: con menos, Safari de iPhone hace zoom al tocar el campo.
 - **`allowedDevOrigins` tiene que incluir `127.0.0.1`**: con el dev server levantado con
   `--hostname 0.0.0.0`, entrar por `127.0.0.1` sirve el HTML pero **no hidrata** (sin error

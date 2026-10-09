@@ -29,12 +29,93 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
+/* Inicio v2 (2026-10-09): el crema se va. Dos fondos candidatos, medidos con
+   `scripts/contraste.mjs`; Manuel elige viendo esto en el celu. */
+const FONDOS = [
+  {
+    id: "C",
+    nombre: "C · Gris azulado",
+    nota: "Del mismo lado que el azul plano; la madera y el pasto resaltan por contraste.",
+    papel: "#f4f6f8",
+    linea: "#dde3e9",
+    tintaSuave: "#5b6670",
+    contrastes: "tinta 16,1 · gris 5,4 · azul 8,0",
+  },
+  {
+    id: "A",
+    nombre: "A · Gris neutro",
+    nota: "El de Mercado Libre y Airbnb: neutro, sin tinte.",
+    papel: "#f7f7f7",
+    linea: "#e3e3e3",
+    tintaSuave: "#5f6368",
+    contrastes: "tinta 16,3 · gris 5,7 · azul 8,1",
+  },
+]
+
+function Fondo({ f }: { f: (typeof FONDOS)[number] }) {
+  return (
+    <section
+      className="flex flex-col gap-3 rounded-hoja border border-linea p-4 text-tinta"
+      style={
+        {
+          "--color-papel": f.papel,
+          "--color-blanco": "#ffffff",
+          "--color-linea": f.linea,
+          "--color-tinta-suave": f.tintaSuave,
+          background: f.papel,
+        } as React.CSSProperties
+      }
+    >
+      <div>
+        <h3 className="text-lg font-titulo">{f.nombre}</h3>
+        <p className="text-sm text-tinta-suave">{f.nota}</p>
+        <p className="mt-1 text-xs text-tinta-suave">
+          fondo {f.papel} · tarjeta #ffffff · {f.contrastes}
+        </p>
+      </div>
+      <article className="overflow-hidden rounded-tarjeta border border-linea bg-blanco">
+        <div className="relative aspect-[4/3] bg-papel">
+          <Image src="/images/properties/house-1.webp" alt="" fill sizes="360px" className="object-cover" />
+          <EtiquetaOperacion className="absolute top-3 left-3">Venta</EtiquetaOperacion>
+        </div>
+        <div className="flex flex-col gap-1 p-4">
+          <p className="font-encode text-2xl leading-none font-bold tabular-nums [font-stretch:87.5%]">US$ 120.000</p>
+          <p className="font-semibold">Casa en Centro</p>
+          <p className="text-sm text-tinta-suave">Belgrano 450 · 3 dorm. · 180 m²</p>
+        </div>
+      </article>
+      <nav aria-label={`Qué querés hacer (${f.id})`} className="rounded-tarjeta border border-linea bg-blanco p-4">
+        <p className="text-[1.375rem] leading-tight font-titulo">¿Qué estás buscando?</p>
+        <ul className="mt-2 divide-y divide-linea">
+          {[
+            ["Comprar", "22 en venta"],
+            ["Alquilar", "11 en alquiler"],
+          ].map(([t, n]) => (
+            <li key={t} className="flex min-h-14 items-center justify-between gap-3">
+              <span className="flex items-center gap-3 text-[1.0625rem] font-semibold">
+                <Key className="size-[22px] text-plano-700" aria-hidden="true" />
+                {t}
+              </span>
+              <span className="flex items-center gap-1 text-sm text-tinta-suave tabular-nums">
+                {n} <CaretRight className="size-4" aria-hidden="true" />
+              </span>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <Button size="lg" className="w-full">
+        Ver 22 propiedades
+      </Button>
+    </section>
+  )
+}
+
 const COLORES = [
-  { token: "papel", hex: "#efe8dc", nota: "fondo" },
-  { token: "blanco", hex: "#f7f2ea", nota: "superficies" },
+  { token: "papel", hex: "#f4f6f8", nota: "fondo" },
+  { token: "blanco", hex: "#ffffff", nota: "superficies" },
   { token: "tinta", hex: "#1a1a1a", nota: "texto" },
-  { token: "tinta-suave", hex: "#6e675e", nota: "texto secundario" },
-  { token: "linea", hex: "#e4dcd0", nota: "bordes" },
+  { token: "tinta-suave", hex: "#5b6670", nota: "texto secundario" },
+  { token: "linea", hex: "#dde3e9", nota: "bordes" },
   { token: "trigo", hex: "#c4a574", nota: "oro" },
 ]
 
@@ -190,11 +271,24 @@ export default function MuestraPage() {
 
         <div className="flex flex-col gap-12 md:flex-row md:items-start md:justify-center">
           <Celular
-            titulo="Tinta"
-            bajada="Papel, tinta y oro. La acción es tinta de día y oro de noche."
-            acento={{ hex: "#1a1a1a", nombre: "plano-700", contraste: "tinta" }}
+            titulo="Azul plano"
+            bajada="Papel, tinta y el azul de los planos como único color de acción. Un solo modo."
+            acento={{ hex: "#1f4e79", nombre: "plano-700", contraste: "blanco" }}
           />
         </div>
+
+        <section className="flex flex-col gap-4">
+          <h2 className="text-xl font-titulo">Fondo: C o A (inicio v2)</h2>
+          <p className="max-w-xl text-tinta-suave">
+            Dos fondos para reemplazar el crema. Mirá la foto, el gris del texto y el azul
+            sobre cada uno.
+          </p>
+          <div className="grid gap-6 md:grid-cols-2">
+            {FONDOS.map((f) => (
+              <Fondo key={f.id} f={f} />
+            ))}
+          </div>
+        </section>
 
         <section className="flex flex-col gap-4">
           <h2 className="text-xl font-titulo">Los demás colores</h2>

@@ -17,19 +17,19 @@ export const contraste = (a, b) => {
 }
 
 const PALETA = {
-  papel: "#efe8dc",
-  blanco: "#f7f2ea",
+  papel: "#f4f6f8",
+  blanco: "#ffffff",
   tinta: "#1a1a1a",
-  "tinta-suave": "#6e675e",
+  "tinta-suave": "#5b6670",
   niebla: "#a8a297",
-  linea: "#e4dcd0",
+  linea: "#dde3e9",
   trigo: "#c4a574",
   alerta: "#b4432f",
   noche: "#1a1a1a",
   "sobre-noche": "#f7f2ea",
-  "plano-50": "#f3efe6",
-  "plano-700": "#1a1a1a",
-  "plano-800": "#3a3530",
+  "plano-50": "#e6edf4",
+  "plano-700": "#1f4e79",
+  "plano-800": "#183d5f",
 }
 
 // [texto, fondo, mínimo] — 4,5 texto normal, 3 texto grande o bordes que importan.
@@ -43,6 +43,7 @@ const PARES = [
   ["blanco", "tinta", 4.5],
   ["niebla", "tinta", 4.5],
   ["linea", "blanco", 1],
+  ["blanco", "papel", 1.05],
   ["blanco", "plano-700", 4.5],
   ["blanco", "plano-800", 4.5],
   ["plano-700", "papel", 4.5],
@@ -54,25 +55,6 @@ const PARES = [
   ["niebla", "noche", 4.5],
 ]
 
-// De noche los tokens de superficie se invierten. `noche` y `niebla` no.
-const NOCHE = {
-  papel: "#1a1a1a",
-  blanco: "#262626",
-  tinta: "#f3efe6",
-  "tinta-suave": "#a8a297",
-  "plano-700": "#c4a574",
-  noche: "#1a1a1a",
-  "sobre-noche": "#f7f2ea",
-  niebla: "#a8a297",
-}
-const PARES_NOCHE = [
-  ["tinta", "papel", 4.5],
-  ["tinta-suave", "papel", 4.5],
-  ["tinta-suave", "blanco", 4.5],
-  ["blanco", "plano-700", 4.5],
-  ["sobre-noche", "noche", 4.5],
-  ["niebla", "noche", 4.5],
-]
 
 const args = process.argv.slice(2)
 if (args.length > 0) {
@@ -91,6 +73,5 @@ if (args.length > 0) {
     }
   }
   medir("día", PALETA, PARES)
-  medir("noche", NOCHE, PARES_NOCHE)
   process.exitCode = falla ? 1 : 0
 }

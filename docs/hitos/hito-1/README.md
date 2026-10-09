@@ -241,6 +241,7 @@ flowchart LR
 | 3 | [`buscador-guiado.md`](buscador-guiado.md) | `in-progress` (falta 👀 Manuel) | El inicio y los pasos 2 a 4 |
 | 4 | [`resultados.md`](resultados.md) | `approved` | `/propiedades`: resumen, selector de vista, carrusel, mapa con tarjeta flotante, hoja de filtros, vacío; escritorio en dos columnas; tiles de OpenFreeMap |
 | 6 | [`inicio-y-pie.md`](inicio-y-pie.md) | `draft` | Debajo de la foto del inicio: recién publicadas, por tipo, destacadas, por zona e inmobiliarias deslizando; pie completo (pedido de Manuel, 2026-10-08) |
+| 6b | [`inicio-v2.md`](inicio-v2.md) | `approved` (2026-10-09) | El hero con el buscador en el primer pliegue, scroll normal, fondo casi blanco, bento de tipos y secciones compactas. Reemplaza el hero de `vivi-bolivar` y las secciones de `inicio-y-pie` |
 | 5 | [`ficha.md`](ficha.md) | `approved` | `/propiedades/[id]`: galería, precio, datos, descripción, ubicación, inmobiliaria, similares, contacto fijo, vista previa al compartir |
 
 Referencia relevada: [`referencia-tandilprop.md`](referencia-tandilprop.md).

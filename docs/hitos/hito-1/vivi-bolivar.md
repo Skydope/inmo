@@ -281,6 +281,21 @@ letra es la misma en todos los anchos. El scroll se resuelve con `sticky` y `ani
 
 ## Lo que se encontró al implementar
 
+- **2026-10-09 (pedido de Manuel): sin modo oscuro.** Ningún portal grande (Zonaprop,
+  Argenprop, ML Inmuebles, Airbnb, Idealista) tiene modo oscuro en la web: las fotos son el
+  producto y sobre fondo oscuro pierden. Se retiraron el botón día/noche, `ThemeProvider`, los
+  tokens `html.dark`, el estilo de mapa de noche y la foto de noche del hero (una descarga
+  menos). Queda **una sola paleta, de día**: papel, tinta y azul plano. La foto
+  `casa-noche.webp` sigue en `public/` por si sirve para compartir.
+- **2026-10-09 (pedido de Manuel): un solo navbar.** Las pestañas sobre la foto y la barra
+  fija que aparecía al scrollear eran dos barras distintas (otro orden, sin Ingresar) y el
+  cambio se notaba. Se reemplazaron por el header de siempre (`shell/header.tsx`): fijo
+  arriba, de todo el ancho, igual en todas las páginas y en cualquier punto del scroll. El
+  hero queda debajo (`--alto-navbar`) y la hoja sube por detrás. En escritorio el navbar lleva
+  Comprar, Alquilar, Temporario, Mapa e Inmobiliarias; en el celu, la luna pasa al menú para
+  que el logo entre en un renglón a 360 px. Se retiraron `pestanas.tsx` y la barra con
+  `animation-timeline`.
+
 - **2026-10-09**: la frase de la hoja pasó de Instrument Serif a Archivo Black en oración
   (la misma del hero). La serif a 28 px quedaba fina, con cifras antiguas, debajo de
   "BOLÍVAR". La línea del pie sigue en Instrument Serif. Los números no van en color de

@@ -35,7 +35,7 @@ export function Logo({ className, claro = false }: { className?: string; claro?:
       <Isotipo />
       <span
         className={cn(
-          "font-encode text-[1.1em] tracking-[-0.01em] [font-stretch:87.5%]",
+          "font-encode text-[1.1em] tracking-[-0.01em] whitespace-nowrap [font-stretch:87.5%]",
           claro ? "text-sobre-noche" : "text-tinta"
         )}
       >

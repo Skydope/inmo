@@ -8,35 +8,21 @@ import { writeFileSync, mkdirSync } from "node:fs"
 
 const ORIGEN = "https://tiles.openfreemap.org/styles/positron"
 
-// Día: papel, tinta y agua lavada. De noche el acento de los nombres (hints) es oro.
+// La paleta C del sitio (inicio-v2, 2026-10-09): gris azulado casi blanco, tinta y agua
+// lavada. Un solo estilo: no hay modo oscuro.
 const DIA = {
-  papel: "#efe8dc",
-  manzana: "#e7dfd2",
-  edificio: "#ddd4c6",
-  parque: "#b7c9ae",
-  agua: "#a8c4d4",
-  linea: "#e4dcd0",
-  calle: "#f7f2ea",
-  calleMenor: "#ebe3d6",
-  tintaSuave: "#6e675e",
+  papel: "#f4f6f8",
+  manzana: "#eaeef2",
+  edificio: "#dfe5eb",
+  parque: "#c9dccb",
+  agua: "#b7d0e0",
+  linea: "#dde3e9",
+  calle: "#ffffff",
+  calleMenor: "#f0f3f6",
+  tintaSuave: "#5b6670",
   tinta: "#1a1a1a",
-  aguaTexto: "#6e675e",
-  hint: "#6e675e",
-}
-
-const NOCHE = {
-  papel: "#1a1a1a",
-  manzana: "#22201c",
-  edificio: "#2a2723",
-  parque: "#1b3326",
-  agua: "#163040",
-  linea: "#3a3530",
-  calle: "#2e2a26",
-  calleMenor: "#26221e",
-  tintaSuave: "#a8a297",
-  tinta: "#f3efe6",
-  aguaTexto: "#c4a574",
-  hint: "#c4a574",
+  aguaTexto: "#5b6670",
+  hint: "#5b6670",
 }
 
 const coloresDe = (p) => ({
@@ -86,4 +72,3 @@ function pintar(base, paleta, nombre, archivo) {
 // (src/components/map/property-map.tsx).
 mkdirSync("public/mapa", { recursive: true })
 pintar(estilo, DIA, "Bolívar Inmo (positron de OpenFreeMap)", "public/mapa/estilo.json")
-pintar(estilo, NOCHE, "Bolívar Inmo noche", "public/mapa/estilo-noche.json")

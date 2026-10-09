@@ -24,6 +24,7 @@
 | 5 | Resultados: lista deslizable ⇄ mapa + hoja de filtros | [`resultados.md`](hitos/hito-1/resultados.md) | paso 4 | 🔄 implementado y verificado (Lighthouse 91); falta 👀 Manuel |
 | 5b | Inicio con contenido y pie completo (pedido de Manuel) | [`inicio-y-pie.md`](hitos/hito-1/inicio-y-pie.md) | paso 5 (usa la tarjeta chica) | 🔄 implementado; falta 👀 Manuel |
 | 5c | Viví Bolívar: el hero de antes (la casa de día y de noche) con nuestro filtro | [`vivi-bolivar.md`](hitos/hito-1/vivi-bolivar.md) | paso 5b | 🔄 `approved` (2026-10-08), en curso |
+| 5d | Inicio v2: buscador en el primer pliegue, scroll normal, fondo claro, bento de tipos, secciones compactas (pedido de Manuel) | [`inicio-v2.md`](hitos/hito-1/inicio-v2.md) | paso 5c | 🔄 `approved` (2026-10-09), en curso |
 | 6 | Ficha de la propiedad + contacto | [`ficha.md`](hitos/hito-1/ficha.md) | paso 5 | ⏳ |
 | 7 | Cierre del hito 1: e2e del recorrido entero, Manuel en el celu, `/cerrar` | [`hito-1/README.md`](hitos/hito-1/README.md) § Definición de terminado | paso 6 | ⏳ |
 

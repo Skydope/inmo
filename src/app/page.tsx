@@ -35,7 +35,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <Header fija />
+      <Header />
       {/* Bloque, no flex: tiene que contener al hero quieto (sticky) y a la hoja que sube. */}
       <main className="flex-1">
         <Hero conteo={conteo} />

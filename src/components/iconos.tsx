@@ -28,7 +28,6 @@ import {
   MapPin as MapPinIcon,
   MapTrifold as MapTrifoldIcon,
   Minus as MinusIcon,
-  Moon as MoonIcon,
   Path as PathIcon,
   Plus as PlusIcon,
   Phone as PhoneIcon,
@@ -39,7 +38,6 @@ import {
   SignOut as SignOutIcon,
   SlidersHorizontal as SlidersHorizontalIcon,
   Storefront as StorefrontIcon,
-  Sun as SunIcon,
   TextT as TextTIcon,
   Tractor as TractorIcon,
   Trash as TrashIcon,
@@ -50,6 +48,13 @@ import {
   type Icon,
   type IconProps,
 } from "@phosphor-icons/react"
+
+/** Trazo grueso: para lo que es una línea y no una forma (el menú, la cruz). Relleno los apelmaza. */
+function trazo(Icono: Icon) {
+  return function IconoTrazo(props: IconProps) {
+    return <Icono {...props} weight="bold" />
+  }
+}
 
 function relleno(Icono: Icon) {
   return function IconoRelleno(props: IconProps) {
@@ -79,12 +84,11 @@ export const Envelope = relleno(EnvelopeIcon)
 export const House = relleno(HouseIcon)
 export const Image = relleno(ImageIcon)
 export const Key = relleno(KeyIcon)
-export const List = relleno(ListIcon)
+export const List = trazo(ListIcon)
 export const MagnifyingGlass = relleno(MagnifyingGlassIcon)
 export const MapPin = relleno(MapPinIcon)
 export const MapTrifold = relleno(MapTrifoldIcon)
 export const Minus = relleno(MinusIcon)
-export const Moon = relleno(MoonIcon)
 export const Path = relleno(PathIcon)
 export const Plus = relleno(PlusIcon)
 export const Phone = relleno(PhoneIcon)
@@ -95,14 +99,13 @@ export const ShareNetwork = relleno(ShareNetworkIcon)
 export const SignOut = relleno(SignOutIcon)
 export const SlidersHorizontal = relleno(SlidersHorizontalIcon)
 export const Storefront = relleno(StorefrontIcon)
-export const Sun = relleno(SunIcon)
 export const TextT = relleno(TextTIcon)
 export const Tractor = relleno(TractorIcon)
 export const Trash = relleno(TrashIcon)
 export const Tree = relleno(TreeIcon)
 export const VideoCamera = relleno(VideoCameraIcon)
 export const Warehouse = relleno(WarehouseIcon)
-export const X = relleno(XIcon)
+export const X = trazo(XIcon)
 
 /** Nombres que ya usaba la taxonomía. El dibujo es Phosphor relleno. */
 export const Building2 = relleno(BuildingsIcon)

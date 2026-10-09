@@ -7,7 +7,6 @@ import * as maplibregl from "maplibre-gl"
 // copian de maplibre-gl/dist a public/maplibre: recopiarlos al actualizar maplibre.
 maplibregl.setWorkerUrl("/maplibre/maplibre-gl-worker.mjs")
 import type { Map as MapLibreMap, Marker } from "maplibre-gl"
-import { useTheme } from "@/components/theme-provider"
 import { BOLIVAR_CENTER } from "@/lib/brand"
 import { etiquetaTipo, nombreZona } from "@/lib/busqueda"
 import { formatPrice, formatPriceCompact } from "@/lib/format"
@@ -21,7 +20,7 @@ import type { Tarjeta } from "@/lib/properties/tarjeta"
  * se rota y se inclina (pedido de Manuel, 2026-10-08), y la brújula lo vuelve al norte.
  * Spec: docs/hitos/hito-1/resultados.md § Vista mapa.
  */
-const ESTILO = { light: "/mapa/estilo.json", dark: "/mapa/estilo-noche.json" } as const
+const ESTILO = "/mapa/estilo.json"
 const ZOOM_CIUDAD = 13.5
 // Más lejos que esto (por ejemplo, con propiedades en las localidades), los pines no elegidos
 // pasan a puntos: los precios no entran.
@@ -67,9 +66,6 @@ export function PropertyMap({
   onSeleccionar: (id: string) => void
   onDeseleccionar: () => void
 }) {
-  const { theme } = useTheme()
-  const tema = useRef(theme)
-  const temaAplicado = useRef(theme)
   const contenedor = useRef<HTMLDivElement>(null)
   const mapa = useRef<MapLibreMap | null>(null)
   const pines = useRef<Map<string, Pin>>(new Map())
@@ -80,7 +76,6 @@ export function PropertyMap({
   const hayElegida = useRef(sel !== undefined)
   // Las refs se actualizan después del render, no durante (regla de React 19).
   useLayoutEffect(() => {
-    tema.current = theme
     handlers.current = { onSeleccionar, onDeseleccionar }
     margen.current = margenInferior
     puntos.current = tarjetas
@@ -95,7 +90,7 @@ export function PropertyMap({
     const elegido = iniciales.find((t) => t.id === selInicial)
     const m = new maplibregl.Map({
       container: contenedor.current,
-      style: ESTILO[tema.current],
+      style: ESTILO,
       center: elegido ? [elegido.lng, elegido.lat] : [BOLIVAR_CENTER.lng, BOLIVAR_CENTER.lat],
       zoom: elegido ? ZOOM_AL_ELEGIR : ZOOM_CIUDAD,
       pitch: 0,
@@ -139,13 +134,6 @@ export function PropertyMap({
       mapa.current = null
     }
   }, [])
-
-  useEffect(() => {
-    const m = mapa.current
-    if (!m || temaAplicado.current === theme) return
-    temaAplicado.current = theme
-    m.setStyle(ESTILO[theme])
-  }, [theme])
 
   // Pines: uno por propiedad, con el precio compacto ("US$120k"); sin precio, "Consultar".
   useEffect(() => {

@@ -25,8 +25,12 @@ export function MapaOficina({
   const pin = useRef<maplibregl.Marker | null>(null)
   const logoRef = useRef(logo)
   const alMover = useRef(onMover)
-  logoRef.current = logo
-  alMover.current = onMover
+  // Se actualizan en un efecto (no durante el render) y antes que los efectos del mapa, que
+  // corren después por estar declarados abajo.
+  useEffect(() => {
+    logoRef.current = logo
+    alMover.current = onMover
+  })
 
   useEffect(() => {
     if (!caja.current || mapa.current) return

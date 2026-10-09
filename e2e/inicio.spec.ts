@@ -2,6 +2,8 @@ import { expect, test } from "@playwright/test"
 import { PRIMER_PLANO } from "../src/lib/casa"
 
 const numero = (texto: string | null) => Number(/(\d+) propiedades?/.exec(texto ?? "")?.[1] ?? NaN)
+/** El conteo de resultados va adelante del título: "(22) Propiedades en venta". */
+const conteoDelTitulo = (texto: string | null) => Number(/\((\d+)\)/.exec(texto ?? "")?.[1] ?? NaN)
 
 test.describe("inicio: ¿Qué estás buscando?", () => {
   test.beforeEach(async ({ page }) => {
@@ -19,7 +21,7 @@ test.describe("inicio: ¿Qué estás buscando?", () => {
     const enInicio = numero(await page.getByRole("navigation", { name: "Qué querés hacer" }).getByRole("link", { name: /^Comprar/ }).textContent())
     expect(enInicio).toBeGreaterThan(0)
     await page.goto("/propiedades?operacion=venta")
-    expect(numero(await page.locator("main p").first().textContent())).toBe(enInicio)
+    expect(conteoDelTitulo(await page.getByRole("heading", { level: 1 }).textContent())).toBe(enInicio)
   })
 
   test("el título es Viví Bolívar y la pregunta es el título del filtro", async ({ page }) => {
@@ -29,7 +31,7 @@ test.describe("inicio: ¿Qué estás buscando?", () => {
   })
 })
 
-test.describe("inicio: la casa de día y de noche", () => {
+test.describe("inicio: la casa de día", () => {
   const fotoDelHero = (page: import("@playwright/test").Page) =>
     page.locator(".casa-foto").first().evaluate((el) => {
       const imgs = [...el.querySelectorAll("img")] as HTMLImageElement[]
@@ -43,26 +45,17 @@ test.describe("inicio: la casa de día y de noche", () => {
     await expect(page.getByRole("heading", { level: 1 })).toHaveCSS("color", "rgb(26, 26, 26)")
   })
 
-  test("con el sistema en oscuro, la casa de noche y el título en tinta clara", async ({ browser }) => {
-    const contexto = await browser.newContext({ colorScheme: "dark" })
-    const page = await contexto.newPage()
-    await page.goto("/")
-    await expect.poll(() => fotoDelHero(page)).toContain("casa-noche")
-    await expect(page.getByRole("heading", { level: 1 })).toHaveCSS("color", "rgb(243, 239, 230)")
-    await contexto.close()
-  })
-
-  test("el hero pide la foto de día y la de noche, para cambiar sin recargar", async ({ page }) => {
+  test("el hero pide solo la foto de día (la de noche ya no existe en el inicio)", async ({ page }) => {
     const pedidas = new Set<string>()
     page.on("response", (r) => {
       if (/casa-(dia|noche)/.test(r.url())) pedidas.add(r.url())
     })
     await page.goto("/")
-    await expect(page.locator(".casa-foto img")).toHaveCount(4)
+    await expect(page.locator(".casa-foto img")).toHaveCount(2)
     await page.waitForLoadState("networkidle")
     const urls = [...pedidas]
     expect(urls.some((u) => u.includes("casa-dia"))).toBe(true)
-    expect(urls.some((u) => u.includes("casa-noche"))).toBe(true)
+    expect(urls.some((u) => u.includes("casa-noche"))).toBe(false)
   })
 
   test("el techo tapa la base de la R y deja la B libre", async ({ page }) => {
@@ -143,7 +136,7 @@ test.describe("inicio: lo que hay debajo de la foto", () => {
     await expect(primera).toHaveAttribute("href", /^\/propiedades\?operacion=[a-z]+&tipo=[a-z-]+$/)
     await primera.click()
     await expect(page).toHaveURL(/\/propiedades\?operacion=/)
-    expect(numero(await page.locator("main p").first().textContent())).toBe(numero(texto))
+    expect(conteoDelTitulo(await page.getByRole("heading", { level: 1 }).textContent())).toBe(numero(texto))
   })
 
   test("Ver todas y las inmobiliarias llevan a donde dicen", async ({ page }) => {
@@ -163,7 +156,8 @@ test.describe("inicio: lo que hay debajo de la foto", () => {
   test("una zona lleva a los resultados de esa zona", async ({ page }) => {
     await page.getByRole("region", { name: "Por zona" }).getByRole("link", { name: /^Centro/ }).click()
     await expect(page).toHaveURL(/\/propiedades\?zona=centro$/)
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Propiedades en Centro")
+    // El conteo va adelante del título: "(14) Propiedades en Centro".
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/^\(\d+\) Propiedades en Centro$/)
   })
 
   test("sin scroll horizontal (los carruseles se desplazan adentro)", async ({ page }) => {
@@ -203,14 +197,19 @@ test("la frase se enciende al bajar sin que ninguna palabra baje de 4,5 de contr
   }
 })
 
-test("la barra fija aparece cuando la hoja tapa las pestañas", async ({ page }, info) => {
-  test.skip(info.project.name !== "android-chico", "se mide en el Android chico")
+test("el navbar es uno solo y no cambia al scrollear", async ({ page }) => {
   await page.goto("/")
-  const soporta = await page.evaluate(() => CSS.supports("animation-timeline: scroll()"))
-  test.skip(!soporta, "sin animaciones de scroll no hay barra fija (los links están en el pie)")
-  const barra = page.locator("header.barra-del-inicio")
-  await expect(barra).toBeHidden()
-  await page.evaluate(() => window.scrollTo(0, window.innerHeight))
-  await expect(barra).toBeVisible()
-  await expect(barra.getByRole("link", { name: "Bolívar Inmo, ir al inicio" })).toBeInViewport()
+  const navbar = page.locator("header").first()
+  const logo = navbar.getByRole("link", { name: "Bolívar Inmo, ir al inicio" })
+  const ingresar = navbar.getByRole("link", { name: "Ingresar" })
+  await expect(logo).toBeInViewport()
+  await expect(ingresar).toBeInViewport()
+  const antes = await navbar.boundingBox()
+  await page.evaluate(() => window.scrollTo(0, window.innerHeight * 2))
+  await expect(logo).toBeInViewport()
+  await expect(ingresar).toBeInViewport()
+  const despues = await navbar.boundingBox()
+  expect(despues).toEqual(antes)
+  expect(antes!.y).toBe(0)
+  expect(antes!.width).toBe(await page.evaluate(() => document.documentElement.clientWidth))
 })
