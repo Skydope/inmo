@@ -28,9 +28,13 @@ const MINIMO_PARA_LOS_NUMEROS = 10
 const masNuevaPrimero = (a: Pick<Property, "publishedAt">, b: Pick<Property, "publishedAt">) =>
   b.publishedAt.localeCompare(a.publishedAt)
 
-/** Las `n` publicadas más recientemente. */
-export function recientes<T extends Pick<Property, "publishedAt">>(props: readonly T[], n = 8): T[] {
-  return [...props].sort(masNuevaPrimero).slice(0, n)
+/** Las `n` publicadas más recientemente. `excluir`: ids que ya se muestran en otra sección. */
+export function recientes<T extends Pick<Property, "id" | "publishedAt">>(
+  props: readonly T[],
+  n = 8,
+  excluir: ReadonlySet<string> = new Set()
+): T[] {
+  return props.filter((p) => !excluir.has(p.id)).sort(masNuevaPrimero).slice(0, n)
 }
 
 /** Las que la inmobiliaria marcó como destacadas, las más nuevas primero (3 o más, o nada). */
@@ -71,6 +75,29 @@ export function categoriasDelInicio(props: readonly Property[]): Categoria[] {
   // sort es estable: a igual cantidad queda el orden de la taxonomía.
   categorias.sort((a, b) => b.cantidad - a.cantidad)
   return categorias.length >= MINIMO_DE_CATEGORIAS ? categorias : []
+}
+
+export type Bento = {
+  /** Las celdas grandes (a lo ancho en el celu; 2 × 2 en escritorio). */
+  grandes: Categoria[]
+  chicas: Categoria[]
+  /** Cuántas categorías quedaron afuera (si hay, va "Ver todos los tipos"). */
+  restantes: number
+}
+
+/**
+ * La forma del bento de "Buscá por tipo" (spec inicio-v2): sin huecos y de la que más tiene a
+ * la que menos. 5 o más → 1 grande + 4 chicas; 4 → 2 + 2; 3 → 1 + 2; 2 → 2 grandes; menos, nada.
+ */
+export function formaDelBento(categorias: readonly Categoria[]): Bento | null {
+  const n = categorias.length
+  if (n < MINIMO_DE_CATEGORIAS) return null
+  const [grandes, chicas] = n >= 5 ? [1, 4] : n === 4 ? [2, 2] : n === 3 ? [1, 2] : [2, 0]
+  return {
+    grandes: categorias.slice(0, grandes),
+    chicas: categorias.slice(grandes, grandes + chicas),
+    restantes: n - grandes - chicas,
+  }
 }
 
 export type ZonaConConteo = { zona: Zona; nombre: string; cantidad: number; href: string }

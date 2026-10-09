@@ -4,6 +4,7 @@ import type { Property } from "@/lib/properties/types"
 import {
   categoriasDelInicio,
   destacadas,
+  formaDelBento,
   fraseDelPortal,
   inmobiliariasDelInicio,
   numerosDelPortal,
@@ -15,6 +16,15 @@ const base = SEED_PROPERTIES[0]
 const prop = (p: Partial<Property>): Property => ({ ...base, featured: false, ...p })
 
 describe("recientes", () => {
+  it("se pueden excluir ids (las que ya están en Destacadas no se repiten)", () => {
+    const props = [
+      prop({ id: "a", publishedAt: "2026-09-03" }),
+      prop({ id: "b", publishedAt: "2026-09-02" }),
+      prop({ id: "c", publishedAt: "2026-09-01" }),
+    ]
+    expect(recientes(props, 2, new Set(["a"])).map((p) => p.id)).toEqual(["b", "c"])
+  })
+
   it("de la más nueva a la más vieja, cortadas en n", () => {
     const r = recientes(SEED_PROPERTIES, 5)
     expect(r).toHaveLength(5)
@@ -41,6 +51,40 @@ describe("destacadas", () => {
   it("con menos de 3, nada (la sección no va)", () => {
     const dos = [prop({ id: "a", featured: true }), prop({ id: "b", featured: true }), prop({ id: "c" })]
     expect(destacadas(dos)).toEqual([])
+  })
+})
+
+describe("formaDelBento", () => {
+  const cat = (n: number) =>
+    Array.from({ length: n }, (_, i) =>
+      categoriasDelInicio(SEED_PROPERTIES)[0] && { ...categoriasDelInicio(SEED_PROPERTIES)[0], titulo: `c${i}`, cantidad: n - i }
+    )
+
+  it("con 5 o más: una grande (la de más propiedades) y cuatro chicas; el resto queda afuera", () => {
+    const f = formaDelBento(cat(7))!
+    expect(f.grandes.map((c) => c.titulo)).toEqual(["c0"])
+    expect(f.chicas.map((c) => c.titulo)).toEqual(["c1", "c2", "c3", "c4"])
+    expect(f.restantes).toBe(2)
+  })
+
+  it("con 4: dos grandes y dos chicas; con 3: una y dos; con 2: dos grandes", () => {
+    expect(formaDelBento(cat(4))).toMatchObject({ grandes: [{ titulo: "c0" }, { titulo: "c1" }], restantes: 0 })
+    expect(formaDelBento(cat(4))!.chicas.map((c) => c.titulo)).toEqual(["c2", "c3"])
+    expect(formaDelBento(cat(3))!.grandes.map((c) => c.titulo)).toEqual(["c0"])
+    expect(formaDelBento(cat(3))!.chicas.map((c) => c.titulo)).toEqual(["c1", "c2"])
+    expect(formaDelBento(cat(2))).toMatchObject({ grandes: [{ titulo: "c0" }, { titulo: "c1" }], chicas: [], restantes: 0 })
+  })
+
+  it("con menos de 2, nada (la sección no va)", () => {
+    expect(formaDelBento(cat(1))).toBeNull()
+    expect(formaDelBento([])).toBeNull()
+  })
+
+  it("con los datos de prueba quedan 10 afuera, y no muta la entrada", () => {
+    const todas = categoriasDelInicio(SEED_PROPERTIES)
+    const copia = [...todas]
+    expect(formaDelBento(todas)!.restantes).toBe(todas.length - 5)
+    expect(todas).toEqual(copia)
   })
 })
 
